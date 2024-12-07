@@ -17,6 +17,11 @@ public final class Constants {
     public static final int kLEDPWM = 1;
     public static final int kNumberLEDs = 60;
   }
+
+  public static class Swerve {
+    public static final double MAX_SPEED = 4.5;
+  }
+
   public static class OperatorConstants {
     public static final int kDriverControllerPort = 0;
   }
