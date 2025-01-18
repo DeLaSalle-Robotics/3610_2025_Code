@@ -46,7 +46,7 @@ public class RobotContainer {
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     // Register Named Commands - Needed to be callable in PathPlanner
-    NamedCommands.registerCommand("autoAim", drivebase.aimAtSpeaker(5));
+    //NamedCommands.registerCommand("autoAim", drivebase.aimAtSpeaker(5));
     
     // Build an auto chooser
     m_autoChooser = AutoBuilder.buildAutoChooser();
@@ -86,7 +86,7 @@ public class RobotContainer {
       driverXbox.a().onTrue((Commands.runOnce(drivebase::zeroGyro)));
       driverXbox.x().onTrue(Commands.runOnce(drivebase::addFakeVisionReading));
       //driverXbox.b().whileTrue()
-      driverXbox.y().whileTrue(drivebase.aimAtSpeaker(2));
+      //driverXbox.y().whileTrue(drivebase.aimAtSpeaker(2));
       driverXbox.start().whileTrue(Commands.none());
       driverXbox.back().whileTrue(Commands.none());
       //driverXbox.leftBumper().whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
