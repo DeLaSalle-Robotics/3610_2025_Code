@@ -12,6 +12,7 @@ import java.util.function.Supplier;
 
 import org.photonvision.targeting.PhotonPipelineResult;
 
+import com.ctre.phoenix6.swerve.jni.SwerveJNI.ModulePosition;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.commands.PathfindingCommand;
@@ -41,15 +42,20 @@ import swervelib.telemetry.SwerveDriveTelemetry.TelemetryVerbosity;
 import swervelib.SwerveController;
 import swervelib.SwerveDrive;
 import swervelib.SwerveDriveTest;
+import swervelib.imu.NavXSwerve;
 import swervelib.math.SwerveMath;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+import edu.wpi.first.math.kinematics.SwerveModulePosition;
+import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.util.struct.parser.ParseException;
@@ -71,15 +77,21 @@ public class SwerveSubsystem extends SubsystemBase{
     /**
      * PhotonVision class to keep an accurate odometry.
      */
-    private       Vision vision;
+    private Vision vision;
+
     
+    private final SwerveDrivePoseEstimator poseEstimator;
     /**
      * Initialize {@link SwerveDrive} with the directory provided.
      *
      * @param directory Directory of swerve drive config files.
      */
-    public SwerveSubsystem(File directory){
-        SwerveDriveTelemetry.verbosity = TelemetryVerbosity.HIGH;
+
+  
+
+
+    public SwerveSubsystem(File directory){        
+      SwerveDriveTelemetry.verbosity = TelemetryVerbosity.HIGH;
         try
         {
         //This will create a swerveDrive object with a potision 1 m infront of the drivers station and 4 m from the right wall.    
@@ -110,6 +122,22 @@ public class SwerveSubsystem extends SubsystemBase{
         // Stop the odometry thread if we are using vision that way we can synchronize updates better.
         swerveDrive.stopOdometryThread();
         }
+
+        
+        // Define the standard deviations for the pose estimator, which determine how fast the pose
+        // estimate converges to the vision measurement. This should depend on the vision measurement
+        // noise
+        // and how many or how frequently vision measurements are applied to the pose estimator.
+      var stateStdDevs = VecBuilder.fill(0.1, 0.1, 0.1);
+      var visionStdDevs = VecBuilder.fill(1, 1, 1);
+      poseEstimator = new SwerveDrivePoseEstimator(
+        swerveDrive.kinematics,
+        swerveDrive.getOdometryHeading(),
+        swerveDrive.getModulePositions(),
+        new Pose2d(),
+        stateStdDevs,
+        visionStdDevs);
+        
     }
     //METHODS
     //========================================
@@ -684,35 +712,6 @@ public class SwerveSubsystem extends SubsystemBase{
     return swerveDrive;
   }
   
-  
-  
-  
-  
-  //COMMANDS
-    //========================================
-    
-    /**
-   * Command to drive the robot using translative values and heading as angular velocity.
-   *
-   * @param translationX     Translation in the X direction.
-   * @param translationY     Translation in the Y direction.
-   * @param angularRotationX Rotation of the robot to set
-   * @param triggerValue     Allows for realtime control of field oriented driving
-   * @return Drive command.
-   */
-  
-
-
-
-
-  /**
-   * Command to drive the robot using translative values and heading as a setpoint.
-   *
-   * @param translationX Translation in the X direction.
-   * @param translationY Translation in the Y direction.
-   * @param rotation     Rotation as a value between [-1, 1] converted to radians.
-   * @return Drive command.
-   */
   public Command simDriveCommand(DoubleSupplier translationX, DoubleSupplier translationY, DoubleSupplier rotation)
   {
     // swerveDrive.setHeadingCorrection(true); // Normally you would want heading correction for this kind of control.
