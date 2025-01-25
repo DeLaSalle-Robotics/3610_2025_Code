@@ -16,6 +16,7 @@ import com.ctre.phoenix6.swerve.jni.SwerveJNI.ModulePosition;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.commands.PathfindingCommand;
+import com.pathplanner.lib.config.ModuleConfig;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
@@ -56,6 +57,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.util.struct.parser.ParseException;
@@ -149,6 +151,7 @@ public class SwerveSubsystem extends SubsystemBase{
           swerveDrive.updateOdometry();
     //      vision.updatePoseEstimation(swerveDrive);
         }
+        poseEstimator.update(swerveDrive.getOdometryHeading(), swerveDrive.getModulePositions());
       }
 
     //Path Planning Methods
@@ -157,8 +160,10 @@ public class SwerveSubsystem extends SubsystemBase{
         RobotConfig config;
         try{
             config = RobotConfig.fromGUISettings();
-            final boolean enableFeedforward = true;
-            AutoBuilder.configure(
+            
+        
+        final boolean enableFeedforward = true;
+        AutoBuilder.configure(
             this::getPose,
             // Robot pose supplier
             this::resetOdometry,
@@ -203,13 +208,13 @@ public class SwerveSubsystem extends SubsystemBase{
             this
             // Reference to this subsystem to set requirements
                             );
+                            
         } catch (Exception e)
         {
           // Handle exception as needed
           e.printStackTrace();
-        }
-        PathfindingCommand.warmupCommand().schedule();
-    }
+          }
+        PathfindingCommand.warmupCommand().schedule();}
 
     /**
    * Aim the robot at the target returned by PhotonVision.
