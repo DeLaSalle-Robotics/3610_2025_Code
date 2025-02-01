@@ -280,9 +280,9 @@ public class SwerveSubsystem extends SubsystemBase{
    * @throws IOException    If the PathPlanner GUI settings is invalid
    * @throws ParseException If PathPlanner GUI settings is nonexistent.
    */
-/* 
+
   private Command driveWithSetpointGenerator(Supplier<ChassisSpeeds> robotRelativeChassisSpeed)
-  throws IOException, ParseException
+  throws IOException, org.json.simple.parser.ParseException
   {
     SwerveSetpointGenerator setpointGenerator = new SwerveSetpointGenerator(RobotConfig.fromGUISettings(),
                                                                             swerveDrive.getMaximumChassisAngularVelocity());
@@ -306,14 +306,14 @@ public class SwerveSubsystem extends SubsystemBase{
 
                     });
   }
- */
+ 
  /**
    * Drive with 254's Setpoint generator; port written by PathPlanner.
    *
    * @param fieldRelativeSpeeds Field-Relative {@link ChassisSpeeds}
    * @return Command to drive the robot using the setpoint generator.
    */
-  /* 
+  
   public Command driveWithSetpointGeneratorFieldRelative(Supplier<ChassisSpeeds> fieldRelativeSpeeds)
   {
     try
@@ -329,7 +329,7 @@ public class SwerveSubsystem extends SubsystemBase{
     return Commands.none();
 
   }
-*/
+
   /**
    * Command to characterize the robot drive motors using SysId
    *
@@ -415,7 +415,7 @@ public class SwerveSubsystem extends SubsystemBase{
   public Command driveCommand(DoubleSupplier translationX, DoubleSupplier translationY, DoubleSupplier headingX,
                               DoubleSupplier headingY)
   {
-    // swerveDrive.setHeadingCorrection(true); // Normally you would want heading correction for this kind of control.
+    //swerveDrive.setHeadingCorrection(true); // Normally you would want heading correction for this kind of control.
     return run(() -> {
 
       Translation2d scaledInputs = SwerveMath.scaleTranslation(new Translation2d(translationX.getAsDouble(),

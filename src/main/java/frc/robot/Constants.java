@@ -34,8 +34,8 @@ public final class Constants {
 
   public static class OperatorConstants {
     public static final int kDriverControllerPort = 0;
-    public static final double LEFT_Y_DEADBAND = 0.2;
-    public static final double LEFT_X_DEADBAND = 0.2;
+    public static final double DEADBAND = 0.2;
+
   }
   public static class Vision {
         public static final String kCameraName = "YOUR CAMERA NAME";
