@@ -9,6 +9,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Supplier;
 import java.awt.Desktop;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 
 import static edu.wpi.first.units.Units.Microseconds;
 import static edu.wpi.first.units.Units.Milliseconds;
@@ -27,6 +30,8 @@ import org.photonvision.PhotonUtils;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.cscore.CvSource;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -58,7 +63,7 @@ public class Vision extends SubsystemBase {
    */
   public              VisionSystemSim     visionSim;
 
-
+  final private boolean visionTroubleShoot = true;
   /**
    * Current pose from the pose estimator using wheel odometry.
    */
@@ -82,12 +87,20 @@ public class Vision extends SubsystemBase {
         {
         visionSim = new VisionSystemSim("Vision");
         visionSim.addAprilTags(fieldLayout);
-
+        if (visionTroubleShoot){
+          visionSim.getDebugField();
+          
+        }
         for (Cameras c : Cameras.values())
         {
             c.addToVisionSim(visionSim);
+            if (visionTroubleShoot){
+              c.cameraSim.enableDrawWireframe(true);
+              CameraServer.addCamera(c.cameraSim.getVideoSimRaw());
+              
+            }
         }
-
+        
         openSimCameraViews();
         }
   }
@@ -226,15 +239,15 @@ public class Vision extends SubsystemBase {
   {
     if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE))
     {
-//      try
-//      {
-//        Desktop.getDesktop().browse(new URI("http://localhost:1182/"));
-//        Desktop.getDesktop().browse(new URI("http://localhost:1184/"));
-//        Desktop.getDesktop().browse(new URI("http://localhost:1186/"));
-//      } catch (IOException | URISyntaxException e)
-//      {
-//        e.printStackTrace();
-//      }
+      try
+      {
+        Desktop.getDesktop().browse(new URI("http://localhost:1182/"));
+        Desktop.getDesktop().browse(new URI("http://localhost:1184/"));
+        Desktop.getDesktop().browse(new URI("http://localhost:1186/"));
+      } catch (IOException | URISyntaxException e)
+      {
+        e.printStackTrace();
+      }
     }
   }
 
@@ -553,6 +566,7 @@ public class Vision extends SubsystemBase {
   @Override
   public void simulationPeriodic() {
     // This method will be called once per scheduler run during simulation
+    visionSim.update(currentPose.get());
   }
 
   
