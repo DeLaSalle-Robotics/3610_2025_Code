@@ -6,6 +6,7 @@ package frc.robot.subsystems;
 import frc.robot.Constants;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
@@ -21,11 +22,23 @@ import swervelib.telemetry.SwerveDriveTelemetry.TelemetryVerbosity;
 import swervelib.parser.SwerveDriveConfiguration;
 import swervelib.parser.SwerveParser;
 
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.commands.FollowPathCommand;
+import com.pathplanner.lib.commands.PathfindingCommand;
+import com.pathplanner.lib.config.PIDConstants;
+import com.pathplanner.lib.config.RobotConfig;
+import com.pathplanner.lib.controllers.PPHolonomicDriveController;
+import com.pathplanner.lib.path.GoalEndState;
+import com.pathplanner.lib.path.PathConstraints;
+import com.pathplanner.lib.path.PathPlannerPath;
+import com.pathplanner.lib.path.Waypoint;
 
 import java.io.File;
+import java.util.List;
 
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 
 import static edu.wpi.first.units.Units.Meter;
@@ -49,8 +62,8 @@ public class DriveTrain extends SubsystemBase {
    * PhotonVision class to keep an accurate odometry.
    */
   private Vision vision;
+
   
-  /** Creates a new ExampleSubsystem. */
   public DriveTrain(File directory) {
 
     // Configure the Telemetry before creating the SwerveDrive to avoid unnecessary objects being created.
@@ -80,6 +93,7 @@ public class DriveTrain extends SubsystemBase {
       // Stop the odometry thread if we are using vision that way we can synchronize updates better.
       swerveDrive.stopOdometryThread();
     }
+    setupPathPlanner();
   }
 
 /**
@@ -195,6 +209,106 @@ public class DriveTrain extends SubsystemBase {
   public boolean exampleCondition() {
     // Query some boolean state, such as a digital sensor.
     return false;
+  }
+
+  public void setupPathPlanner()
+  {
+    RobotConfig config;
+    try {
+      {
+        config = RobotConfig.fromGUISettings();
+
+        final boolean enableFeedForward = true;
+        AutoBuilder.configure(
+          this::getPose,
+          this::resetOdometry,
+          this::getRobotVelocity,
+          (speedsRobotRelative, moduleFeedForwards) -> {
+            if (enableFeedForward)
+            {
+              swerveDrive.drive(
+                speedsRobotRelative,
+                swerveDrive.kinematics.toSwerveModuleStates(speedsRobotRelative),
+                moduleFeedForwards.linearForces()
+              );
+            } else{
+              swerveDrive.setChassisSpeeds(speedsRobotRelative);
+            }
+          },
+          new PPHolonomicDriveController(
+            new PIDConstants(5.0, 0.0, 0.0 ),
+            new PIDConstants(5.0,0.0,0.0)
+            ),
+            config,
+            () -> {
+              var alliance = DriverStation.getAlliance();
+              if (alliance.isPresent())
+              {
+                return alliance.get() == DriverStation.Alliance.Red;
+              }
+              return false;
+            },
+            this
+        );
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+    //Preload PathPlanner Path finding
+    // IF USING CUSTOM PATHFINDER ADD BEFORE THIS LINE
+    PathfindingCommand.warmupCommand().schedule();
+  }
+
+  /**
+   * Resets odometry to the given pose. Gyro angle and module positions do not need to be reset when calling this
+   * method.  However, if either gyro angle or module position is reset, this must be called in order for odometry to
+   * keep working.
+   *
+   * @param initialHolonomicPose The pose to set the odometry to
+   */
+  public void resetOdometry(Pose2d initialHolonomicPose)
+  {
+    swerveDrive.resetOdometry(initialHolonomicPose);
+  }
+
+   /**
+   * Gets the current velocity (x, y and omega) of the robot
+   *
+   * @return A {@link ChassisSpeeds} object of the current velocity
+   */
+  public ChassisSpeeds getRobotVelocity()
+  {
+    return swerveDrive.getRobotVelocity();
+  }
+
+  public Command DriveToPoint(Pose2d finalPose) {
+        
+    try {
+        RobotConfig config = RobotConfig.fromGUISettings();
+        PathConstraints constraints = new PathConstraints(3.0, 3.0, 2 * Math.PI, 4 * Math.PI);
+        return new PathfindingCommand(finalPose, 
+                                  constraints,
+                                  0.0,
+                                  this::getPose,
+                                  this::getRobotVelocity,
+                                  (speedsRobotRelative, moduleFeedForwards) -> {
+                                        swerveDrive.drive(
+                                        speedsRobotRelative,
+                                        swerveDrive.kinematics.toSwerveModuleStates(speedsRobotRelative),
+                                        moduleFeedForwards.linearForces()
+                                      );
+                                  },
+                                  new PPHolonomicDriveController(
+                                    new PIDConstants(5.0, 0.0, 0.0 ),
+                                    new PIDConstants(5.0,0.0,0.0)
+                                    ),
+                                    config,
+                                    this
+                                );
+    } catch (Exception e) {
+      e.printStackTrace();
+      return Commands.none();
+    }
   }
 
   @Override

@@ -11,8 +11,17 @@ import frc.robot.subsystems.*;
 
 import java.io.File;
 
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.path.PathPlannerPath;
+
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
@@ -29,7 +38,7 @@ public class RobotContainer {
   // Replace with CommandPS4Controller or CommandJoystick if needed
   private final CommandXboxController m_driverController =
       new CommandXboxController(OperatorConstants.kDriverControllerPort);
-  
+  Trigger aButton = m_driverController.a();
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -55,7 +64,10 @@ public class RobotContainer {
     {driveTrain.setDefaultCommand(new AbsoluteFieldDrive(driveTrain, () -> m_driverController.getLeftX(), 
                                                                 () -> m_driverController.getLeftY(),
                                                                 () -> m_driverController.getRightX()));}
-  }
+    m_driverController.a().onTrue(driveTrain.DriveToPoint(new Pose2d(new Translation2d(5.509, 2.425), 
+                                                          new Rotation2d(Units.degreesToRadians(105)))).andThen(Commands.print("Finished")));
+    }
+  
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
@@ -64,7 +76,13 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
-    return null;
+    try{
+      PathPlannerPath path = PathPlannerPath.fromPathFile("Far to H.path");
+      return AutoBuilder.followPath(path);
+    } catch (Exception e) {
+      DriverStation.reportError("Problem..." + e.getMessage(), e.getStackTrace());
+      return Commands.none();
+    }
   }
     
 }
