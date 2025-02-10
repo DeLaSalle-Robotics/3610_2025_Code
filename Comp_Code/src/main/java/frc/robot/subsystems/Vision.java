@@ -63,7 +63,7 @@ public class Vision extends SubsystemBase {
    */
   public              VisionSystemSim     visionSim;
 
-  final private boolean visionTroubleShoot = true;
+  final private boolean visionTroubleShoot = false;
   /**
    * Current pose from the pose estimator using wheel odometry.
    */

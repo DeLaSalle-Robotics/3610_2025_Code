@@ -6,6 +6,7 @@ package frc.robot;
 
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.Autos;
+import frc.robot.commands.DriveTrain.AbsoluteDrive;
 import frc.robot.commands.DriveTrain.AbsoluteFieldDrive;
 import frc.robot.subsystems.*;
 
@@ -60,12 +61,24 @@ public class RobotContainer {
       driveTrain.setDefaultCommand(new AbsoluteFieldDrive(driveTrain, () -> m_driverController.getLeftX(), 
                                                                 () -> m_driverController.getLeftY(),
                                                                 () -> m_driverController.getLeftTriggerAxis()));
+      // driveTrain.setDefaultCommand(new AbsoluteDrive(driveTrain, () -> m_driverController.getLeftX(), 
+      //                                                           () -> m_driverController.getLeftY(),
+      //                                                           () -> m_driverController.getRightX(),
+      //                                                           () -> m_driverController.getRightY()));
+      
     } else 
-    {driveTrain.setDefaultCommand(new AbsoluteFieldDrive(driveTrain, () -> m_driverController.getLeftX(), 
+    {
+      driveTrain.setDefaultCommand(new AbsoluteFieldDrive(driveTrain, () -> m_driverController.getLeftX(), 
                                                                 () -> m_driverController.getLeftY(),
-                                                                () -> m_driverController.getRightX()));}
-    m_driverController.a().onTrue(driveTrain.DriveToPoint(new Pose2d(new Translation2d(5.509, 2.425), 
-                                                          new Rotation2d(Units.degreesToRadians(105)))).andThen(Commands.print("Finished")));
+                                                                () -> m_driverController.getRightX()));
+      // driveTrain.setDefaultCommand(new AbsoluteDrive(driveTrain, () -> m_driverController.getLeftX(), 
+      //                                                           () -> m_driverController.getLeftY(),
+      //                                                           () -> m_driverController.getRightX(),
+      //                                                           () -> m_driverController.getRightY()));
+                                                              }
+    m_driverController.a().onTrue(driveTrain.driveToPose(new Pose2d(new Translation2d(5.509, 2.425), 
+                                                          new Rotation2d(Units.degreesToRadians(105)))
+                                                          ).andThen(Commands.print("Finished")));
     }
   
 

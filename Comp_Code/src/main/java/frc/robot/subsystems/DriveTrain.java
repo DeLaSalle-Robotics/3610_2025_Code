@@ -32,6 +32,7 @@ import com.pathplanner.lib.path.GoalEndState;
 import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.path.Waypoint;
+import com.pathplanner.lib.pathfinding.Pathfinding;
 
 import java.io.File;
 import java.util.List;
@@ -94,6 +95,27 @@ public class DriveTrain extends SubsystemBase {
       swerveDrive.stopOdometryThread();
     }
     setupPathPlanner();
+  }
+
+  /**
+   * Get the chassis speeds based on controller input of 2 joysticks. One for speeds in which direction. The other for
+   * the angle of the robot.
+   *
+   * @param xInput   X joystick input for the robot to move in the X direction.
+   * @param yInput   Y joystick input for the robot to move in the Y direction.
+   * @param headingX X joystick which controls the angle of the robot.
+   * @param headingY Y joystick which controls the angle of the robot.
+   * @return {@link ChassisSpeeds} which can be sent to the Swerve Drive.
+   */
+  public ChassisSpeeds getTargetSpeeds(double xInput, double yInput, double headingX, double headingY)
+  {
+    Translation2d scaledInputs = SwerveMath.cubeTranslation(new Translation2d(xInput, yInput));
+    return swerveDrive.swerveController.getTargetSpeeds(scaledInputs.getX(),
+                                                        scaledInputs.getY(),
+                                                        headingX,
+                                                        headingY,
+                                                        getHeading().getRadians(),
+                                                        Constants.Swerve.MAX_SPEED);
   }
 
 /**
@@ -281,6 +303,7 @@ public class DriveTrain extends SubsystemBase {
     return swerveDrive.getRobotVelocity();
   }
 
+  
   public Command DriveToPoint(Pose2d finalPose) {
         
     try {
@@ -309,6 +332,72 @@ public class DriveTrain extends SubsystemBase {
       e.printStackTrace();
       return Commands.none();
     }
+  }
+/**
+   * Use PathPlanner Path finding to go to a point on the field.
+   *
+   * @param pose Target {@link Pose2d} to go to.
+   * @return PathFinding command
+   */
+  public Command driveToPose(Pose2d pose)
+  {
+// Create the constraints to use while pathfinding
+    PathConstraints constraints = new PathConstraints(
+        swerveDrive.getMaximumChassisVelocity(), 4.0,
+        swerveDrive.getMaximumChassisAngularVelocity(), Units.degreesToRadians(720));
+
+// Since AutoBuilder is configured, we can use it to build pathfinding commands
+    return AutoBuilder.pathfindToPose(
+        pose,
+        constraints,
+        edu.wpi.first.units.Units.MetersPerSecond.of(0) // Goal end velocity in meters/sec
+                                     );
+  }
+
+
+/**
+   * Checks if the alliance is red, defaults to false if alliance isn't available.
+   *
+   * @return true if the red alliance, false if blue. Defaults to false if none is available.
+   */
+  public boolean isRedAlliance()
+  {
+    var alliance = DriverStation.getAlliance();
+    return alliance.isPresent() ? alliance.get() == DriverStation.Alliance.Red : false;
+  }
+
+  /**
+   * This will zero (calibrate) the robot to assume the current position is facing forward
+   * <p>
+   * If red alliance rotate the robot 180 after the drviebase zero command
+   */
+  public void zeroGyroWithAlliance()
+  {
+    if (isRedAlliance())
+    {
+      zeroGyro();
+      //Set the pose 180 degrees
+      resetOdometry(new Pose2d(getPose().getTranslation(), Rotation2d.fromDegrees(180)));
+    } else
+    {
+      zeroGyro();
+    }
+  }
+  /**
+   * Resets the gyro angle to zero and resets odometry to the same position, but facing toward 0.
+   */
+  public void zeroGyro()
+  {
+    swerveDrive.zeroGyro();
+  }
+  /**
+   * Sets the drive motors to brake/coast mode.
+   *
+   * @param brake True to set motors to brake mode, false for coast.
+   */
+  public void setMotorBrake(boolean brake)
+  {
+    swerveDrive.setMotorIdleMode(brake);
   }
 
   @Override
