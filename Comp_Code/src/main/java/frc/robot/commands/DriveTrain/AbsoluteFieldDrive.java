@@ -58,7 +58,7 @@ public class AbsoluteFieldDrive extends Command {
   public void execute() {
     double heading2 = heading.getAsDouble();
     if(Math.abs(heading2)<0.1){
-      heading2=0;
+      heading2 = 0;
     }
     ChassisSpeeds desiredSpeeds = swerve.getTargetSpeeds(vX.getAsDouble(), vY.getAsDouble(),
                                                       new Rotation2d(heading2 * Math.PI));
@@ -71,7 +71,7 @@ public class AbsoluteFieldDrive extends Command {
                                             swerve.getSwerveDriveConfiguration());
     SmartDashboard.putNumber("LimitedTranslation", translation.getX());
     SmartDashboard.putString("Translation", translation.toString());
-    SmartDashboard.putNumber("AFD Heading", heading.getAsDouble());
+    SmartDashboard.putNumber("AFD Heading", heading2 * Math.PI);
     SmartDashboard.putNumber("AFD Heading2", heading2);
 
     swerve.drive(translation, desiredSpeeds.omegaRadiansPerSecond, true);
