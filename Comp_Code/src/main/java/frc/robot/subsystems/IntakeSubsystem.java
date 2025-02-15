@@ -9,16 +9,14 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants;
 
 public class IntakeSubsystem extends SubsystemBase {
     private final SparkMax intakeMotor;
     private final DigitalInput sensor;
 
-    private boolean hasCoral;
+    private boolean hasCoral = false;
 
     /** Creates a new ExampleSubsystem. */
     public IntakeSubsystem() {
@@ -34,8 +32,18 @@ public class IntakeSubsystem extends SubsystemBase {
         intakeMotor.set(Constants.Intake.motorSpeed);
     }
 
-    private boolean detectCoral() {
-        return sensor.get();
+    public boolean detectCoral() {
+        boolean has = sensor.get();
+        if (has != hasCoral) {
+            hasCoral = has;
+            SmartDashboard.putBoolean("Has Coral", has);
+        }
+        if (sensor.get() && !hasCoral) {
+            hasCoral = true;
+        } else {
+            hasCoral = false;
+        }
+        return hasCoral;
     }
 
     public boolean getHasCoral() {
@@ -44,17 +52,6 @@ public class IntakeSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-        boolean has = detectCoral();
-        if (has != hasCoral) {
-            hasCoral = has;
-            SmartDashboard.putBoolean("Has Coral", has);
-        }
-        if (sensor.get() && !hasCoral) {
-            hasCoral = true;
-            stopIntake();
-        } else {
-            hasCoral = false;
-        }
         // This method will be called once per scheduler run
     }
 
