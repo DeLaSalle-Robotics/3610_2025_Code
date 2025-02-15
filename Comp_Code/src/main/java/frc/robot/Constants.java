@@ -28,4 +28,10 @@ public final class Constants {
   public static class OperatorConstants {
     public static final int kDriverControllerPort = 0;
   }
+
+  public static class Intake {
+    public static final int motorId = -1;
+    public static final int sensorId = -1;
+    public static final double motorSpeed = 0.0;
+  }
 }
