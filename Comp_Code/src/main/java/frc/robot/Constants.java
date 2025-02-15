@@ -37,4 +37,10 @@ public final class Constants {
     public static final int sensorId = -1;
     public static final double motorSpeed = 0.0;
   }
+
+  public static class Led {
+    public static final int numLeds = -1;
+    public static final int ledPwm = -1;
+    public static final float rainbowShiftSpeed = 5.0f;
+  }
 }
