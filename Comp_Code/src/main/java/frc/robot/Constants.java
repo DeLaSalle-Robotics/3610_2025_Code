@@ -39,8 +39,8 @@ public final class Constants {
   }
 
   public static class Led {
-    public static final int numLeds = -1;
-    public static final int ledPwm = -1;
+    public static final int numLeds = 120;
+    public static final int ledPwm = 9;
     public static final float rainbowShiftSpeed = 5.0f;
   }
 }
