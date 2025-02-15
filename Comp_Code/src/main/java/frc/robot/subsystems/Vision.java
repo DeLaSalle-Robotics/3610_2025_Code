@@ -56,7 +56,7 @@ import swervelib.telemetry.SwerveDriveTelemetry;
 
 public class Vision extends SubsystemBase {
   /** Creates a new ExampleSubsystem. */
-  public static final AprilTagFieldLayout fieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2025Reefscape);
+  public static final AprilTagFieldLayout fieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeWelded);
   
   /**
    * Photon Vision Simulation
