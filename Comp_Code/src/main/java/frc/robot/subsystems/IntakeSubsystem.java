@@ -19,42 +19,47 @@ public class IntakeSubsystem extends SubsystemBase {
     private final DigitalInput sensor;
 
     private boolean hasCoral;
-  /** Creates a new ExampleSubsystem. */
-  public IntakeSubsystem() {
-    intakeMotor = new SparkMax(Constants.Intake.motorId, MotorType.kBrushless);
-    sensor = new DigitalInput(Constants.Intake.sensorId);
-  }
-  public void stopIntake() {
-    intakeMotor.set(0.0);
-  }
-  public void startIntake() {
-    intakeMotor.set(Constants.Intake.motorSpeed);
-  }
-  private boolean detectCoral() {
-    return sensor.get();
-  }
-  public boolean getHasCoral() {
-    return hasCoral;
-  }
 
-  @Override
-  public void periodic() {
-    boolean has = detectCoral();
-    if(has != hasCoral) {
-        hasCoral = has;
-        SmartDashboard.putBoolean("Has Coral", has);
+    /** Creates a new ExampleSubsystem. */
+    public IntakeSubsystem() {
+        intakeMotor = new SparkMax(Constants.Intake.motorId, MotorType.kBrushless);
+        sensor = new DigitalInput(Constants.Intake.sensorId);
     }
-    if(sensor.get() && !hasCoral) {
-        hasCoral = true;
-        stopIntake();
-    } else {
-        hasCoral = false;
-    }
-    // This method will be called once per scheduler run
-  }
 
-  @Override
-  public void simulationPeriodic() {
-    // This method will be called once per scheduler run during simulation
-  }
+    public void stopIntake() {
+        intakeMotor.set(0.0);
+    }
+
+    public void startIntake() {
+        intakeMotor.set(Constants.Intake.motorSpeed);
+    }
+
+    private boolean detectCoral() {
+        return sensor.get();
+    }
+
+    public boolean getHasCoral() {
+        return hasCoral;
+    }
+
+    @Override
+    public void periodic() {
+        boolean has = detectCoral();
+        if (has != hasCoral) {
+            hasCoral = has;
+            SmartDashboard.putBoolean("Has Coral", has);
+        }
+        if (sensor.get() && !hasCoral) {
+            hasCoral = true;
+            stopIntake();
+        } else {
+            hasCoral = false;
+        }
+        // This method will be called once per scheduler run
+    }
+
+    @Override
+    public void simulationPeriodic() {
+        // This method will be called once per scheduler run during simulation
+    }
 }
