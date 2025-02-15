@@ -61,7 +61,7 @@ public class RobotContainer {
     if(Robot.isSimulation()) {
       driveTrain.setDefaultCommand(new AbsoluteFieldDrive(driveTrain, () -> m_driverController.getLeftX(), 
                                                                 () -> m_driverController.getLeftY(),
-                                                                () -> m_driverController.getLeftTriggerAxis()));
+                                                                () -> m_driverController.getRightX()));
       // driveTrain.setDefaultCommand(new AbsoluteDrive(driveTrain, () -> m_driverController.getLeftX(), 
       //                                                           () -> m_driverController.getLeftY(),
       //                                                           () -> m_driverController.getRightX(),
@@ -77,12 +77,14 @@ public class RobotContainer {
       //                                                           () -> m_driverController.getRightX(),
       //                                                           () -> m_driverController.getRightY()));
                                                               }
+                                                              /*
     m_driverController.a().onTrue( driveTrain.driveToPose(new Pose2d(new Translation2d(5.509, 2.425), 
                                                           new Rotation2d(Units.degreesToRadians(105)))
                                                           ));
     m_driverController.b().onTrue(new TurnToAngle(driveTrain, new Pose2d(new Translation2d(0, 0), 
                                                           new Rotation2d(Units.degreesToRadians(105)))
                                                           ));
+                                                          */
     }
   
 

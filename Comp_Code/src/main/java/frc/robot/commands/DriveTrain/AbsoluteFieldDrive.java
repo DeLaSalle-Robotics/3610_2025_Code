@@ -56,9 +56,12 @@ public class AbsoluteFieldDrive extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-
+    double heading2 = heading.getAsDouble();
+    if(Math.abs(heading2)<0.1){
+      heading2=0;
+    }
     ChassisSpeeds desiredSpeeds = swerve.getTargetSpeeds(vX.getAsDouble(), vY.getAsDouble(),
-                                                      new Rotation2d(heading.getAsDouble() * Math.PI));
+                                                      new Rotation2d(heading2 * Math.PI));
     Translation2d translation = SwerveController.getTranslation2d(desiredSpeeds);
     translation = SwerveMath.limitVelocity(translation, swerve.getFieldVelocity(),
                                             swerve.getPose(),
@@ -68,6 +71,8 @@ public class AbsoluteFieldDrive extends Command {
                                             swerve.getSwerveDriveConfiguration());
     SmartDashboard.putNumber("LimitedTranslation", translation.getX());
     SmartDashboard.putString("Translation", translation.toString());
+    SmartDashboard.putNumber("AFD Heading", heading.getAsDouble());
+    SmartDashboard.putNumber("AFD Heading2", heading2);
 
     swerve.drive(translation, desiredSpeeds.omegaRadiansPerSecond, true);
 
