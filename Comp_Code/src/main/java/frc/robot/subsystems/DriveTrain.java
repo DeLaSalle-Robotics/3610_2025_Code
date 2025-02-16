@@ -174,7 +174,7 @@ public class DriveTrain extends SubsystemBase {
    *                      relativity.
    * @param fieldRelative Drive mode.  True for field-relative, false for robot-relative.
    */
-  public void drive(Translation2d translation, double rotation, boolean fieldRelative)
+  public void drive(Translation2d translation, double rotation, boolean fieldRelative, boolean isOpenLoop)
   {
     swerveDrive.drive(translation,
                       rotation,

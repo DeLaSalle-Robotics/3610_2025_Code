@@ -72,9 +72,9 @@ public class AbsoluteFieldDrive extends Command {
     SmartDashboard.putNumber("LimitedTranslation", translation.getX());
     SmartDashboard.putString("Translation", translation.toString());
     SmartDashboard.putNumber("AFD Heading", heading2 * Math.PI);
-    SmartDashboard.putNumber("AFD Heading2", heading2);
+    SmartDashboard.putNumber("AFD Heading2", desiredSpeeds.omegaRadiansPerSecond);
 
-    swerve.drive(translation, desiredSpeeds.omegaRadiansPerSecond, true);
+    swerve.drive(translation, heading2 * Math.PI, true, false);
 
   }
 
