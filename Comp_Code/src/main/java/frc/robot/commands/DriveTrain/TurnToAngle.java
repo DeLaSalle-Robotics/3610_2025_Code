@@ -52,7 +52,7 @@ public class TurnToAngle extends Command{
         double targetAngle = finalPose.getRotation().getRadians();
         double error = targetAngle - currentAngle;
         double rotationAmp = 0.2 * error;
-        swerve.drive(new Translation2d(0,0), rotationAmp, true);
+        swerve.drive(new Translation2d(0,0), rotationAmp, true, false);
     }
 
     @Override
