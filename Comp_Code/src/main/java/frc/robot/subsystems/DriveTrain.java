@@ -37,9 +37,15 @@ import com.pathplanner.lib.pathfinding.Pathfinding;
 
 import java.io.File;
 import java.util.List;
+import java.util.function.Supplier;
 
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.networktables.BooleanPublisher;
+import edu.wpi.first.networktables.BooleanSubscriber;
+import edu.wpi.first.networktables.DoubleSubscriber;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 
@@ -64,8 +70,14 @@ public class DriveTrain extends SubsystemBase {
    * PhotonVision class to keep an accurate odometry.
    */
   private Vision vision;
+  DoubleSubscriber xTarget;
+  DoubleSubscriber yTarget;
+  DoubleSubscriber thetaTarget;
+  BooleanSubscriber haveTarget;
 
-  
+  BooleanPublisher rightTarget;
+  boolean rTarget = false;
+
   public DriveTrain(File directory) {
 
     // Configure the Telemetry before creating the SwerveDrive to avoid unnecessary objects being created.
@@ -96,6 +108,16 @@ public class DriveTrain extends SubsystemBase {
       swerveDrive.stopOdometryThread();
     }
     setupPathPlanner();
+
+    NetworkTableInstance inst = NetworkTableInstance.getDefault();
+    NetworkTable table = inst.getTable("datatable");
+    haveTarget = table.getBooleanTopic("haveTarget").subscribe(false);
+    xTarget = table.getDoubleTopic("xTar").subscribe(0);
+    yTarget = table.getDoubleTopic("yTar").subscribe(0);
+    thetaTarget = table.getDoubleTopic("thetaTar").subscribe(0);
+    rightTarget = table.getBooleanTopic("rightTarget").publish();
+
+    rightTarget.set(rTarget);
   }
 
   /**
@@ -342,18 +364,32 @@ public class DriveTrain extends SubsystemBase {
    */
   public Command driveToPose(Pose2d pose)
   {
-// Create the constraints to use while pathfinding
+    // Create the constraints to use while pathfinding
     PathConstraints constraints = new PathConstraints(
         swerveDrive.getMaximumChassisVelocity(), 4.0,
         swerveDrive.getMaximumChassisAngularVelocity(), Units.degreesToRadians(720));
 
-// Since AutoBuilder is configured, we can use it to build pathfinding commands
+    // Since AutoBuilder is configured, we can use it to build pathfinding commands
     return defer( () -> AutoBuilder.pathfindToPose(
         pose,
         constraints,
         edu.wpi.first.units.Units.MetersPerSecond.of(0) // Goal end velocity in meters/sec
                                      ).andThen(() -> this.resetOdometry(pose)).andThen(Commands.print("Testing the command")));
   }
+
+  public Pose2d driveToTarget() {
+    Pose2d tarPose;
+    double xTar = xTarget.get();
+    double yTar = yTarget.get();
+    double thetaTar = thetaTarget.get();
+    boolean targetPresent = haveTarget.get();
+    if (targetPresent) {
+      tarPose = new Pose2d(xTar, yTar, new Rotation2d(thetaTar));
+    } else {tarPose = swerveDrive.getPose();
+    }
+    return tarPose;
+  }
+
 
 
 /**
@@ -408,6 +444,7 @@ public class DriveTrain extends SubsystemBase {
     {
       swerveDrive.updateOdometry();
       vision.updatePoseEstimation(swerveDrive);
+      
     }
   }
 
@@ -415,5 +452,13 @@ public class DriveTrain extends SubsystemBase {
   public void simulationPeriodic() {
     // This method will be called once per scheduler run during simulation
     
+  }
+
+  public void toggleTarget() {
+    if (rTarget) {
+      rightTarget.set(false);
+    } else {
+      rightTarget.set(true);
+    }
   }
 }

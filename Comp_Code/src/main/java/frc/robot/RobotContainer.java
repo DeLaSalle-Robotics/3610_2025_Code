@@ -24,6 +24,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.ProxyCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
@@ -81,9 +82,7 @@ public class RobotContainer {
     m_driverController.a().onTrue( driveTrain.driveToPose(new Pose2d(new Translation2d(5.509, 2.425), 
                                                           new Rotation2d(Units.degreesToRadians(105)))
                                                           ));
-    m_driverController.b().onTrue(new TurnToAngle(driveTrain, new Pose2d(new Translation2d(0, 0), 
-                                                          new Rotation2d(Units.degreesToRadians(105)))
-                                                          ));
+    m_driverController.b().onTrue(new ProxyCommand( driveTrain.driveToPose(driveTrain.driveToTarget())));
                                                           
     }
   

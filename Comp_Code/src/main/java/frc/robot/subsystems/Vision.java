@@ -5,7 +5,10 @@
 package frc.robot.subsystems;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.function.Supplier;
 import java.awt.Desktop;
@@ -44,6 +47,11 @@ import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.networktables.BooleanPublisher;
+import edu.wpi.first.networktables.BooleanSubscriber;
+import edu.wpi.first.networktables.DoublePublisher;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.NetworkTablesJNI;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
@@ -64,6 +72,8 @@ public class Vision extends SubsystemBase {
   public              VisionSystemSim     visionSim;
 
   final private boolean visionTroubleShoot = false;
+
+  private List<Number> scoringTargets = Arrays.asList(6, 7, 8, 9, 10, 11, 22, 17, 18, 19, 20, 21);
   /**
    * Current pose from the pose estimator using wheel odometry.
    */
@@ -73,6 +83,18 @@ public class Vision extends SubsystemBase {
    */
   private Field2d field2d;
 
+  
+  public enum LevelTarget {
+    Level1, Level2, Level3
+  }
+  BooleanSubscriber rightTarget; 
+  BooleanPublisher haveTarget;
+  DoublePublisher xTarget;
+  DoublePublisher yTarget;
+  DoublePublisher thetaTarget;
+
+  Map<Integer, Pose2d> RtargetLookup = new HashMap<Integer, Pose2d>();
+  Map<Integer, Pose2d> LtargetLookup = new HashMap<Integer, Pose2d>();
   /**
      * Constructor for the Vision class.
      *
@@ -103,6 +125,55 @@ public class Vision extends SubsystemBase {
         
         openSimCameraViews();
         }
+
+       
+        //Red AprilTag Targets
+        RtargetLookup.put(6,new Pose2d(541.75,123.67,new Rotation2d(300)));
+        RtargetLookup.put(7,new Pose2d(546.87,145.5,new Rotation2d(0)));
+        RtargetLookup.put(8,new Pose2d(519.23,180.33,new Rotation2d(60)));
+        RtargetLookup.put(9,new Pose2d(486.51,193.33,new Rotation2d(120)));
+        RtargetLookup.put(10,new Pose2d(481.39,171.5,new Rotation2d(180)));
+        RtargetLookup.put(11,new Pose2d(509.03,136.67,new Rotation2d(240)));
+        
+        //Blue AprilTag Targets
+        RtargetLookup.put(17,new Pose2d(171.65,136.67,new Rotation2d(240)));
+        RtargetLookup.put(18,new Pose2d(144.0,171.5,new Rotation2d(180)));
+        RtargetLookup.put(19,new Pose2d(149.13,193.33,new Rotation2d(120)));
+        RtargetLookup.put(20,new Pose2d(181.84,180.33,new Rotation2d(60)));
+        RtargetLookup.put(21,new Pose2d(209.49,145.5,new Rotation2d(0)));
+        RtargetLookup.put(22,new Pose2d(204.36,123.67,new Rotation2d(300)));
+        
+
+        
+        //Red AprilTag Targets
+        LtargetLookup.put(6,new Pose2d(519.23,136.67,new Rotation2d(300)));
+        LtargetLookup.put(7,new Pose2d(546.87,171.5,new Rotation2d(0)));
+        LtargetLookup.put(8,new Pose2d(541.75,193.33,new Rotation2d(60)));
+        LtargetLookup.put(9,new Pose2d(509.03,180.33,new Rotation2d(120)));
+        LtargetLookup.put(10,new Pose2d(481.39,145.5,new Rotation2d(180)));
+        LtargetLookup.put(11,new Pose2d(486.51,123.67,new Rotation2d(240)));
+        
+        //Blue AprilTag Targets
+        LtargetLookup.put(17,new Pose2d(149.13,123.67,new Rotation2d(240)));
+        LtargetLookup.put(18,new Pose2d(144.0,145.5,new Rotation2d(180)));
+        LtargetLookup.put(19,new Pose2d(171.65,180.33,new Rotation2d(120)));
+        LtargetLookup.put(20,new Pose2d(204.36,193.33,new Rotation2d(60)));
+        LtargetLookup.put(21,new Pose2d(209.49,171.5,new Rotation2d(0)));
+        LtargetLookup.put(22,new Pose2d(181.84,136.67,new Rotation2d(300)));
+        
+        NetworkTableInstance inst = NetworkTableInstance.getDefault();
+        NetworkTable table = inst.getTable("datatable");
+        haveTarget = table.getBooleanTopic("haveTarget").publish();
+        xTarget = table.getDoubleTopic("xTar").publish();
+        yTarget = table.getDoubleTopic("yTar").publish();
+        thetaTarget = table.getDoubleTopic("thetaTar").publish();
+        haveTarget.set(false);
+        xTarget.set(0);
+        yTarget.set(0);
+        thetaTarget.set(0);
+
+        rightTarget = table.getBooleanTopic("rightTarget").subscribe(false);
+
   }
   /**
    * Calculates a target pose relative to an AprilTag on the field.
@@ -558,9 +629,40 @@ public class Vision extends SubsystemBase {
     return false;
   }
 
+  /**
+   * This method is designed to return a Pose2d for the desired Scoring Position
+   * based on current position and selected targets.
+   */
+  public void getTargetPose(){
+    Pose2d target;
+    for (PhotonPipelineResult result : Cameras.FRONT_CAM.resultsList)
+    {
+      if (result.hasTargets())
+      {
+        if (scoringTargets.contains(result.getBestTarget().getFiducialId()))
+          {
+            haveTarget.set(true);
+            int targetID = result.getBestTarget().getFiducialId();
+            if (rightTarget.get()) {
+              target = RtargetLookup.get(targetID);
+            } else {
+              target = LtargetLookup.get(targetID);
+            }
+            xTarget.set(target.getX());
+            yTarget.set(target.getY());
+            thetaTarget.set(target.getRotation().getRadians());
+            } 
+          } 
+        }
+      }
+
+
+
+
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    getTargetPose();
   }
 
   @Override
