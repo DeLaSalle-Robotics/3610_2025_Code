@@ -70,8 +70,8 @@ public class RobotContainer {
       
     } else 
     {
-      driveTrain.setDefaultCommand(new AbsoluteFieldDrive(driveTrain, () -> m_driverController.getLeftX(), 
-                                                                () -> m_driverController.getLeftY(),
+      driveTrain.setDefaultCommand(new AbsoluteFieldDrive(driveTrain, () -> m_driverController.getLeftY(),
+                                                                () -> m_driverController.getLeftX(), 
                                                                 () -> m_driverController.getRightX()));
       // driveTrain.setDefaultCommand(new AbsoluteDrive(driveTrain, () -> m_driverController.getLeftX(), 
       //                                                           () -> m_driverController.getLeftY(),
