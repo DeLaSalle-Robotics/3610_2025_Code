@@ -6,6 +6,7 @@ package frc.robot;
 
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.Autos;
+import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.DriveTrain.AbsoluteDrive;
 import frc.robot.commands.DriveTrain.AbsoluteFieldDrive;
 import frc.robot.subsystems.*;
@@ -35,8 +36,8 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
  */
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
-  private final DriveTrain driveTrain = new DriveTrain(new File(Filesystem.getDeployDirectory(),"swerve"));
-
+  //private final DriveTrain driveTrain = new DriveTrain(new File(Filesystem.getDeployDirectory(),"swerve"));
+  private final IntakeSubsystem intakeSubsystem = new IntakeSubsystem();
   // Replace with CommandPS4Controller or CommandJoystick if needed
   private final CommandXboxController m_driverController =
       new CommandXboxController(OperatorConstants.kDriverControllerPort);
@@ -59,6 +60,7 @@ public class RobotContainer {
    */
   private void configureBindings() {
     if(Robot.isSimulation()) {
+      /*
       driveTrain.setDefaultCommand(new AbsoluteFieldDrive(driveTrain, () -> m_driverController.getLeftX(), 
                                                                 () -> m_driverController.getLeftY(),
                                                                 () -> m_driverController.getRightX()));
@@ -66,9 +68,10 @@ public class RobotContainer {
       //                                                           () -> m_driverController.getLeftY(),
       //                                                           () -> m_driverController.getRightX(),
       //                                                           () -> m_driverController.getRightY()));
-      
+      */
     } else 
     {
+      /*
       driveTrain.setDefaultCommand(new AbsoluteFieldDrive(driveTrain, () -> m_driverController.getLeftX(), 
                                                                 () -> m_driverController.getLeftY(),
                                                                 () -> m_driverController.getRightX()));
@@ -76,6 +79,7 @@ public class RobotContainer {
       //                                                           () -> m_driverController.getLeftY(),
       //                                                           () -> m_driverController.getRightX(),
       //                                                           () -> m_driverController.getRightY()));
+      */
                                                               }
                                                               /*
     m_driverController.a().onTrue( driveTrain.driveToPose(new Pose2d(new Translation2d(5.509, 2.425), 
@@ -85,6 +89,8 @@ public class RobotContainer {
                                                           new Rotation2d(Units.degreesToRadians(105)))
                                                           ));
                                                           */
+      m_driverController.a().onTrue(new IntakeCommand(intakeSubsystem,true));
+      m_driverController.b().whileTrue(new IntakeCommand(intakeSubsystem,false));
     }
   
 

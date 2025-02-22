@@ -29,7 +29,7 @@ public class IntakeSubsystem extends SubsystemBase {
     }
 
     public void startIntake() {
-        intakeMotor.set(Constants.Intake.motorSpeed);
+        intakeMotor.set(-0.5);
     }
 
     public boolean detectCoral() {
@@ -38,11 +38,14 @@ public class IntakeSubsystem extends SubsystemBase {
             hasCoral = has;
             SmartDashboard.putBoolean("Has Coral", has);
         }
+        /*
         if (sensor.get() && !hasCoral) {
             hasCoral = true;
-        } else {
-            hasCoral = false;
-        }
+            } else {
+                hasCoral = false;
+                }
+        
+        */
         return hasCoral;
     }
 

@@ -11,14 +11,15 @@ import edu.wpi.first.wpilibj2.command.Command;
 public class IntakeCommand extends Command {
     @SuppressWarnings({ "PMD.UnusedPrivateField", "PMD.SingularField" })
     private final IntakeSubsystem intake;
-
+    private boolean stopOnSensor;
     /**
      * Creates a new ExampleCommand.
      *
      * @param subsystem The subsystem used by this command.
      */
-    public IntakeCommand(IntakeSubsystem subsystem) {
+    public IntakeCommand(IntakeSubsystem subsystem,boolean stopOnSensor) {
         this.intake = subsystem;
+        this.stopOnSensor = stopOnSensor;
         // Use addRequirements() here to declare subsystem dependencies.
         addRequirements(subsystem);
     }
@@ -44,6 +45,6 @@ public class IntakeCommand extends Command {
     // Returns true when the command should end.
     @Override
     public boolean isFinished() {
-        return intake.detectCoral();
+        return (intake.detectCoral() && stopOnSensor);
     }
 }
