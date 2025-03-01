@@ -9,6 +9,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.networktables.BooleanSubscriber;
 import edu.wpi.first.networktables.NetworkTable;
@@ -18,7 +20,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
 
 public class ElevatorSubsystem extends SubsystemBase {
-  private final TalonSRX elevatorMotor;
+  private final TalonFX elevatorMotor;
   private final DigitalInput limitSwitch;
   BooleanSubscriber goingUp;
   
@@ -26,18 +28,19 @@ public class ElevatorSubsystem extends SubsystemBase {
   NetworkTable table = inst.getTable("elevator");
   
     public ElevatorSubsystem() {
-    elevatorMotor = new TalonSRX(Constants.Elevator.elevatorMotorId);
+    elevatorMotor = new TalonFX(Constants.Elevator.elevatorMotorId);
+    elevatorMotor.setNeutralMode(NeutralModeValue.Brake);
     limitSwitch = new DigitalInput(Constants.Elevator.sensorId);
 
     goingUp = table.getBooleanTopic("goingUp").subscribe(false);
   }
 
   public void stopElevator(){
-    elevatorMotor.set(ControlMode.PercentOutput,0.0);
+    elevatorMotor.set(-0.02);
   }
 
   public void runElevator(double speed){
-  elevatorMotor.set(ControlMode.PercentOutput,speed);
+  elevatorMotor.set(speed);
   }
 
   public boolean getSensor(){
@@ -45,7 +48,7 @@ public class ElevatorSubsystem extends SubsystemBase {
   }
 
   public void zeroEncoders(){
-    elevatorMotor.setSelectedSensorPosition(0);
+    //elevatorMotor.setSelectedSensorPosition(0);
   }
 
 
@@ -55,13 +58,10 @@ public class ElevatorSubsystem extends SubsystemBase {
    *
    * @return a command
    */
-  public Command exampleMethodCommand() {
+  public Command holdCommand() {
     // Inline construction of command goes here.
     // Subsystem::RunOnce implicitly requires `this` subsystem.
-    return runOnce(
-        () -> {
-          /* one-time action goes here */
-        });
+    return run(() -> stopElevator());
   }
 
   /**
@@ -76,11 +76,11 @@ public class ElevatorSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    if(getSensor() && goingUp.get()){
+    if(getSensor() /*&& goingUp.get()*/){
       zeroEncoders();
       stopElevator();
     }
-    SmartDashboard.putNumber("Elevator Encoder", elevatorMotor.getSelectedSensorPosition());
+    //SmartDashboard.putNumber("Elevator Encoder", elevatorMotor.getSelectedSensorPosition());
   }
 
   @Override

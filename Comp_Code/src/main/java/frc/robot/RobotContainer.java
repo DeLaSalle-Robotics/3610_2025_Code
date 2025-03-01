@@ -39,7 +39,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
  */
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
-  private final DriveTrain driveTrain = new DriveTrain(new File(Filesystem.getDeployDirectory(),"swerve"));
+ // private final DriveTrain driveTrain = new DriveTrain(new File(Filesystem.getDeployDirectory(),"swerve"));
   private final IntakeSubsystem intakeSubsystem = new IntakeSubsystem();
   private final ElevatorSubsystem elevatorSubsystem = new ElevatorSubsystem();
   // Replace with CommandPS4Controller or CommandJoystick if needed
@@ -75,6 +75,7 @@ public class RobotContainer {
       */
     } else 
     {
+      /*
       driveTrain.setDefaultCommand(new AbsoluteFieldDrive(driveTrain, () -> -m_driverController.getLeftY(),
                                                                 () -> -m_driverController.getLeftX(), 
                                                                 () -> m_driverController.getRightX(),
@@ -83,18 +84,18 @@ public class RobotContainer {
       //                                                           () -> m_driverController.getLeftY(),
       //                                                           () -> m_driverController.getRightX(),
       //                                                           () -> m_driverController.getRightY()));
-                                                              
+                                                          
     m_driverController.a().onTrue( driveTrain.driveToPose(new Pose2d(new Translation2d(5.509, 2.425), 
                                                           new Rotation2d(Units.degreesToRadians(105)))
                                                           ));
     m_driverController.b().onTrue(new TurnToAngle(driveTrain, new Pose2d(new Translation2d(0, 0), 
                                                           new Rotation2d(Units.degreesToRadians(105)))
                                                           ));
-                                                          
+    */  
+      elevatorSubsystem.setDefaultCommand(elevatorSubsystem.holdCommand());
       m_driverController.a().onTrue(new IntakeCommand(intakeSubsystem,true));
       m_driverController.b().whileTrue(new IntakeCommand(intakeSubsystem,false));}
-      m_driverController.y().whileTrue(new ElevatorCommand(elevatorSubsystem,()->0.5));
-      m_driverController.x().whileTrue(new ElevatorCommand(elevatorSubsystem,()->-0.5));
+      m_driverController.y().whileTrue(new ElevatorCommand(elevatorSubsystem,()->m_driverController.getRightY()));
                                                             }
   
 
