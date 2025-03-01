@@ -10,6 +10,7 @@ import swervelib.SwerveController;
 import swervelib.math.SwerveMath;
 
 import java.util.List;
+import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -22,7 +23,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 public class AbsoluteFieldDrive extends Command {
   private final DriveTrain swerve;
   private final DoubleSupplier vX, vY, heading;
-
+  private final BooleanSupplier relativeToField;
 
  /**
    * Used to drive a swerve robot in full field-centric mode.  vX and vY supply translation inputs, where x is
@@ -39,12 +40,13 @@ public class AbsoluteFieldDrive extends Command {
    * @param heading DoubleSupplier that supplies the robot's heading angle.
    */
   public AbsoluteFieldDrive(DriveTrain swerve, DoubleSupplier vX, DoubleSupplier vY,
-                            DoubleSupplier heading)
+                            DoubleSupplier heading, BooleanSupplier relativeToField)
   {
     this.swerve = swerve;
     this.vX = vX;
     this.vY = vY;
     this.heading = heading;
+    this.relativeToField = relativeToField;
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(swerve);
   }
@@ -74,7 +76,7 @@ public class AbsoluteFieldDrive extends Command {
     SmartDashboard.putNumber("AFD Heading", heading2 * Math.PI);
     SmartDashboard.putNumber("AFD Heading2", desiredSpeeds.omegaRadiansPerSecond);
 
-    swerve.drive(translation, heading2 * Math.PI, true, false);
+    swerve.drive(translation, heading2 * Math.PI, relativeToField.getAsBoolean(), false);
 
   }
 

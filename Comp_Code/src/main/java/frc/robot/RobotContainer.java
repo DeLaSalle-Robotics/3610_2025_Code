@@ -72,9 +72,10 @@ public class RobotContainer {
       */
     } else 
     {
-      driveTrain.setDefaultCommand(new AbsoluteFieldDrive(driveTrain, () -> m_driverController.getLeftY(),
-                                                                () -> m_driverController.getLeftX(), 
-                                                                () -> m_driverController.getRightX()));
+      driveTrain.setDefaultCommand(new AbsoluteFieldDrive(driveTrain, () -> -m_driverController.getLeftY(),
+                                                                () -> -m_driverController.getLeftX(), 
+                                                                () -> m_driverController.getRightX(),
+                                                                () -> m_driverController.getLeftTriggerAxis()<0.5));
       // driveTrain.setDefaultCommand(new AbsoluteDrive(driveTrain, () -> m_driverController.getLeftX(), 
       //                                                           () -> m_driverController.getLeftY(),
       //                                                           () -> m_driverController.getRightX(),
@@ -89,6 +90,7 @@ public class RobotContainer {
                                                           
       m_driverController.a().onTrue(new IntakeCommand(intakeSubsystem,true));
       m_driverController.b().whileTrue(new IntakeCommand(intakeSubsystem,false));}
+      
                                                             }
   
 

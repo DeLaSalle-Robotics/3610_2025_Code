@@ -56,6 +56,7 @@ import edu.wpi.first.networktables.NetworkTablesJNI;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Robot;
@@ -70,6 +71,7 @@ public class Vision extends SubsystemBase {
    * Photon Vision Simulation
    */
   public              VisionSystemSim     visionSim;
+  
 
   final private boolean visionTroubleShoot = false;
 
@@ -143,8 +145,7 @@ public class Vision extends SubsystemBase {
         RtargetLookup.put(21,new Pose2d(209.49,145.5,new Rotation2d(0)));
         RtargetLookup.put(22,new Pose2d(204.36,123.67,new Rotation2d(300)));
         
-
-        
+       
         //Red AprilTag Targets
         LtargetLookup.put(6,new Pose2d(519.23,136.67,new Rotation2d(300)));
         LtargetLookup.put(7,new Pose2d(546.87,171.5,new Rotation2d(0)));
@@ -223,6 +224,8 @@ public class Vision extends SubsystemBase {
         swerveDrive.addVisionMeasurement(pose.estimatedPose.toPose2d(),
                                          pose.timestampSeconds,
                                          camera.curStdDevs);
+        //SmartDashboard.putData(field2d.setRobotPose(pose.estimatedPose.toPose2d()));
+        
       }
     }
 
@@ -325,13 +328,14 @@ public class Vision extends SubsystemBase {
 
   enum Cameras
   {
-    FRONT_CAM("front",
+    FRONT_CAM("Arducam_OV9782_USB_Camera1",
               new Rotation3d(0,0,0),
               new Translation3d(Units.inchesToMeters(13.0),
                                 Units.inchesToMeters(0),
                                 Units.inchesToMeters(7.5)),
               VecBuilder.fill(4, 4, 8), VecBuilder.fill(0.5, 0.5, 1)),
-    REAR_CAM("Rear",new Rotation3d(0,0,Math.PI),
+    REAR_CAM("Arducam_OV9782_USB_Camera2",
+              new Rotation3d(0,0,Math.PI),
               new Translation3d(Units.inchesToMeters(-13.0),
                                 Units.inchesToMeters(0),
                                 Units.inchesToMeters(7.5)),
@@ -663,6 +667,7 @@ public class Vision extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
     getTargetPose();
+    
   }
 
   @Override
