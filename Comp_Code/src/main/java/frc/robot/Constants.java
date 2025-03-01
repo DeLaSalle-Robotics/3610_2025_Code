@@ -36,4 +36,10 @@ public final class Constants {
     public static final int motorId = 28;
     public static final int sensorId = 0;
   }
+
+  public static class  Elevator {
+    public static final int elevatorMotorId = 30;
+    public static final int sensorId = 2;
+    
+  }
 }

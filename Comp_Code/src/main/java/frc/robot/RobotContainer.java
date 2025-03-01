@@ -6,6 +6,7 @@ package frc.robot;
 
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.Autos;
+import frc.robot.commands.ElevatorCommand;
 import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.DriveTrain.AbsoluteDrive;
 import frc.robot.commands.DriveTrain.AbsoluteFieldDrive;
@@ -13,6 +14,7 @@ import frc.robot.subsystems.*;
 import frc.robot.commands.DriveTrain.*;
 
 import java.io.File;
+import java.time.Period;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.PathPlannerPath;
@@ -39,6 +41,7 @@ public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   private final DriveTrain driveTrain = new DriveTrain(new File(Filesystem.getDeployDirectory(),"swerve"));
   private final IntakeSubsystem intakeSubsystem = new IntakeSubsystem();
+  private final ElevatorSubsystem elevatorSubsystem = new ElevatorSubsystem();
   // Replace with CommandPS4Controller or CommandJoystick if needed
   private final CommandXboxController m_driverController =
       new CommandXboxController(OperatorConstants.kDriverControllerPort);
@@ -90,7 +93,8 @@ public class RobotContainer {
                                                           
       m_driverController.a().onTrue(new IntakeCommand(intakeSubsystem,true));
       m_driverController.b().whileTrue(new IntakeCommand(intakeSubsystem,false));}
-      
+      m_driverController.y().whileTrue(new ElevatorCommand(elevatorSubsystem,()->0.5));
+      m_driverController.x().whileTrue(new ElevatorCommand(elevatorSubsystem,()->-0.5));
                                                             }
   
 
