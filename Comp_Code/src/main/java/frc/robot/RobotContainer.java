@@ -44,6 +44,8 @@ public class RobotContainer {
   private final Popper popper = new Popper();
 
   private final ElevatorSubsystem elevatorSubsystem = new ElevatorSubsystem();
+  private final DriveTrain driveTrain = new DriveTrain(new File(Filesystem.getDeployDirectory(),"swerve"));
+  private final LedSubsystem leds = new LedSubsystem();
   // Replace with CommandPS4Controller or CommandJoystick if needed
   private final CommandXboxController m_driverController =
       new CommandXboxController(OperatorConstants.kDriverControllerPort);
@@ -97,8 +99,8 @@ public class RobotContainer {
                                                           ));
     */  
       elevatorSubsystem.setDefaultCommand(elevatorSubsystem.holdCommand());
-      m_driverController.a().onTrue(new IntakeCommand(intakeSubsystem,true));
-      m_driverController.b().whileTrue(new IntakeCommand(intakeSubsystem,false));}
+      m_driverController.a().onTrue(new IntakeCommand(intakeSubsystem, leds,true));
+      m_driverController.b().whileTrue(new IntakeCommand(intakeSubsystem, leds,false));}
     
       //Popper Binding
       popper.setDefaultCommand(Commands.run(() -> popper.PopperMove(m_operatorController.getLeftY())) );

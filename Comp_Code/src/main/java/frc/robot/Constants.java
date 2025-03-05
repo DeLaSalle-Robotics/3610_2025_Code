@@ -52,4 +52,10 @@ public final class Constants {
     public static double maxAngle = 60.0;
     
   }
+
+  public static class Led {
+    public static final int numLeds = 120;
+    public static final int ledPwm = 9;
+    public static final double rainbowShiftSpeed = 5.0;
+  }
 }

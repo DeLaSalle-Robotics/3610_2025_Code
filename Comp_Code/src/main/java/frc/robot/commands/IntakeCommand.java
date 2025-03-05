@@ -5,20 +5,24 @@
 package frc.robot.commands;
 
 import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.LedSubsystem;
+import frc.robot.subsystems.LedSubsystem.LedState;
 import edu.wpi.first.wpilibj2.command.Command;
 
 /** An example command that uses an example subsystem. */
 public class IntakeCommand extends Command {
     @SuppressWarnings({ "PMD.UnusedPrivateField", "PMD.SingularField" })
     private final IntakeSubsystem intake;
+    private final LedSubsystem led;
     private boolean stopOnSensor;
     /**
      * Creates a new ExampleCommand.
      *
      * @param subsystem The subsystem used by this command.
      */
-    public IntakeCommand(IntakeSubsystem subsystem,boolean stopOnSensor) {
+    public IntakeCommand(IntakeSubsystem subsystem, LedSubsystem m_ledSubSystem, boolean stopOnSensor) {
         this.intake = subsystem;
+        this.led = m_ledSubSystem;
         this.stopOnSensor = stopOnSensor;
         // Use addRequirements() here to declare subsystem dependencies.
         addRequirements(subsystem);
@@ -40,6 +44,12 @@ public class IntakeCommand extends Command {
     @Override
     public void end(boolean interrupted) {
         intake.stopIntake();
+        LedState ledState = led.getState();
+        if (ledState == LedState.HasCoral){
+            led.setState(ledState.Idle);
+        } else {
+            led.setState(ledState.HasCoral);
+        }
     }
 
     // Returns true when the command should end.
