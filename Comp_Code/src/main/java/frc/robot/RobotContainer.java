@@ -39,9 +39,13 @@ public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   private final DriveTrain driveTrain = new DriveTrain(new File(Filesystem.getDeployDirectory(),"swerve"));
   private final IntakeSubsystem intakeSubsystem = new IntakeSubsystem();
+  private final Popper popper = new Popper();
+
   // Replace with CommandPS4Controller or CommandJoystick if needed
   private final CommandXboxController m_driverController =
       new CommandXboxController(OperatorConstants.kDriverControllerPort);
+  private final CommandXboxController m_operatorController = 
+      new CommandXboxController(OperatorConstants.kOperatorControllerPort);
   Trigger aButton = m_driverController.a();
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
@@ -89,7 +93,13 @@ public class RobotContainer {
                                                           
       m_driverController.a().onTrue(new IntakeCommand(intakeSubsystem,true));
       m_driverController.b().whileTrue(new IntakeCommand(intakeSubsystem,false));}
-                                                            }
+    
+      //Popper Binding
+      popper.setDefaultCommand(Commands.run(() -> popper.PopperMove(m_operatorController.getLeftY())) );
+
+      m_operatorController.a().onTrue(popper.rockAndRoll(m_operatorController.getLeftY()));
+    }
+
   
 
   /**
