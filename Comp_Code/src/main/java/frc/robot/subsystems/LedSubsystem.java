@@ -29,7 +29,9 @@ public class LedSubsystem extends SubsystemBase {
     private final AddressableLEDBuffer ledBuffer;
 
     private LedState currentState;
-    private float ledRainbowOffset = 0;
+    private double ledRainbowOffset = 0;
+
+
 
     /** Creates a new ExampleSubsystem. */
     public LedSubsystem() {
@@ -74,10 +76,10 @@ public class LedSubsystem extends SubsystemBase {
     }
     void rainbow() {
         for(int i = 0;i < Constants.Led.numLeds;i++) {
-            int hue = (int)((float)(i << 8) / (float)Constants.Led.numLeds + ledRainbowOffset) % 256;
+            int hue = (int)((double)(i << 8) / (double)Constants.Led.numLeds + ledRainbowOffset) % 256;
             ledBuffer.setHSV(i, hue, 255, 200);
         }
-        ledRainbowOffset = (ledRainbowOffset + Constants.Led.rainbowShiftSpeed) % 256f;
+        ledRainbowOffset = (ledRainbowOffset + Constants.Led.rainbowShiftSpeed) % 256.0;
     }
 
     public void updateLeds(LedState state) {
@@ -85,8 +87,14 @@ public class LedSubsystem extends SubsystemBase {
             case Pride -> {
                 rainbow();
             }
+            case HasCoral -> {
+                this.setAllLeds(Color.kGreen);
+            }
+            case Idle -> {
+                this.setAllLeds(Color.kBlack);
+            }
             default -> {
-                setAllLeds(Color.kMagenta);
+                setAllLeds(Color.kBlack);
             }
         }
         led.setData(ledBuffer);
@@ -104,6 +112,10 @@ public class LedSubsystem extends SubsystemBase {
                 () -> {
                     /* one-time action goes here */
                 });
+    }
+
+    public LedState getState(){
+        return currentState;
     }
 
     public void setState(LedState state) {
