@@ -11,6 +11,7 @@ import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.DriveTrain.AbsoluteDrive;
 import frc.robot.commands.DriveTrain.AbsoluteFieldDrive;
 import frc.robot.subsystems.*;
+import frc.robot.subsystems.ElevatorSubsystem.elevatorState;
 import frc.robot.commands.DriveTrain.*;
 
 import java.io.File;
@@ -105,10 +106,15 @@ public class RobotContainer {
       //Popper Binding
       popper.setDefaultCommand(Commands.run(() -> popper.PopperMove(m_operatorController.getLeftY())) );
 
-      m_operatorController.a().onTrue(popper.rockAndRoll(m_operatorController.getLeftY()));
+      m_operatorController.rightBumper().onTrue(popper.rockAndRoll(m_operatorController.getLeftY()));
     
-
+      //Elevator Bindings
       m_driverController.y().whileTrue(new ElevatorCommand(elevatorSubsystem,()->m_driverController.getRightY()));
+
+      m_operatorController.a().onTrue(Commands.run(() -> elevatorSubsystem.setState(elevatorState.Load)));
+      m_operatorController.x().onTrue(Commands.run(() -> elevatorSubsystem.setState(elevatorState.L1)));
+      m_operatorController.b().onTrue(Commands.run(() -> elevatorSubsystem.setState(elevatorState.L2)));
+      m_operatorController.y().onTrue(Commands.run(() -> elevatorSubsystem.setState(elevatorState.L3)));
                                                             }
   
 

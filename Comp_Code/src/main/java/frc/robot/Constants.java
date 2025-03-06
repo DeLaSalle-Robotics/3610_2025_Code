@@ -41,6 +41,15 @@ public final class Constants {
   public static class  Elevator {
     public static final int elevatorMotorId = 13;
     public static final int sensorId = 2;
+
+    public static final double holdValue = -0.02;
+    public static final double threshold = 50;
+    public static final double Start_Position = 0;
+    public static final double L1_Position = 100;
+    public static final double L2_Position = 200;
+    public static final double L3_Position = 300;
+    public static final double Load_Position = 150;
+    
   }
   public static class Popper {
     public static int popperRotateID = 99;
