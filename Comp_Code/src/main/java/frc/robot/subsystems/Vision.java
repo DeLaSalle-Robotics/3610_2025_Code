@@ -199,7 +199,7 @@ public class Vision extends SubsystemBase {
 
   /**
    * Update the pose estimation inside of {@link SwerveDrive} with all of the given poses.
-   *
+   * Called in swerveDrive periodic
    * @param swerveDrive {@link SwerveDrive} instance.
    */
   public void updatePoseEstimation(SwerveDrive swerveDrive)
@@ -215,8 +215,10 @@ public class Vision extends SubsystemBase {
        */
       visionSim.update(swerveDrive.getSimulationDriveTrainPose().get());
     }
+    //Cycle through each Camera
     for (Cameras camera : Cameras.values())
     {
+      //Get a PoseEstimation from the selected Camera
       Optional<EstimatedRobotPose> poseEst = getEstimatedGlobalPose(camera);
       if (poseEst.isPresent())
       {
@@ -255,7 +257,7 @@ public class Vision extends SubsystemBase {
           () -> {
             debugField.getObject("VisionEstimation").setPoses();
           });
-    }
+    } 
     return poseEst;
   }
   /**
@@ -512,6 +514,8 @@ public class Vision extends SubsystemBase {
       {
         resultsList = Robot.isReal() ? camera.getAllUnreadResults() : cameraSim.getCamera().getAllUnreadResults();
         lastReadTimestamp = currentTimestamp;
+        System.err.print("Result info: ");
+        System.err.println(resultsList.size());
         resultsList.sort((PhotonPipelineResult a, PhotonPipelineResult b) -> {
           return a.getTimestampSeconds() >= b.getTimestampSeconds() ? 1 : -1;
         });
