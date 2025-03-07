@@ -82,11 +82,12 @@ public class RobotContainer {
       */
     } else 
     {
-      /*
+      
       driveTrain.setDefaultCommand(new AbsoluteFieldDrive(driveTrain, () -> -m_driverController.getLeftY(),
                                                                 () -> -m_driverController.getLeftX(), 
                                                                 () -> m_driverController.getRightX(),
                                                                 () -> m_driverController.getLeftTriggerAxis()<0.5));
+      
       // driveTrain.setDefaultCommand(new AbsoluteDrive(driveTrain, () -> m_driverController.getLeftX(), 
       //                                                           () -> m_driverController.getLeftY(),
       //                                                           () -> m_driverController.getRightX(),
@@ -98,13 +99,13 @@ public class RobotContainer {
     m_driverController.b().onTrue(new TurnToAngle(driveTrain, new Pose2d(new Translation2d(0, 0), 
                                                           new Rotation2d(Units.degreesToRadians(105)))
                                                           ));
-    */  
+      
       elevatorSubsystem.setDefaultCommand(elevatorSubsystem.holdCommand());
-      m_driverController.a().onTrue(new IntakeCommand(intakeSubsystem, leds,true));
-      m_driverController.b().whileTrue(new IntakeCommand(intakeSubsystem, leds,false));}
+      m_driverController.x().onTrue(new IntakeCommand(intakeSubsystem, leds,true));
+      m_driverController.y().whileTrue(new IntakeCommand(intakeSubsystem, leds,false));}
     
       //Popper Binding
-      popper.setDefaultCommand(Commands.run(() -> popper.PopperMove(m_operatorController.getLeftY())) );
+      popper.setDefaultCommand(popper.rock(() -> m_operatorController.getLeftY()));
 
       m_operatorController.rightBumper().onTrue(popper.rockAndRoll(m_operatorController.getLeftY()));
     

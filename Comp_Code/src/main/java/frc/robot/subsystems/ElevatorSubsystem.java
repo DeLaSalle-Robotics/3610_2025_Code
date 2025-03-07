@@ -43,7 +43,8 @@ public class ElevatorSubsystem extends SubsystemBase {
     public ElevatorSubsystem() {
     elevatorMotor.getConfigurator().apply(new TalonFXConfiguration());
     elevatorMotor.setNeutralMode(NeutralModeValue.Brake);
-    
+    currenState = elevatorState.Start;
+
     var talonFXConfigs = new TalonFXConfiguration();
     
     var slot0Configs = talonFXConfigs.Slot0;
@@ -95,8 +96,8 @@ public class ElevatorSubsystem extends SubsystemBase {
     this.currenState = state;
   }
 
-  public void updatePosition(elevatorState state){
-    switch (state) {
+  public void updatePosition(){
+    switch (this.currenState) {
       case Start -> {
         this.setPosition(Constants.Elevator.Start_Position);
       }
@@ -146,7 +147,7 @@ public class ElevatorSubsystem extends SubsystemBase {
       stopElevator();
     }
     SmartDashboard.putNumber("Elevator Encoder", this.getPosition());
-    this.updatePosition(currenState);
+    this.updatePosition();
   }
 
   @Override
