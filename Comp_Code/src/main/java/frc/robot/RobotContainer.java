@@ -74,7 +74,8 @@ public class RobotContainer {
       
       driveTrain.setDefaultCommand(new AbsoluteFieldDrive(driveTrain, () -> m_driverController.getLeftX(), 
                                                                 () -> m_driverController.getLeftY(),
-                                                                () -> m_driverController.getRightX(), () -> true));
+                                                                () -> m_driverController.getRightX(), 
+                                                                m_driverController.x()));
       // driveTrain.setDefaultCommand(new AbsoluteDrive(driveTrain, () -> m_driverController.getLeftX(), 
       //                                                           () -> m_driverController.getLeftY(),
       //                                                           () -> m_driverController.getRightX(),
@@ -97,7 +98,7 @@ public class RobotContainer {
                                                           new Rotation2d(Units.degreesToRadians(105)))
                                                           ));
     m_driverController.b().onTrue(new TurnToAngle(driveTrain, new Pose2d(new Translation2d(0, 0), 
-                                                          new Rotation2d(Units.degreesToRadians(w105)))
+                                                          new Rotation2d(Units.degreesToRadians(105)))
                                                           ));
       
       elevatorSubsystem.setDefaultCommand(elevatorSubsystem.holdCommand());
