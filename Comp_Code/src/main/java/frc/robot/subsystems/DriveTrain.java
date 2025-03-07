@@ -399,8 +399,15 @@ public class DriveTrain extends SubsystemBase {
         edu.wpi.first.units.Units.MetersPerSecond.of(0) // Goal end velocity in meters/sec
                                      ).andThen(() -> this.resetOdometry(pose)).andThen(Commands.print("Testing the command")));
   }
-
-  public Pose2d driveToTarget() {
+/**
+   * Use PathPlanner Path finding to go to target on field.
+   *
+   * @param pose Target {@link Pose2d} to go to.
+   * @return PathFinding command
+   * 
+   * https://github.com/PerkValleyRobotics/2025RobotCode/blob/limelight/src%2Fmain%2Fjava%2Ffrc%2Frobot%2Fcommands%2FDriveToNearestReefSideCommand.java
+   */
+  public Command driveToTarget() {
     Pose2d tarPose;
     double xTar = xTarget.get();
     double yTar = yTarget.get();
@@ -410,7 +417,15 @@ public class DriveTrain extends SubsystemBase {
       tarPose = new Pose2d(xTar, yTar, new Rotation2d(thetaTar));
     } else {tarPose = swerveDrive.getPose();
     }
-    return tarPose;
+    PathConstraints constraints = new PathConstraints(
+      swerveDrive.getMaximumChassisVelocity(), 4.0,
+      swerveDrive.getMaximumChassisAngularVelocity(), Units.degreesToRadians(720));
+
+  // Since AutoBuilder is configured, we can use it to build pathfinding commands
+  return AutoBuilder.pathfindToPose(
+      tarPose,
+      constraints,
+      edu.wpi.first.units.Units.MetersPerSecond.of(0));
   }
 
 

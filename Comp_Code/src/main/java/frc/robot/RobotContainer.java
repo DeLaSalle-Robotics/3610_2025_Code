@@ -16,6 +16,7 @@ import frc.robot.commands.DriveTrain.*;
 
 import java.io.File;
 import java.time.Period;
+import java.util.Set;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.PathPlannerPath;
@@ -97,9 +98,7 @@ public class RobotContainer {
     m_driverController.a().onTrue( driveTrain.driveToPose(new Pose2d(new Translation2d(5.509, 2.425), 
                                                           new Rotation2d(Units.degreesToRadians(105)))
                                                           ));
-    m_driverController.b().onTrue(new TurnToAngle(driveTrain, new Pose2d(new Translation2d(0, 0), 
-                                                          new Rotation2d(Units.degreesToRadians(105)))
-                                                          ));
+    m_driverController.b().onTrue(driveTrain.driveToTarget());
       
       elevatorSubsystem.setDefaultCommand(elevatorSubsystem.holdCommand());
       m_driverController.x().onTrue(new IntakeCommand(intakeSubsystem, leds,true));
