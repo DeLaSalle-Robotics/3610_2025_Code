@@ -204,6 +204,29 @@ public class DriveTrain extends SubsystemBase {
                       false); // Open loop is disabled since it shouldn't be used most of the time.
   }
 
+ /**
+   * The primary method for controlling the drivebase.  Takes a {@link Translation2d} and a rotation rate, and
+   * calculates and commands module states accordingly.  Can use either open-loop or closed-loop velocity control for
+   * the wheel velocities.  Also has field- and robot-relative modes, which affect how the translation vector is used.
+   *
+   * @param translation   {@link Translation2d} that is the commanded linear velocity of the robot, in meters per
+   *                      second. In robot-relative mode, positive x is torwards the bow (front) and positive y is
+   *                      torwards port (left).  In field-relative mode, positive x is away from the alliance wall
+   *                      (field North) and positive y is torwards the left wall when looking through the driver station
+   *                      glass (field West).
+   * @param rotation      Robot angular rate, in radians per second. CCW positive.  Unaffected by field/robot
+   *                      relativity.
+   * @param fieldRelative Drive mode.  True for field-relative, false for robot-relative.
+   */
+  public void drive(Translation2d translation, double rotation, boolean fieldRelative)
+  {
+    swerveDrive.drive(translation,
+                      rotation,
+                      fieldRelative,
+                      false); // Open loop is disabled since it shouldn't be used most of the time.
+  }
+
+
   /**
    * Gets the current field-relative velocity (x, y and omega) of the robot
    *

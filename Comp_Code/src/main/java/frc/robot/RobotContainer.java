@@ -71,15 +71,15 @@ public class RobotContainer {
    */
   private void configureBindings() {
     if(Robot.isSimulation()) {
-      /*
+      
       driveTrain.setDefaultCommand(new AbsoluteFieldDrive(driveTrain, () -> m_driverController.getLeftX(), 
                                                                 () -> m_driverController.getLeftY(),
-                                                                () -> m_driverController.getRightX()));
+                                                                () -> m_driverController.getRightX(), () -> true));
       // driveTrain.setDefaultCommand(new AbsoluteDrive(driveTrain, () -> m_driverController.getLeftX(), 
       //                                                           () -> m_driverController.getLeftY(),
       //                                                           () -> m_driverController.getRightX(),
       //                                                           () -> m_driverController.getRightY()));
-      */
+      
     } else 
     {
       
@@ -92,17 +92,17 @@ public class RobotContainer {
       //                                                           () -> m_driverController.getLeftY(),
       //                                                           () -> m_driverController.getRightX(),
       //                                                           () -> m_driverController.getRightY()));
-                                                          
+    }
     m_driverController.a().onTrue( driveTrain.driveToPose(new Pose2d(new Translation2d(5.509, 2.425), 
                                                           new Rotation2d(Units.degreesToRadians(105)))
                                                           ));
     m_driverController.b().onTrue(new TurnToAngle(driveTrain, new Pose2d(new Translation2d(0, 0), 
-                                                          new Rotation2d(Units.degreesToRadians(105)))
+                                                          new Rotation2d(Units.degreesToRadians(w105)))
                                                           ));
       
       elevatorSubsystem.setDefaultCommand(elevatorSubsystem.holdCommand());
       m_driverController.x().onTrue(new IntakeCommand(intakeSubsystem, leds,true));
-      m_driverController.y().whileTrue(new IntakeCommand(intakeSubsystem, leds,false));}
+      m_driverController.y().whileTrue(new IntakeCommand(intakeSubsystem, leds,false));
     
       //Popper Binding
       popper.setDefaultCommand(popper.rock(() -> m_operatorController.getLeftY()));
