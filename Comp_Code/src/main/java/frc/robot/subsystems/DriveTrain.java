@@ -289,7 +289,7 @@ public class DriveTrain extends SubsystemBase {
         final boolean enableFeedForward = true;
         AutoBuilder.configure(
           this::getPose,
-          this::resetOdometry,
+          this::resetPose,
           this::getRobotVelocity,
           (speedsRobotRelative, moduleFeedForwards) -> {
             if (enableFeedForward)
@@ -334,7 +334,7 @@ public class DriveTrain extends SubsystemBase {
    *
    * @param initialHolonomicPose The pose to set the odometry to
    */
-  public void resetOdometry(Pose2d initialHolonomicPose)
+  public void resetPose(Pose2d initialHolonomicPose)
   {
     swerveDrive.resetOdometry(initialHolonomicPose);
   }
@@ -397,7 +397,7 @@ public class DriveTrain extends SubsystemBase {
         pose,
         constraints,
         edu.wpi.first.units.Units.MetersPerSecond.of(0) // Goal end velocity in meters/sec
-                                     ).andThen(() -> this.resetOdometry(pose)).andThen(Commands.print("Testing the command")));
+                                     ).andThen(() -> this.resetPose(pose)).andThen(Commands.print("Testing the command")));
   }
 /**
    * Use PathPlanner Path finding to go to target on field.
@@ -407,7 +407,7 @@ public class DriveTrain extends SubsystemBase {
    * 
    * https://github.com/PerkValleyRobotics/2025RobotCode/blob/limelight/src%2Fmain%2Fjava%2Ffrc%2Frobot%2Fcommands%2FDriveToNearestReefSideCommand.java
    */
-  public Command driveToTarget() {
+  public Supplier<Command> driveToTarget() {
     Pose2d tarPose;
     double xTar = xTarget.get();
     double yTar = yTarget.get();
@@ -422,7 +422,7 @@ public class DriveTrain extends SubsystemBase {
       swerveDrive.getMaximumChassisAngularVelocity(), Units.degreesToRadians(720));
 
   // Since AutoBuilder is configured, we can use it to build pathfinding commands
-  return AutoBuilder.pathfindToPose(
+  return () -> AutoBuilder.pathfindToPose(
       tarPose,
       constraints,
       edu.wpi.first.units.Units.MetersPerSecond.of(0));
@@ -452,7 +452,7 @@ public class DriveTrain extends SubsystemBase {
     {
       zeroGyro();
       //Set the pose 180 degrees
-      resetOdometry(new Pose2d(getPose().getTranslation(), Rotation2d.fromDegrees(180)));
+      resetPose(new Pose2d(getPose().getTranslation(), Rotation2d.fromDegrees(180)));
     } else
     {
       zeroGyro();

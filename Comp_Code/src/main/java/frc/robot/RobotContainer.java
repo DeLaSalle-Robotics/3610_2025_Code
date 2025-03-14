@@ -12,13 +12,14 @@ import frc.robot.commands.DriveTrain.AbsoluteDrive;
 import frc.robot.commands.DriveTrain.AbsoluteFieldDrive;
 import frc.robot.subsystems.*;
 import frc.robot.subsystems.ElevatorSubsystem.elevatorState;
-import frc.robot.commands.DriveTrain.*;
+import frc.robot.commands.IntakeCommand;
 
 import java.io.File;
 import java.time.Period;
 import java.util.Set;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.path.PathPlannerPath;
 
 import edu.wpi.first.math.geometry.Pose2d;
@@ -27,11 +28,16 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.DeferredCommand;
 import edu.wpi.first.wpilibj2.command.ProxyCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -42,12 +48,17 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
  // private final DriveTrain driveTrain = new DriveTrain(new File(Filesystem.getDeployDirectory(),"swerve"));
-  private final IntakeSubsystem intakeSubsystem = new IntakeSubsystem();
-  private final Popper popper = new Popper();
+  private final IntakeSubsystem m_intakeSubsystem = new IntakeSubsystem();
+  private final Popper m_popper = new Popper();
 
-  private final ElevatorSubsystem elevatorSubsystem = new ElevatorSubsystem();
-  private final DriveTrain driveTrain = new DriveTrain(new File(Filesystem.getDeployDirectory(),"swerve"));
-  private final LedSubsystem leds = new LedSubsystem();
+  private final ElevatorSubsystem m_elevatorSubsystem = new ElevatorSubsystem();
+  private final DriveTrain m_driveTrain = new DriveTrain(new File(Filesystem.getDeployDirectory(),"swerve"));
+  private final LedSubsystem m_leds = new LedSubsystem();
+
+  // Allows picking autonomous routines from SmartDashboard
+  private final SendableChooser<Command> m_autoChooser;
+
+
   // Replace with CommandPS4Controller or CommandJoystick if needed
   private final CommandXboxController m_driverController =
       new CommandXboxController(OperatorConstants.kDriverControllerPort);
@@ -59,7 +70,18 @@ public class RobotContainer {
   public RobotContainer() {
     // Configure the trigger bindings
     configureBindings();
+
+    // Register Named Commands
+    NamedCommands.registerCommand("Level3", Commands.run(() -> m_elevatorSubsystem.setState(elevatorState.L3)));
+    NamedCommands.registerCommand("autoIntake", new IntakeCommand(m_intakeSubsystem, m_leds, true));
+
+    // Build an auto chooser
+    m_autoChooser = AutoBuilder.buildAutoChooser();
+    SmartDashboard.putData("Auto Chooser", m_autoChooser);
+
+    SmartDashboard.putString("Robot State", "Have Coral");
   }
+  
 
   /**
    * Use this method to define your trigger->command mappings. Triggers can be created via the
@@ -73,7 +95,7 @@ public class RobotContainer {
   private void configureBindings() {
     if(Robot.isSimulation()) {
       
-      driveTrain.setDefaultCommand(new AbsoluteFieldDrive(driveTrain, () -> m_driverController.getLeftX(), 
+      m_driveTrain.setDefaultCommand(new AbsoluteFieldDrive(m_driveTrain, () -> m_driverController.getLeftX(), 
                                                                 () -> m_driverController.getLeftY(),
                                                                 () -> m_driverController.getRightX(), 
                                                                 m_driverController.x()));
@@ -85,7 +107,7 @@ public class RobotContainer {
     } else 
     {
       
-      driveTrain.setDefaultCommand(new AbsoluteFieldDrive(driveTrain, () -> -m_driverController.getLeftY(),
+      m_driveTrain.setDefaultCommand(new AbsoluteFieldDrive(m_driveTrain, () -> -m_driverController.getLeftY(),
                                                                 () -> -m_driverController.getLeftX(), 
                                                                 () -> m_driverController.getRightX(),
                                                                 () -> m_driverController.getLeftTriggerAxis()<0.5));
@@ -95,27 +117,28 @@ public class RobotContainer {
       //                                                           () -> m_driverController.getRightX(),
       //                                                           () -> m_driverController.getRightY()));
     }
-    m_driverController.a().onTrue( driveTrain.driveToPose(new Pose2d(new Translation2d(5.509, 2.425), 
+    m_driverController.a().onTrue( m_driveTrain.driveToPose(new Pose2d(new Translation2d(5.509, 2.425), 
                                                           new Rotation2d(Units.degreesToRadians(105)))
                                                           ));
-    m_driverController.b().onTrue(driveTrain.driveToTarget());
+
+    m_driverController.b().onTrue(Commands.defer(m_driveTrain.driveToTarget(), Set.of(m_driveTrain)));
       
-      elevatorSubsystem.setDefaultCommand(elevatorSubsystem.holdCommand());
-      m_driverController.x().onTrue(new IntakeCommand(intakeSubsystem, leds,true));
-      m_driverController.y().whileTrue(new IntakeCommand(intakeSubsystem, leds,false));
+      m_elevatorSubsystem.setDefaultCommand(m_elevatorSubsystem.holdCommand());
+      m_driverController.x().onTrue(new IntakeCommand(m_intakeSubsystem, m_leds,true));
+      m_driverController.y().whileTrue(new IntakeCommand(m_intakeSubsystem, m_leds,false));
     
       //Popper Binding
-      popper.setDefaultCommand(popper.rock(() -> m_operatorController.getLeftY()));
+      m_popper.setDefaultCommand(m_popper.rock(() -> m_operatorController.getLeftY()));
 
-      m_operatorController.rightBumper().onTrue(popper.rockAndRoll(m_operatorController.getLeftY()));
+      m_operatorController.rightBumper().onTrue(m_popper.rockAndRoll(m_operatorController.getLeftY()));
     
       //Elevator Bindings
-      m_driverController.y().whileTrue(new ElevatorCommand(elevatorSubsystem,()->m_driverController.getRightY()));
+      m_driverController.y().whileTrue(new ElevatorCommand(m_elevatorSubsystem,()->m_driverController.getRightY()));
 
-      m_operatorController.a().onTrue(Commands.run(() -> elevatorSubsystem.setState(elevatorState.Load)));
-      m_operatorController.x().onTrue(Commands.run(() -> elevatorSubsystem.setState(elevatorState.L1)));
-      m_operatorController.b().onTrue(Commands.run(() -> elevatorSubsystem.setState(elevatorState.L2)));
-      m_operatorController.y().onTrue(Commands.run(() -> elevatorSubsystem.setState(elevatorState.L3)));
+      m_operatorController.a().onTrue(Commands.run(() -> m_elevatorSubsystem.setState(elevatorState.Load)));
+      m_operatorController.x().onTrue(Commands.run(() -> m_elevatorSubsystem.setState(elevatorState.L1)));
+      m_operatorController.b().onTrue(Commands.run(() -> m_elevatorSubsystem.setState(elevatorState.L2)));
+      m_operatorController.y().onTrue(Commands.run(() -> m_elevatorSubsystem.setState(elevatorState.L3)));
                                                             }
   
 
