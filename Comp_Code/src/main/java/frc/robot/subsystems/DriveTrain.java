@@ -204,6 +204,29 @@ public class DriveTrain extends SubsystemBase {
                       false); // Open loop is disabled since it shouldn't be used most of the time.
   }
 
+ /**
+   * The primary method for controlling the drivebase.  Takes a {@link Translation2d} and a rotation rate, and
+   * calculates and commands module states accordingly.  Can use either open-loop or closed-loop velocity control for
+   * the wheel velocities.  Also has field- and robot-relative modes, which affect how the translation vector is used.
+   *
+   * @param translation   {@link Translation2d} that is the commanded linear velocity of the robot, in meters per
+   *                      second. In robot-relative mode, positive x is torwards the bow (front) and positive y is
+   *                      torwards port (left).  In field-relative mode, positive x is away from the alliance wall
+   *                      (field North) and positive y is torwards the left wall when looking through the driver station
+   *                      glass (field West).
+   * @param rotation      Robot angular rate, in radians per second. CCW positive.  Unaffected by field/robot
+   *                      relativity.
+   * @param fieldRelative Drive mode.  True for field-relative, false for robot-relative.
+   */
+  public void drive(Translation2d translation, double rotation, boolean fieldRelative)
+  {
+    swerveDrive.drive(translation,
+                      rotation,
+                      fieldRelative,
+                      false); // Open loop is disabled since it shouldn't be used most of the time.
+  }
+
+
   /**
    * Gets the current field-relative velocity (x, y and omega) of the robot
    *
@@ -266,7 +289,7 @@ public class DriveTrain extends SubsystemBase {
         final boolean enableFeedForward = true;
         AutoBuilder.configure(
           this::getPose,
-          this::resetOdometry,
+          this::resetPose,
           this::getRobotVelocity,
           (speedsRobotRelative, moduleFeedForwards) -> {
             if (enableFeedForward)
@@ -311,7 +334,7 @@ public class DriveTrain extends SubsystemBase {
    *
    * @param initialHolonomicPose The pose to set the odometry to
    */
-  public void resetOdometry(Pose2d initialHolonomicPose)
+  public void resetPose(Pose2d initialHolonomicPose)
   {
     swerveDrive.resetOdometry(initialHolonomicPose);
   }
@@ -374,10 +397,17 @@ public class DriveTrain extends SubsystemBase {
         pose,
         constraints,
         edu.wpi.first.units.Units.MetersPerSecond.of(0) // Goal end velocity in meters/sec
-                                     ).andThen(() -> this.resetOdometry(pose)).andThen(Commands.print("Testing the command")));
+                                     ).andThen(() -> this.resetPose(pose)).andThen(Commands.print("Testing the command")));
   }
-
-  public Pose2d driveToTarget() {
+/**
+   * Use PathPlanner Path finding to go to target on field.
+   *
+   * @param pose Target {@link Pose2d} to go to.
+   * @return PathFinding command
+   * 
+   * https://github.com/PerkValleyRobotics/2025RobotCode/blob/limelight/src%2Fmain%2Fjava%2Ffrc%2Frobot%2Fcommands%2FDriveToNearestReefSideCommand.java
+   */
+  public Supplier<Command> driveToTarget() {
     Pose2d tarPose;
     double xTar = xTarget.get();
     double yTar = yTarget.get();
@@ -387,7 +417,15 @@ public class DriveTrain extends SubsystemBase {
       tarPose = new Pose2d(xTar, yTar, new Rotation2d(thetaTar));
     } else {tarPose = swerveDrive.getPose();
     }
-    return tarPose;
+    PathConstraints constraints = new PathConstraints(
+      swerveDrive.getMaximumChassisVelocity(), 4.0,
+      swerveDrive.getMaximumChassisAngularVelocity(), Units.degreesToRadians(720));
+
+  // Since AutoBuilder is configured, we can use it to build pathfinding commands
+  return () -> AutoBuilder.pathfindToPose(
+      tarPose,
+      constraints,
+      edu.wpi.first.units.Units.MetersPerSecond.of(0));
   }
 
 
@@ -414,7 +452,7 @@ public class DriveTrain extends SubsystemBase {
     {
       zeroGyro();
       //Set the pose 180 degrees
-      resetOdometry(new Pose2d(getPose().getTranslation(), Rotation2d.fromDegrees(180)));
+      resetPose(new Pose2d(getPose().getTranslation(), Rotation2d.fromDegrees(180)));
     } else
     {
       zeroGyro();

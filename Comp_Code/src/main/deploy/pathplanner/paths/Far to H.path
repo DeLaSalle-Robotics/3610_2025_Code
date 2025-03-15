@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 8.140723990351775,
-        "y": 4.768733190317622
+        "x": 8.0,
+        "y": 4.0
       },
       "prevControl": null,
       "nextControl": {
-        "x": 7.290454768613388,
-        "y": 4.620098243254781
+        "x": 7.018527159275748,
+        "y": 3.940204961428552
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 5.821752570250566,
-        "y": 4.182295353199319
+        "x": 5.822,
+        "y": 4.2
       },
       "prevControl": {
-        "x": 6.507878979062041,
-        "y": 4.1676896069561495
+        "x": 7.004511793344734,
+        "y": 4.3071573974306165
       },
       "nextControl": null,
       "isLocked": false,
@@ -31,7 +31,14 @@
   "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
-  "eventMarkers": [],
+  "eventMarkers": [
+    {
+      "name": "L3 Raise",
+      "waypointRelativePos": 0.791177844684386,
+      "endWaypointRelativePos": null,
+      "command": null
+    }
+  ],
   "globalConstraints": {
     "maxVelocity": 3.0,
     "maxAcceleration": 3.0,

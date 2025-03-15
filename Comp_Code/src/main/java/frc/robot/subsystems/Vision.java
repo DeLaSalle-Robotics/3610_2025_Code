@@ -514,8 +514,8 @@ public class Vision extends SubsystemBase {
       {
         resultsList = Robot.isReal() ? camera.getAllUnreadResults() : cameraSim.getCamera().getAllUnreadResults();
         lastReadTimestamp = currentTimestamp;
-        System.err.print("Result info: ");
-        System.err.println(resultsList.size());
+        //System.err.print("Result info: ");
+        //System.err.println(resultsList.size());
         resultsList.sort((PhotonPipelineResult a, PhotonPipelineResult b) -> {
           return a.getTimestampSeconds() >= b.getTimestampSeconds() ? 1 : -1;
         });

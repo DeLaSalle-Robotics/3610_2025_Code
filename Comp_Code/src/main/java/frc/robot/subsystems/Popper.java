@@ -4,6 +4,8 @@
 
 package frc.robot.subsystems;
 
+import java.util.function.DoubleSupplier;
+
 import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.sim.SparkAbsoluteEncoderSim;
 import com.revrobotics.spark.SparkAbsoluteEncoder;
@@ -35,7 +37,7 @@ public class Popper extends SubsystemBase {
   //Some sort of gyro scope to set grasper position
   private final Encoder intakeArmEncoder = new Encoder(Constants.Popper.popperEncoderChannelA,
                                                         Constants.Popper.popperEncoderChannelB, false, EncodingType.k4X);
-  private final DutyCycleEncoder m_abEncoder = new DutyCycleEncoder(2);
+  //private final DutyCycleEncoder m_abEncoder = new DutyCycleEncoder(2);
   public static final double armOffset = 83.0;
 
 
@@ -79,6 +81,8 @@ public double getPopperPosition() {
 public void PopperSpin(){
   Spinner.set(Constants.Popper.popperSpinnerSpeed);
 }
+
+//Commands====================================
 /**
    * This command will allow spinning and moving of the Popper arm.
    *
@@ -94,6 +98,20 @@ public void PopperSpin(){
         });
   }
   
+/**
+   * This command will allow spinning and moving of the Popper arm.
+   *
+   * @return a rockAndRoll Command
+   */
+  public Command rock(DoubleSupplier speed) {
+    // Inline construction of command goes here.
+    // Subsystem::RunOnce implicitly requires `this` subsystem.
+    return run(
+        () -> {
+          PopperMove(speed.getAsDouble());
+        });
+  }
+
   /**
    * An example method querying a boolean state of the subsystem (for example, a digital sensor).
    *
