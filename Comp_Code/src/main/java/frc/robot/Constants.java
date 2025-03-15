@@ -34,13 +34,13 @@ public final class Constants {
   }
 
   public static class Intake {
-    public static final int motorId = 28;
-    public static final int sensorId = 0;
+    public static final int motorId = 16;
+    public static final int sensorId = 1;
   }
 
   public static class  Elevator {
-    public static final int elevatorMotorId = 13;
-    public static final int sensorId = 2;
+    public static final int elevatorMotorId = 18;
+    public static final int sensorId = 0;
 
     public static final double holdValue = -0.02;
     public static final double threshold = 50;
@@ -52,10 +52,10 @@ public final class Constants {
     
   }
   public static class Popper {
-    public static int popperRotateID = 99;
-    public static int popperSpinnerID = 98;
-    public static int popperEncoderChannelA = 42;
-    public static int popperEncoderChannelB = 43;
+    public static int popperRotateID = 14;
+    public static int popperSpinnerID = 15;
+    public static int popperEncoderChannelA = 2;
+    public static int popperEncoderChannelB = 3;
     public static double popperSpinnerSpeed = 0.5;
     public static double minAngle = -45.0;
     public static double maxAngle = 60.0;

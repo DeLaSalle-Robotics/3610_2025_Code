@@ -100,8 +100,11 @@ public class RobotContainer {
                                                           ));
     */  
       elevatorSubsystem.setDefaultCommand(elevatorSubsystem.holdCommand());
-      m_driverController.a().onTrue(new IntakeCommand(intakeSubsystem, leds,true));
-      m_driverController.b().whileTrue(new IntakeCommand(intakeSubsystem, leds,false));}
+      m_driverController.a().onTrue(new IntakeCommand(intakeSubsystem, leds, () -> -0.5 ,true));
+      m_driverController.b().whileTrue(new IntakeCommand(intakeSubsystem, leds,() -> -0.5,false));
+      
+
+    }
     
       //Popper Binding
       popper.setDefaultCommand(Commands.run(() -> popper.PopperMove(m_operatorController.getLeftY())) );
@@ -117,7 +120,7 @@ public class RobotContainer {
       m_operatorController.y().onTrue(Commands.run(() -> elevatorSubsystem.setState(elevatorState.L3)));
                                                             }
   
-
+ 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
    *
