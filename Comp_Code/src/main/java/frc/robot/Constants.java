@@ -42,7 +42,7 @@ public final class Constants {
     public static final int elevatorMotorId = 18;
     public static final int sensorId = 0;
 
-    public static final double holdValue = -0.02;
+    public static final double holdValue = -0.04;
     public static final double threshold = 50;
     public static final double Start_Position = 0;
     public static final double L1_Position = 100;
@@ -57,8 +57,8 @@ public final class Constants {
     public static int popperEncoderChannelA = 2;
     public static int popperEncoderChannelB = 3;
     public static double popperSpinnerSpeed = 0.5;
-    public static double minAngle = -45.0;
-    public static double maxAngle = 60.0;
+    public static double minAngle = 0;//EncoderValue Not actuly an Angle
+    public static double maxAngle = 730;//EncoderValue Not actuly an Angle
     
   }
 

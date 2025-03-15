@@ -10,7 +10,11 @@ import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.sim.SparkAbsoluteEncoderSim;
 import com.revrobotics.spark.SparkAbsoluteEncoder;
 import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.SparkBase.PersistMode;
+import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.config.SparkMaxConfig;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.system.plant.DCMotor;
@@ -33,11 +37,11 @@ import frc.robot.Constants;
 public class Popper extends SubsystemBase {
   private final SparkMax Rotater = new SparkMax(Constants.Popper.popperRotateID, MotorType.kBrushless);
   private final SparkMax Spinner = new SparkMax(Constants.Popper.popperSpinnerID, MotorType.kBrushless);
+  SparkMaxConfig rotaterConfig = new SparkMaxConfig();
  
   //Some sort of gyro scope to set grasper position
-  private final Encoder intakeArmEncoder = new Encoder(Constants.Popper.popperEncoderChannelA,
-                                                        Constants.Popper.popperEncoderChannelB, false, EncodingType.k4X);
-  //private final DutyCycleEncoder m_abEncoder = new DutyCycleEncoder(2);
+  private final Encoder intakeArmEncoder = new Encoder(Constants.Popper.popperEncoderChannelA,Constants.Popper.popperEncoderChannelB, false, EncodingType.k4X);
+  //private final DutyCycleEncoder intakeArmEncoder = new DutyCycleEncoder(2);
   public static final double armOffset = 83.0;
 
 
@@ -48,22 +52,26 @@ public class Popper extends SubsystemBase {
   private final double m_armLength = Units.inchesToMeters(24);
   private double priorArmVelocity = 0.0;
   private static double armPositionRad = Math.PI/4;
-
+  double initialPoint;
  
  //Declaring the Subsystem \/
  public Popper() {
-  
-  intakeArmEncoder.setDistancePerPulse(0.1758); //Degrees/Pulse
+  rotaterConfig.idleMode(IdleMode.kBrake);
+  Rotater.configure(rotaterConfig,ResetMode.kResetSafeParameters,PersistMode.kPersistParameters);
+ 
+  initialPoint = intakeArmEncoder.get();
+  //intakeArmEncoder.setDistancePerPulse(0.1758); //Degrees/Pulse
  }
 
 //Methods===================
 
 public void PopperMove(Double speed) {
-  if (Math.abs(speed) > 0.1) {
+  SmartDashboard.putNumber("RockSpeed", speed);
+  if (Math.abs(speed) > 0.01) {
     double popperPosition = this.getPopperPosition();
-    if (popperPosition > Constants.Popper.maxAngle  && speed < 0){
+    if (popperPosition > Constants.Popper.maxAngle-50  && speed < 0){
       Rotater.set(0);
-    } else if (popperPosition < Constants.Popper.minAngle && speed > 0) {
+    } else if (popperPosition < Constants.Popper.minAngle+50 && speed > 0) {
       Rotater.set(0);
     } else {
       Rotater.set(speed);
@@ -74,12 +82,12 @@ public void PopperMove(Double speed) {
 }
 
 public double getPopperPosition() {
-
-  return intakeArmEncoder.getDistance() - armOffset;
+  
+  return intakeArmEncoder.get() - initialPoint;
 }
 
-public void PopperSpin(){
-  Spinner.set(Constants.Popper.popperSpinnerSpeed);
+public void PopperSpin(Double speed){
+  Spinner.set(speed);
 }
 
 //Commands====================================
@@ -88,13 +96,13 @@ public void PopperSpin(){
    *
    * @return a rockAndRoll Command
    */
-  public Command rockAndRoll(double speed) {
+  public Command rockAndRoll(double speed,double spinSpeed) {
     // Inline construction of command goes here.
     // Subsystem::RunOnce implicitly requires `this` subsystem.
-    return runOnce(
+    return run(
         () -> {
           PopperMove(speed);
-          PopperSpin();
+          PopperSpin(spinSpeed);
         });
   }
   
@@ -106,6 +114,7 @@ public void PopperSpin(){
   public Command rock(DoubleSupplier speed) {
     // Inline construction of command goes here.
     // Subsystem::RunOnce implicitly requires `this` subsystem.
+    
     return run(
         () -> {
           PopperMove(speed.getAsDouble());
@@ -124,7 +133,7 @@ public void PopperSpin(){
 
   @Override
   public void periodic() {
-    // This method will be called once per scheduler run
+    SmartDashboard.putNumber("PopperPosition", getPopperPosition());
   }
 
   @Override
