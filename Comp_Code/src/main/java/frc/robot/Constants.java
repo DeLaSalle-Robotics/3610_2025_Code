@@ -44,11 +44,12 @@ public final class Constants {
 
     public static final double holdValue = -0.04;
     public static final double threshold = 50;
+    //Values of positions are rotations of the motor shaft.
     public static final double Start_Position = 0;
-    public static final double L1_Position = 100;
-    public static final double L2_Position = 200;
-    public static final double L3_Position = 300;
-    public static final double Load_Position = 150;
+    public static final double L1_Position = 0;
+    public static final double L2_Position = -9.1;
+    public static final double L3_Position = -28.5;
+    public static final double Load_Position = -48.0;
     
   }
   public static class Popper {
