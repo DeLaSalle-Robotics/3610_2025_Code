@@ -115,6 +115,10 @@ public class Vision extends SubsystemBase {
           visionSim.getDebugField();
           
         }
+
+        /*
+         * I don't think this is necessary in regular robot, because the cameras are auto detected?
+         */
         for (Cameras c : Cameras.values())
         {
             c.addToVisionSim(visionSim);
@@ -215,10 +219,10 @@ public class Vision extends SubsystemBase {
        */
       visionSim.update(swerveDrive.getSimulationDriveTrainPose().get());
     }
-    //Cycle through each Camera
+    //Cycle through each Camera during each click
     for (Cameras camera : Cameras.values())
     {
-      //Get a PoseEstimation from the selected Camera
+      //Get a PoseEstimation from the selected Camera - Collected from all tags available
       Optional<EstimatedRobotPose> poseEst = getEstimatedGlobalPose(camera);
       if (poseEst.isPresent())
       {
@@ -343,7 +347,12 @@ public class Vision extends SubsystemBase {
                                 Units.inchesToMeters(7.5)),
               VecBuilder.fill(4, 4, 8), VecBuilder.fill(0.5, 0.5, 1));
               
-    /**
+    /*
+     ======================
+     These are Camera level variables to be assigned to each camera
+     ===========================
+     */
+              /**
      * Latency alert to use when high latency is detected.
      */
     public final  Alert                        latencyAlert;
@@ -416,7 +425,11 @@ public class Vision extends SubsystemBase {
 
       this.singleTagStdDevs = singleTagStdDevs;
       this.multiTagStdDevs = multiTagStdDevsMatrix;
-
+      /*
+       * =======================
+       * This bit of code is used if the actual Camera information is not available (i.e. robot in sim mode)
+       * =======================
+       */
       if (Robot.isSimulation())
       {
         SimCameraProperties cameraProp = new SimCameraProperties();
