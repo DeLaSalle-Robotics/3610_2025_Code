@@ -37,13 +37,13 @@ public class ElevatorSubsystem extends SubsystemBase {
     L3,
     Load
   }
-    private elevatorState currenState;
+    private elevatorState currentState;
     final MotionMagicVoltage m_motmag = new MotionMagicVoltage(0).withSlot(0);
 
     public ElevatorSubsystem() {
     elevatorMotor.getConfigurator().apply(new TalonFXConfiguration());
     elevatorMotor.setNeutralMode(NeutralModeValue.Brake);
-    currenState = elevatorState.Start;
+    currentState = elevatorState.Start;
 
     var talonFXConfigs = new TalonFXConfiguration();
     
@@ -93,11 +93,11 @@ public class ElevatorSubsystem extends SubsystemBase {
   }
 
   public void setState(elevatorState state){
-    this.currenState = state;
+    this.currentState = state;
   }
 
   public void updatePosition(){
-    switch (this.currenState) {
+    switch (this.currentState) {
       case Start -> {
         this.setPosition(Constants.Elevator.Start_Position);
       }
