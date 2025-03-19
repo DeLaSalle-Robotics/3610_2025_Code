@@ -10,8 +10,10 @@ import frc.robot.commands.ElevatorCommand;
 import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.DriveTrain.AbsoluteDrive;
 import frc.robot.commands.DriveTrain.AbsoluteFieldDrive;
+import frc.robot.commands.DriveTrain.DriveToTarget;
 import frc.robot.subsystems.*;
 import frc.robot.subsystems.ElevatorSubsystem.elevatorState;
+import frc.robot.subsystems.Popper.popperState;
 import frc.robot.commands.IntakeCommand;
 
 import java.io.File;
@@ -26,6 +28,9 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.networktables.DoubleSubscriber;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -57,7 +62,10 @@ public class RobotContainer {
 
   // Allows picking autonomous routines from SmartDashboard
   private final SendableChooser<Command> m_autoChooser;
-
+  
+  DoubleSubscriber xTarget;
+  DoubleSubscriber yTarget;
+  DoubleSubscriber thetaTarget;
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
   private final CommandXboxController m_driverController =
@@ -68,6 +76,13 @@ public class RobotContainer {
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
+    NetworkTableInstance inst = NetworkTableInstance.getDefault();
+    NetworkTable table = inst.getTable("datatable");
+    xTarget = table.getDoubleTopic("xTar").subscribe(0);
+    yTarget = table.getDoubleTopic("yTar").subscribe(0);
+    thetaTarget = table.getDoubleTopic("thetaTar").subscribe(0);
+      
+       
     // Configure the trigger bindings
     configureBindings();
 
@@ -121,7 +136,9 @@ public class RobotContainer {
                                                           new Rotation2d(Units.degreesToRadians(105)))
                                                           ));
 
-    m_driverController.b().onTrue(Commands.defer(m_driveTrain.driveToTarget(), Set.of(m_driveTrain)));
+    m_driverController.b().onTrue(m_driveTrain.driveToPose(new Pose2d(new Translation2d(xTarget.get(), yTarget.get()), 
+                                    new Rotation2d(thetaTarget.get()))
+                                       ));
       
       m_elevatorSubsystem.setDefaultCommand(m_elevatorSubsystem.holdCommand());
       m_driverController.x().onTrue(new IntakeCommand(m_intakeSubsystem, m_leds,true));
@@ -131,7 +148,11 @@ public class RobotContainer {
       m_popper.setDefaultCommand(m_popper.rock(() -> m_operatorController.getLeftY()));
 
       m_operatorController.rightBumper().onTrue(m_popper.rockAndRoll(m_operatorController.getLeftY()));
-    
+
+      m_driverController.povUp().onTrue(Commands.run(()-> m_popper.setPopperState(popperState.L3)));
+      m_driverController.povLeft().onTrue(Commands.run(()-> m_popper.setPopperState(popperState.L2)));
+      m_driverController.povDown().onTrue(Commands.run(()-> m_popper.setPopperState(popperState.Start)));
+
       //Elevator Bindings
       m_driverController.y().whileTrue(new ElevatorCommand(m_elevatorSubsystem,()->m_driverController.getRightY()));
 

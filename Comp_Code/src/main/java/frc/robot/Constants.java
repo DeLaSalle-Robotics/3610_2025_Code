@@ -52,6 +52,13 @@ public final class Constants {
     
   }
   public static class Popper {
+    /*NOTE: The popper position values are from the builtin 
+     * SparkMax encoder (i.e. not the through-bore). These do
+     * not account for the gearing occurring with the sprockets.
+     */
+    public static double Start_Position = 0;
+    public static double L2_Position = 40;
+    public static double L3_Position = 70;
     public static int popperRotateID = 99;
     public static int popperSpinnerID = 98;
     public static int popperEncoderChannelA = 5;

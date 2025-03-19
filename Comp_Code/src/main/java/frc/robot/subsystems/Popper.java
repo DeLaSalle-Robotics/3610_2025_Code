@@ -9,8 +9,11 @@ import java.util.function.DoubleSupplier;
 import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.sim.SparkAbsoluteEncoderSim;
 import com.revrobotics.spark.SparkAbsoluteEncoder;
+import com.revrobotics.spark.SparkBase.ControlType;
+import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.config.SparkMaxConfig;
 
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.system.plant.DCMotor;
@@ -39,7 +42,9 @@ public class Popper extends SubsystemBase {
                                                         Constants.Popper.popperEncoderChannelB, false, EncodingType.k4X);
   //private final DutyCycleEncoder m_abEncoder = new DutyCycleEncoder(2);
   public static final double armOffset = 83.0;
+  private double setPoint = 0.0;
 
+  SparkClosedLoopController m_controller = Rotater.getClosedLoopController();
 
   //Simulation
   private final DCMotor Rotater_sim = DCMotor.getNEO(Constants.Popper.popperRotateID);
@@ -49,12 +54,28 @@ public class Popper extends SubsystemBase {
   private double priorArmVelocity = 0.0;
   private static double armPositionRad = Math.PI/4;
 
- 
+ public enum popperState{
+  Start,
+  L2,
+  L3
+ }
+
  //Declaring the Subsystem \/
  public Popper() {
+   
   
+  SparkMaxConfig config = new SparkMaxConfig();
+  config.closedLoop.p(0.1);
+  config.closedLoop.i(0);
+  config.closedLoop.d(0);
+  config.closedLoop.maxMotion.maxVelocity(4.00)
+                            .maxAcceleration(12)
+                            .allowedClosedLoopError(0.1);
+
+
   intakeArmEncoder.setDistancePerPulse(0.1758); //Degrees/Pulse
  }
+private popperState currentState;
 
 //Methods===================
 
@@ -74,14 +95,42 @@ public void PopperMove(Double speed) {
 }
 
 public double getPopperPosition() {
-
-  return intakeArmEncoder.getDistance() - armOffset;
+  /* This code uses the throughbore encoder, but that cannot be sent directly to the sparkMax
+  *   without a specific adapter from Rev (REV-11-1881-PK2). Consider if built-in encoder is 
+  *  not sufficiently sensitive to control the arm.
+  */
+  //return intakeArmEncoder.getDistance() - armOffset;
+  return Rotater.getEncoder().getPosition();
 }
 
+public void setPopperPosition(double setPoint){
+  m_controller.setReference(setPoint, ControlType.kMAXMotionPositionControl);
+  
+}
+
+public void setPopperState(popperState newState){
+  this.currentState = newState;
+}
 public void PopperSpin(){
   Spinner.set(Constants.Popper.popperSpinnerSpeed);
 }
 
+public void updatePosition(){
+  switch (this.currentState) {
+    case Start -> {
+      this.setPopperPosition(Constants.Popper.Start_Position);
+    }
+    case L2 -> {
+      this.setPopperPosition(Constants.Popper.L2_Position);
+    }
+    case L3 -> {
+      this.setPopperPosition(Constants.Popper.L3_Position);
+    }
+    default ->{
+      this.setPopperPosition(Constants.Popper.Start_Position);
+    }
+  }
+}
 //Commands====================================
 /**
    * This command will allow spinning and moving of the Popper arm.
@@ -125,6 +174,11 @@ public void PopperSpin(){
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    //Not this will run the motors to pre set positions. Do not activate until tested.
+    
+    //this.updatePosition();
+
+
   }
 
   @Override
