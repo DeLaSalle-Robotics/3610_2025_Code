@@ -12,6 +12,7 @@ import frc.robot.commands.DriveTrain.AbsoluteDrive;
 import frc.robot.commands.DriveTrain.AbsoluteFieldDrive;
 import frc.robot.commands.DriveTrain.DriveToTarget;
 import frc.robot.subsystems.*;
+import frc.robot.subsystems.ClimberSubsystem.climberState;
 import frc.robot.subsystems.ElevatorSubsystem.elevatorState;
 import frc.robot.subsystems.Popper.popperState;
 import frc.robot.commands.IntakeCommand;
@@ -56,7 +57,7 @@ public class RobotContainer {
  // private final DriveTrain driveTrain = new DriveTrain(new File(Filesystem.getDeployDirectory(),"swerve"));
   private final IntakeSubsystem m_intakeSubsystem = new IntakeSubsystem();
   private final Popper m_popper = new Popper();
-
+  private final ClimberSubsystem m_climber = new ClimberSubsystem();
   private final ElevatorSubsystem m_elevatorSubsystem = new ElevatorSubsystem();
   private final DriveTrain m_driveTrain = new DriveTrain(new File(Filesystem.getDeployDirectory(),"swerve"));
   private final LedSubsystem m_leds = new LedSubsystem();
@@ -89,7 +90,9 @@ public class RobotContainer {
 
     // Register Named Commands
     NamedCommands.registerCommand("Level3", Commands.run(() -> m_elevatorSubsystem.setState(elevatorState.L3)));
+    NamedCommands.registerCommand("Load", Commands.run(() -> m_elevatorSubsystem.setState(elevatorState.Load)));
     NamedCommands.registerCommand("autoIntake", new IntakeCommand(m_intakeSubsystem, m_leds,() -> -0.5, true));
+    NamedCommands.registerCommand("autoScore", new IntakeCommand(m_intakeSubsystem, m_leds, () ->  -0.5, false));
 
     // Build an auto chooser
     m_autoChooser = AutoBuilder.buildAutoChooser();
@@ -172,8 +175,11 @@ public class RobotContainer {
       m_operatorController.x().onTrue(new IntakeCommand(m_intakeSubsystem, m_leds,() -> -0.5,true));
       m_operatorController.y().whileTrue(new IntakeCommand(m_intakeSubsystem, m_leds,() -> -0.5,false));
       m_operatorController.b().whileTrue(new IntakeCommand(m_intakeSubsystem, m_leds, () -> 1, false));
+      m_operatorController.povRight().onTrue(Commands.run(()-> m_climber.setState(climberState.Out)));
+      m_operatorController.povUp().onTrue(Commands.run(()-> m_climber.setState(climberState.Start)));
+      m_operatorController.povUp().onTrue(Commands.run(()-> m_climber.setState(climberState.In)));
                                                             }
-  
+                                                          
  
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
@@ -182,13 +188,9 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
-    try{
-      PathPlannerPath path = PathPlannerPath.fromPathFile("Far to H.path");
-      return AutoBuilder.followPath(path);
-    } catch (Exception e) {
-      DriverStation.reportError("Problem..." + e.getMessage(), e.getStackTrace());
-      return Commands.none();
+    return m_autoChooser.getSelected();
+      //return m_ShooterSubsystem.autoShooter(m_IntakeSubsystem);
     }
-  }
+  
     
 }
