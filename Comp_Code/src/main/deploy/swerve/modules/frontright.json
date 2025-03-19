@@ -5,8 +5,8 @@
     },
     "absoluteEncoderOffset": 290.34,
     "drive": {
-      "type": "falcon",
-      "id": 7,
+      "type": "sparkflex",
+      "id": 5,
       "canbus": null
     },
     "inverted": {
@@ -15,12 +15,12 @@
     },
     "angle": {
       "type": "sparkmax",
-      "id": 8,
+      "id": 4,
       "canbus": null
     },
     "encoder": {
       "type": "cancoder",
-      "id": 12,
+      "id": 10,
       "canbus": null
     },
     "absoluteEncoderInverted": false

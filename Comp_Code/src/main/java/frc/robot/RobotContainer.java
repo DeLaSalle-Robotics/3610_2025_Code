@@ -38,6 +38,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.DeferredCommand;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ProxyCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -88,7 +89,7 @@ public class RobotContainer {
 
     // Register Named Commands
     NamedCommands.registerCommand("Level3", Commands.run(() -> m_elevatorSubsystem.setState(elevatorState.L3)));
-    NamedCommands.registerCommand("autoIntake", new IntakeCommand(m_intakeSubsystem, m_leds, true));
+    NamedCommands.registerCommand("autoIntake", new IntakeCommand(m_intakeSubsystem, m_leds,() -> -0.5, true));
 
     // Build an auto chooser
     m_autoChooser = AutoBuilder.buildAutoChooser();
@@ -132,37 +133,48 @@ public class RobotContainer {
       //                                                           () -> m_driverController.getRightX(),
       //                                                           () -> m_driverController.getRightY()));
     }
-    m_driverController.a().onTrue( m_driveTrain.driveToPose(new Pose2d(new Translation2d(5.509, 2.425), 
+    
+    /*m_driverController.a().onTrue( m_driveTrain.driveToPose(new Pose2d(new Translation2d(5.509, 2.425), 
                                                           new Rotation2d(Units.degreesToRadians(105)))
                                                           ));
-
+*/
     m_driverController.b().onTrue(m_driveTrain.driveToPose(new Pose2d(new Translation2d(xTarget.get(), yTarget.get()), 
                                     new Rotation2d(thetaTarget.get()))
                                        ));
       
       m_elevatorSubsystem.setDefaultCommand(m_elevatorSubsystem.holdCommand());
-      m_driverController.x().onTrue(new IntakeCommand(m_intakeSubsystem, m_leds,true));
-      m_driverController.y().whileTrue(new IntakeCommand(m_intakeSubsystem, m_leds,false));
+      
+
+      m_driverController.x().onTrue(new IntakeCommand(m_intakeSubsystem, m_leds,() -> -0.5,true));
+      m_driverController.y().whileTrue(new IntakeCommand(m_intakeSubsystem, m_leds,() -> -0.5,false));
     
       //Popper Binding
-      m_popper.setDefaultCommand(m_popper.rock(() -> m_operatorController.getLeftY()));
+      m_popper.setDefaultCommand(m_popper.rockAndRoll(0.0,0.0));
 
-      m_operatorController.rightBumper().onTrue(m_popper.rockAndRoll(m_operatorController.getLeftY()));
-
+      //m_operatorController.rightBumper().onTrue(m_popper.rockAndRoll(m_operatorController.getLeftY()));
+      m_driverController.leftBumper().whileTrue(m_popper.rock(() ->-0.11));
+      m_driverController.rightBumper().whileTrue(m_popper.rock(()->0.12));
+      
+      m_driverController.b().whileTrue(m_popper.rockAndRoll(-0.11,-0.5));
+      m_driverController.a().whileTrue(m_popper.rockAndRoll(0,0.5));
+  
       m_driverController.povUp().onTrue(Commands.run(()-> m_popper.setPopperState(popperState.L3)));
       m_driverController.povLeft().onTrue(Commands.run(()-> m_popper.setPopperState(popperState.L2)));
       m_driverController.povDown().onTrue(Commands.run(()-> m_popper.setPopperState(popperState.Start)));
 
       //Elevator Bindings
-      m_driverController.y().whileTrue(new ElevatorCommand(m_elevatorSubsystem,()->m_driverController.getRightY()));
-
-      m_operatorController.a().onTrue(Commands.run(() -> m_elevatorSubsystem.setState(elevatorState.Load)));
-      m_operatorController.x().onTrue(Commands.run(() -> m_elevatorSubsystem.setState(elevatorState.L1)));
-      m_operatorController.b().onTrue(Commands.run(() -> m_elevatorSubsystem.setState(elevatorState.L2)));
-      m_operatorController.y().onTrue(Commands.run(() -> m_elevatorSubsystem.setState(elevatorState.L3)));
+      m_operatorController.leftBumper().whileTrue(new ElevatorCommand(m_elevatorSubsystem,()->m_operatorController.getRightY()));
+      
+      //m_operatorController.a().onTrue(Commands.run(() -> m_elevatorSubsystem.setState(elevatorState.Load)));
+      //m_operatorController.x().onTrue(Commands.run(() -> m_elevatorSubsystem.setState(elevatorState.L1)));
+      //m_operatorController.b().onTrue(Commands.run(() -> m_elevatorSubsystem.setState(elevatorState.L2)));
+      //m_operatorController.y().onTrue(Commands.run(() -> m_elevatorSubsystem.setState(elevatorState.L3)));
+      m_operatorController.x().onTrue(new IntakeCommand(m_intakeSubsystem, m_leds,() -> -0.5,true));
+      m_operatorController.y().whileTrue(new IntakeCommand(m_intakeSubsystem, m_leds,() -> -0.5,false));
+      m_operatorController.b().whileTrue(new IntakeCommand(m_intakeSubsystem, m_leds, () -> 1, false));
                                                             }
   
-
+ 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
    *

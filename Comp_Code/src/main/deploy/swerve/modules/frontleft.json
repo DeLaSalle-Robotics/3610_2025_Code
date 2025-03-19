@@ -5,8 +5,8 @@
     },
     "absoluteEncoderOffset": 101.16,
     "drive": {
-      "type": "falcon",
-      "id": 5,
+      "type": "sparkflex",
+      "id": 7,
       "canbus": null
     },
     "inverted": {

@@ -7,6 +7,9 @@ package frc.robot.commands;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.LedSubsystem;
 import frc.robot.subsystems.LedSubsystem.LedState;
+
+import java.util.function.DoubleSupplier;
+
 import edu.wpi.first.wpilibj2.command.Command;
 
 /** An example command that uses an example subsystem. */
@@ -15,14 +18,16 @@ public class IntakeCommand extends Command {
     private final IntakeSubsystem intake;
     private final LedSubsystem led;
     private boolean stopOnSensor;
+    private DoubleSupplier speed;
     /**
      * Creates a new ExampleCommand.
      *
      * @param subsystem The subsystem used by this command.
      */
-    public IntakeCommand(IntakeSubsystem subsystem, LedSubsystem m_ledSubSystem, boolean stopOnSensor) {
+    public IntakeCommand(IntakeSubsystem subsystem, LedSubsystem m_ledSubSystem,DoubleSupplier speed, boolean stopOnSensor) {
         this.intake = subsystem;
         this.led = m_ledSubSystem;
+        this.speed = speed;
         this.stopOnSensor = stopOnSensor;
         // Use addRequirements() here to declare subsystem dependencies.
         addRequirements(subsystem);
@@ -37,7 +42,7 @@ public class IntakeCommand extends Command {
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
-        intake.startIntake();
+        intake.startIntake(speed.getAsDouble());
     }
 
     // Called once the command ends or is interrupted.

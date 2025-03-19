@@ -28,8 +28,8 @@ public class IntakeSubsystem extends SubsystemBase {
         intakeMotor.set(0.0);
     }
 
-    public void startIntake() {
-        intakeMotor.set(-0.5);
+    public void startIntake(double speed) {
+        intakeMotor.set(speed);
     }
 
     public boolean detectCoral() {
