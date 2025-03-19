@@ -153,7 +153,7 @@ public void updatePosition(){
     return run(
         () -> {
           PopperMove(speed);
-          PopperSpin(spinSpeed);
+          PopperSpin();
         });
   }
   
