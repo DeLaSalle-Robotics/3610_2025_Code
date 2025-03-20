@@ -57,9 +57,9 @@ public final class Constants {
      * SparkMax encoder (i.e. not the through-bore). These do
      * not account for the gearing occurring with the sprockets.
      */
-    public static double Start_Position = 0;
-    public static double L2_Position = 40;
-    public static double L3_Position = 70;
+    public static final double Start_Position = 0;
+    public static final double L2_Position = 40;
+    public static final double L3_Position = 70;
     public static int popperRotateID = 14;
     public static int popperSpinnerID = 15;
     public static int popperEncoderChannelA = 2;
@@ -74,5 +74,15 @@ public final class Constants {
     public static final int numLeds = 120;
     public static final int ledPwm = 9;
     public static final double rainbowShiftSpeed = 5.0;
+  }
+
+  public static class Climber {
+    public static final int climberID = 17;
+
+    public static final double Start_Position = 0;
+    public static final double Down_Position = 0;
+    public static final double Climb_Position = -9.1;
+
+
   }
 }
