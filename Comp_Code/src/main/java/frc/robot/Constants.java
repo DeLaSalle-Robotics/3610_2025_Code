@@ -67,6 +67,9 @@ public final class Constants {
     public static double popperSpinnerSpeed = 0.5;
     public static double minAngle = 0;//EncoderValue Not actuly an Angle
     public static double maxAngle = 730;//EncoderValue Not actuly an Angle
+    public static double PopperStep = 0.5;
+    public static double maxPosition = 3;
+    public static double minPosition = 0.5;
     
   }
 
