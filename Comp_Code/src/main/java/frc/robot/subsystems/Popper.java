@@ -77,6 +77,7 @@ public class Popper extends SubsystemBase {
   config.closedLoop.p(0.1);
   config.closedLoop.i(0);
   config.closedLoop.d(0);
+ 
   config.closedLoop.maxMotion.maxVelocity(4.00)
                             .maxAcceleration(12)
                             .allowedClosedLoopError(0.1);
@@ -185,6 +186,10 @@ public void updatePosition(){
   @Override
   public void periodic() {
     SmartDashboard.putNumber("PopperPosition", getPopperPosition());
+    SmartDashboard.putNumber("PopperVoltage", Rotater.getBusVoltage());
+    SmartDashboard.putNumber("PopperCurrent", Rotater.getOutputCurrent());
+    
+    
     //Not this will run the motors to pre set positions. Do not activate until tested.
     
     //this.updatePosition();

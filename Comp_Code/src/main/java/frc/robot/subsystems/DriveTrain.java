@@ -4,7 +4,7 @@
 
 package frc.robot.subsystems;
 import frc.robot.Constants;
-
+import frc.robot.commands.DriveTrain.DriveToTarget;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.DeferredCommand;
@@ -498,5 +498,9 @@ public class DriveTrain extends SubsystemBase {
     } else {
       rightTarget.set(true);
     }
+  }
+
+  public Supplier<Command> driveSupplier(){
+    return () -> new DriveToTarget(this);
   }
 }

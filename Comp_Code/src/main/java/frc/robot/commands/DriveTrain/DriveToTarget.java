@@ -70,6 +70,8 @@ public class DriveToTarget extends Command{
         finalPose = new Pose2d(new Translation2d(xTar,yTar), Rotation2d.fromDegrees(thetaTar));
         endGoalState = new GoalEndState(0.0, finalPose.getRotation());
         path = Pathfinding.getCurrentPath(constraints, endGoalState);
+        System.out.print("Here is the x value:");
+        System.out.println(xTar);
     }
 
     @Override

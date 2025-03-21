@@ -20,6 +20,7 @@ import frc.robot.commands.IntakeCommand;
 import java.io.File;
 import java.time.Period;
 import java.util.Set;
+import java.util.function.Supplier;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
@@ -137,15 +138,14 @@ public class RobotContainer {
       //                                                           () -> m_driverController.getRightY()));
     }
     
-    /*m_driverController.a().onTrue( m_driveTrain.driveToPose(new Pose2d(new Translation2d(5.509, 2.425), 
-                                                          new Rotation2d(Units.degreesToRadians(105)))
+    /*
+    * Auto Driving Commands- not currently working
+    m_driverController.a().onTrue( m_driveTrain.driveToPose(new Pose2d(new Translation2d(1.588, 0.799), 
+                                                          new Rotation2d(Units.degreesToRadians(40)))
                                                           ));
-*/
-    m_driverController.b().onTrue(m_driveTrain.driveToPose(new Pose2d(new Translation2d(xTarget.get(), yTarget.get()), 
-                                    new Rotation2d(thetaTarget.get()))
-                                       ));
-      
-      m_elevatorSubsystem.setDefaultCommand(m_elevatorSubsystem.holdCommand());
+
+    m_driverController.b().onTrue(Commands.defer(m_driveTrain.driveSupplier(), Set.of(m_driveTrain)));
+    */  
       
 
       m_driverController.x().onTrue(new IntakeCommand(m_intakeSubsystem, m_leds,() -> -0.5,true));
@@ -166,6 +166,7 @@ public class RobotContainer {
       m_driverController.povDown().onTrue(Commands.run(()-> m_popper.setPopperState(popperState.Start)));
 
       //Elevator Bindings
+      m_elevatorSubsystem.setDefaultCommand(m_elevatorSubsystem.holdCommand());
       m_operatorController.leftBumper().whileTrue(new ElevatorCommand(m_elevatorSubsystem,()->m_operatorController.getRightY()));
       
       //m_operatorController.a().onTrue(Commands.run(() -> m_elevatorSubsystem.setState(elevatorState.Load)));

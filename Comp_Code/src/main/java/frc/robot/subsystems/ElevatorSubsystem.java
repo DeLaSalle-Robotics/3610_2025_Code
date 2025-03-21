@@ -147,6 +147,7 @@ public class ElevatorSubsystem extends SubsystemBase {
       runElevator(0.0);
     }
     SmartDashboard.putNumber("Elevator Encoder", this.getPosition());
+    SmartDashboard.putNumber("Elevator Voltage", elevatorMotor.getMotorVoltage().getValueAsDouble());
     this.updatePosition();
   }
 
