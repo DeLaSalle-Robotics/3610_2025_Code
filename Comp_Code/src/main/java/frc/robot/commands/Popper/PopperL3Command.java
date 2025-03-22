@@ -43,7 +43,7 @@ public class PopperL3Command extends Command {
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
-        m_popper.PopperSpin();
+        m_popper.PopperSpinL3();
         targetPosition = targetPosition + Constants.Popper.PopperStep;
         m_popper.setPopperPosition(targetPosition);
     }

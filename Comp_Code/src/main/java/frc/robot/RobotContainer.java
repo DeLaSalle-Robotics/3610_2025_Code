@@ -58,7 +58,7 @@ public class RobotContainer {
  // private final DriveTrain driveTrain = new DriveTrain(new File(Filesystem.getDeployDirectory(),"swerve"));
   private final IntakeSubsystem m_intakeSubsystem = new IntakeSubsystem();
   private final Popper m_popper = new Popper();
-  private final ClimberSubsystem m_climber = new ClimberSubsystem();
+  //private final ClimberSubsystem m_climber = new ClimberSubsystem();
   private final ElevatorSubsystem m_elevatorSubsystem = new ElevatorSubsystem();
   private final DriveTrain m_driveTrain = new DriveTrain(new File(Filesystem.getDeployDirectory(),"swerve"));
   private final LedSubsystem m_leds = new LedSubsystem();
@@ -129,9 +129,9 @@ public class RobotContainer {
       
       m_driveTrain.setDefaultCommand(new AbsoluteFieldDrive(m_driveTrain, () -> -m_driverController.getLeftY(),
                                                                 () -> -m_driverController.getLeftX(), 
-                                                                () -> m_driverController.getRightX(),
-                                                                () -> m_driverController.getLeftTriggerAxis()<0.5));
-      
+                                                                () -> -m_driverController.getRightX(),
+                                                                () -> m_driverController.getRightTriggerAxis()<0.5));
+  
       // driveTrain.setDefaultCommand(new AbsoluteDrive(driveTrain, () -> m_driverController.getLeftX(), 
       //                                                           () -> m_driverController.getLeftY(),
       //                                                           () -> m_driverController.getRightX(),
@@ -147,38 +147,39 @@ public class RobotContainer {
     m_driverController.b().onTrue(Commands.defer(m_driveTrain.driveSupplier(), Set.of(m_driveTrain)));
     */  
       
-
-      m_driverController.x().onTrue(new IntakeCommand(m_intakeSubsystem, m_leds,() -> -0.5,true));
-      m_driverController.y().whileTrue(new IntakeCommand(m_intakeSubsystem, m_leds,() -> -0.5,false));
+    //Popper Binding
+    m_popper.setDefaultCommand(m_popper.rockAndRoll(0.0,0.0));
     
-      //Popper Binding
-      m_popper.setDefaultCommand(m_popper.rockAndRoll(0.0,0.0));
-
-      //m_operatorController.rightBumper().onTrue(m_popper.rockAndRoll(m_operatorController.getLeftY()));
-      m_driverController.leftBumper().whileTrue(m_popper.rock(() ->-0.11));
-      m_driverController.rightBumper().whileTrue(m_popper.rock(()->0.12));
+    //m_operatorController.rightBumper().onTrue(m_popper.rockAndRoll(m_operatorController.getLeftY()));
+    
+      //m_driverController.leftBumper().whileTrue(m_popper.rock(() ->-0.11));
+      //m_driverController.rightBumper().whileTrue(m_popper.rock(()->0.12));
       
-      m_driverController.b().whileTrue(m_popper.rockAndRoll(-0.11,-0.5));
-      m_driverController.a().whileTrue(m_popper.rockAndRoll(0,0.5));
+      //m_driverController.b().whileTrue(m_popper.rockAndRoll(-0.11,-0.5));
+      //m_driverController.a().whileTrue(m_popper.rockAndRoll(0,0.5));
+      m_driverController.start().onTrue(Commands.runOnce(() -> m_driveTrain.zeroGyro()));
   
-      m_driverController.povUp().onTrue(Commands.run(()-> m_popper.setPopperState(popperState.L3)));
-      m_driverController.povLeft().onTrue(Commands.run(()-> m_popper.setPopperState(popperState.L2)));
-      m_driverController.povDown().onTrue(Commands.run(()-> m_popper.setPopperState(popperState.Start)));
-
+      m_driverController.povUp().onTrue(Commands.runOnce(()-> m_popper.setPopperState(popperState.L3)));
+      m_driverController.povLeft().onTrue(Commands.runOnce(()-> m_popper.setPopperState(popperState.L2)));
+      m_driverController.povDown().onTrue(Commands.runOnce(()-> m_popper.setPopperState(popperState.Start)));
       //Elevator Bindings
-      m_elevatorSubsystem.setDefaultCommand(m_elevatorSubsystem.holdCommand());
-      m_operatorController.leftBumper().whileTrue(new ElevatorCommand(m_elevatorSubsystem,()->m_operatorController.getRightY()));
+      //m_elevatorSubsystem.setDefaultCommand(m_elevatorSubsystem.holdCommand());
       
-      //m_operatorController.a().onTrue(Commands.run(() -> m_elevatorSubsystem.setState(elevatorState.Load)));
-      //m_operatorController.x().onTrue(Commands.run(() -> m_elevatorSubsystem.setState(elevatorState.L1)));
-      //m_operatorController.b().onTrue(Commands.run(() -> m_elevatorSubsystem.setState(elevatorState.L2)));
-      //m_operatorController.y().onTrue(Commands.run(() -> m_elevatorSubsystem.setState(elevatorState.L3)));
-      m_operatorController.x().onTrue(new IntakeCommand(m_intakeSubsystem, m_leds,() -> -0.5,true));
-      m_operatorController.y().whileTrue(new IntakeCommand(m_intakeSubsystem, m_leds,() -> -0.5,false));
-      m_operatorController.b().whileTrue(new IntakeCommand(m_intakeSubsystem, m_leds, () -> 1, false));
-      m_operatorController.povRight().onTrue(Commands.run(()-> m_climber.setState(climberState.Out)));
-      m_operatorController.povUp().onTrue(Commands.run(()-> m_climber.setState(climberState.Start)));
-      m_operatorController.povUp().onTrue(Commands.run(()-> m_climber.setState(climberState.In)));
+      m_operatorController.x().onTrue(Commands.runOnce(() -> m_elevatorSubsystem.setState(elevatorState.Load)));
+      m_operatorController.a().onTrue(Commands.runOnce(() -> m_elevatorSubsystem.setState(elevatorState.L1)));
+      m_operatorController.b().onTrue(Commands.runOnce(() -> m_elevatorSubsystem.setState(elevatorState.L2)));
+      m_operatorController.y().onTrue(Commands.runOnce(() -> m_elevatorSubsystem.setState(elevatorState.L3)));  
+      m_operatorController.leftBumper().whileTrue(new IntakeCommand(m_intakeSubsystem, m_leds,() -> -0.5,true));
+      m_operatorController.rightBumper().whileTrue(new IntakeCommand(m_intakeSubsystem, m_leds,() -> -0.5,false));
+      m_operatorController.povDown().whileTrue(new IntakeCommand(m_intakeSubsystem, m_leds, () -> 0.8, false));
+      m_operatorController.start().whileTrue(new ElevatorCommand(m_elevatorSubsystem,()->m_operatorController.getRightY()));
+      
+      
+      //m_operatorController.x().onTrue(new IntakeCommand(m_intakeSubsystem, m_leds,() -> -0.5,true));
+      //m_operatorController.y().whileTrue(new IntakeCommand(m_intakeSubsystem, m_leds,() -> -0.5,false));
+      //m_operatorController.povRight().onTrue(Commands.run(()-> m_climber.setState(climberState.Out)));
+      //m_operatorController.povUp().onTrue(Commands.run(()-> m_climber.setState(climberState.Start)));
+      //m_operatorController.povUp().onTrue(Commands.run(()-> m_climber.setState(climberState.In)));
                                                             }
                                                           
  

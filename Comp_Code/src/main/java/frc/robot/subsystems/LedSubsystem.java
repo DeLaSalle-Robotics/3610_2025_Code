@@ -125,7 +125,7 @@ public class LedSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-        updateLeds(currentState);
+        //updateLeds(currentState);
     }
 
     @Override

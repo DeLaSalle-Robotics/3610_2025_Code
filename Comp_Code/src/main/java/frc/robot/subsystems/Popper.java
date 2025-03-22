@@ -40,7 +40,7 @@ import frc.robot.Constants;
 public class Popper extends SubsystemBase {
   private final SparkMax Rotater = new SparkMax(Constants.Popper.popperRotateID, MotorType.kBrushless);
   private final SparkMax Spinner = new SparkMax(Constants.Popper.popperSpinnerID, MotorType.kBrushless);
-  SparkMaxConfig rotaterConfig = new SparkMaxConfig();
+  
  
   //Some sort of gyro scope to set grasper position
   private final Encoder intakeArmEncoder = new Encoder(Constants.Popper.popperEncoderChannelA,Constants.Popper.popperEncoderChannelB, false, EncodingType.k4X);
@@ -66,26 +66,25 @@ public class Popper extends SubsystemBase {
 
  //Declaring the Subsystem \/
  public Popper() {
+  SparkMaxConfig rotaterConfig = new SparkMaxConfig();
   rotaterConfig.idleMode(IdleMode.kBrake);
-  Rotater.configure(rotaterConfig,ResetMode.kResetSafeParameters,PersistMode.kPersistParameters);
- 
+  
   initialPoint = intakeArmEncoder.get();
   //intakeArmEncoder.setDistancePerPulse(0.1758); //Degrees/Pulse
    
-  
-  SparkMaxConfig config = new SparkMaxConfig();
-  config.closedLoop.p(0.1);
-  config.closedLoop.i(0);
-  config.closedLoop.d(0);
+  rotaterConfig.closedLoop.p(150);
+  rotaterConfig.closedLoop.i(0);
+  rotaterConfig.closedLoop.d(0);
  
-  config.closedLoop.maxMotion.maxVelocity(4.00)
+  rotaterConfig.closedLoop.maxMotion.maxVelocity(15.00)
                             .maxAcceleration(12)
                             .allowedClosedLoopError(0.1);
 
-
+  Rotater.configure(rotaterConfig,ResetMode.kResetSafeParameters,PersistMode.kPersistParameters);
+ 
   intakeArmEncoder.setDistancePerPulse(0.1758); //Degrees/Pulse
  }
-private popperState currentState;
+private popperState currentState = popperState.Start;
 
 //Methods===================
 
@@ -115,15 +114,27 @@ public double getPopperPosition() {
 }
 
 public void setPopperPosition(double setPoint){
-  m_controller.setReference(setPoint, ControlType.kMAXMotionPositionControl);
-  
+  //m_controller.setReference(setPoint, ControlType.kMAXMotionPositionControl);
+  double currentPosition = intakeArmEncoder.getDistance();
+  double popperError = currentPosition-setPoint;
+  double popperVoltage = 0.08 * popperError;
+  Rotater.setVoltage(popperVoltage);
+
+  SmartDashboard.putNumber("Popper voltage", popperVoltage);
+  SmartDashboard.putNumber("Popper Error", popperError);
+  SmartDashboard.putNumber("Popper SetPoint", setPoint);
+  SmartDashboard.putNumber("Popper Position", currentPosition);
+
 }
 
 public void setPopperState(popperState newState){
   this.currentState = newState;
 }
-public void PopperSpin(){
+public void PopperSpinL3(){
   Spinner.set(Constants.Popper.popperSpinnerSpeed);
+}
+public void PopperSpinL2(){
+  Spinner.set(-Constants.Popper.popperSpinnerSpeed);
 }
 
 public void updatePosition(){
@@ -154,7 +165,7 @@ public void updatePosition(){
     return run(
         () -> {
           PopperMove(speed);
-          PopperSpin();
+          PopperSpinL2();
         });
   }
   
@@ -185,14 +196,17 @@ public void updatePosition(){
 
   @Override
   public void periodic() {
+    /*
     SmartDashboard.putNumber("PopperPosition", getPopperPosition());
-    SmartDashboard.putNumber("PopperVoltage", Rotater.getBusVoltage());
+    SmartDashboard.putNumber("PopperVoltage", Rotater.getAppliedOutput() );
     SmartDashboard.putNumber("PopperCurrent", Rotater.getOutputCurrent());
+    SmartDashboard.putString("PopperState",this.currentState.toString());
+    //SmartDashboard.putNumber("P", rotaterConfig);
+    */
     
+    //Note this will run the motors to pre set positions. Do not activate until tested.
     
-    //Not this will run the motors to pre set positions. Do not activate until tested.
-    
-    //this.updatePosition();
+    this.updatePosition();
 
 
   }

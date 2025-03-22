@@ -45,11 +45,11 @@ public final class Constants {
     public static final double holdValue = -0.04;
     public static final double threshold = 50;
     //Values of positions are rotations of the motor shaft.
-    public static final double Start_Position = 0;
-    public static final double L1_Position = 0;
-    public static final double L2_Position = -9.1;
-    public static final double L3_Position = -28.5;
-    public static final double Load_Position = -48.0;
+    public static final double Start_Position = -0.5;
+    public static final double L1_Position = -0.5;
+    public static final double Load_Position = -9.1;
+    public static final double L2_Position = -28.5;
+    public static final double L3_Position = -48.0;
     
   }
   public static class Popper {
@@ -58,16 +58,16 @@ public final class Constants {
      * not account for the gearing occurring with the sprockets.
      */
     public static final double Start_Position = 0;
-    public static final double L2_Position = 40;
-    public static final double L3_Position = 70;
+    public static final double L2_Position = 106.5;
+    public static final double L3_Position = 95.6;
     public static int popperRotateID = 14;
     public static int popperSpinnerID = 15;
     public static int popperEncoderChannelA = 2;
     public static int popperEncoderChannelB = 3;
-    public static double popperSpinnerSpeed = 0.5;
+    public static double popperSpinnerSpeed = 0;
     public static double minAngle = 0;//EncoderValue Not actuly an Angle
     public static double maxAngle = 730;//EncoderValue Not actuly an Angle
-    public static double PopperStep = 0.5;
+    public static double PopperStep = -0.05;
     public static double maxPosition = 3;
     public static double minPosition = 0.5;
     

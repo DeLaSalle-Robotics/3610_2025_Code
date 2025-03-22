@@ -43,16 +43,16 @@ public class ElevatorSubsystem extends SubsystemBase {
     public ElevatorSubsystem() {
     elevatorMotor.getConfigurator().apply(new TalonFXConfiguration());
     elevatorMotor.setNeutralMode(NeutralModeValue.Brake);
-    elevatorMotor.setInverted(true);
+    //elevatorMotor.setInverted(true);
     currentState = elevatorState.Start;
 
     var talonFXConfigs = new TalonFXConfiguration();
     var slot0Configs = talonFXConfigs.Slot0;
-    slot0Configs.kG = 0.24;
-    slot0Configs.kS = 0.0; // add 0.24 V to overcome friction
+    slot0Configs.kG = -0.28;
+    slot0Configs.kS = -0.72; // add 0.24 V to overcome friction
     slot0Configs.kV = 0.0; // apply 12 V for a target velocity of 100 rps
     // PID runs on position
-    slot0Configs.kP = 4.8;
+    slot0Configs.kP = 5;
     slot0Configs.kI = 0;
     slot0Configs.kD = 0;
     
@@ -143,12 +143,12 @@ public class ElevatorSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     if(getSensor() /*&& goingUp.get()*/){
-      zeroEncoders();
+      //zeroEncoders();
       runElevator(0.0);
     }
     SmartDashboard.putNumber("Elevator Encoder", this.getPosition());
     SmartDashboard.putNumber("Elevator Voltage", elevatorMotor.getMotorVoltage().getValueAsDouble());
-    this.updatePosition();
+    //this.updatePosition();
   }
 
   @Override
