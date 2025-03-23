@@ -148,7 +148,7 @@ public class RobotContainer {
     */  
       
     //Popper Binding
-    m_popper.setDefaultCommand(m_popper.rockAndRoll(0.0,0.0));
+    m_popper.setDefaultCommand(Commands.run(() -> m_popper.updatePosition()));
     
     //m_operatorController.rightBumper().onTrue(m_popper.rockAndRoll(m_operatorController.getLeftY()));
     

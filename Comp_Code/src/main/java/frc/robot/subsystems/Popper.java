@@ -6,6 +6,10 @@ package frc.robot.subsystems;
 
 import java.util.function.DoubleSupplier;
 
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.MotionMagicVoltage;
+import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.sim.SparkAbsoluteEncoderSim;
 import com.revrobotics.spark.SparkAbsoluteEncoder;
@@ -38,7 +42,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
 public class Popper extends SubsystemBase {
-  private final SparkMax Rotater = new SparkMax(Constants.Popper.popperRotateID, MotorType.kBrushless);
+  //private final SparkMax Rotater = new SparkMax(Constants.Popper.popperRotateID, MotorType.kBrushless);
+  private final TalonFX Rotater = new TalonFX(Constants.Popper.popperRotateID);
   private final SparkMax Spinner = new SparkMax(Constants.Popper.popperSpinnerID, MotorType.kBrushless);
   
  
@@ -47,16 +52,8 @@ public class Popper extends SubsystemBase {
   //private final DutyCycleEncoder intakeArmEncoder = new DutyCycleEncoder(2);
   public static final double armOffset = 83.0;
   private double setPoint = 0.0;
-
-  SparkClosedLoopController m_controller = Rotater.getClosedLoopController();
-
-  //Simulation
-  private final DCMotor Rotater_sim = DCMotor.getNEO(Constants.Popper.popperRotateID);
-  private final double m_armReduction = 5.0; // gear Ratio
-  private final double m_armMass = 2; //in kg
-  private final double m_armLength = Units.inchesToMeters(24);
-  private double priorArmVelocity = 0.0;
-  private static double armPositionRad = Math.PI/4;
+  
+  final MotionMagicVoltage m_motmag = new MotionMagicVoltage(0).withSlot(0);
   double initialPoint;
  public enum popperState{
   Start,
@@ -66,22 +63,28 @@ public class Popper extends SubsystemBase {
 
  //Declaring the Subsystem \/
  public Popper() {
-  SparkMaxConfig rotaterConfig = new SparkMaxConfig();
-  rotaterConfig.idleMode(IdleMode.kBrake);
-  
-  initialPoint = intakeArmEncoder.get();
+  Rotater.getConfigurator().apply(new TalonFXConfiguration());
+  Rotater.setNeutralMode(NeutralModeValue.Brake);
+      initialPoint = intakeArmEncoder.get();
   //intakeArmEncoder.setDistancePerPulse(0.1758); //Degrees/Pulse
    
-  rotaterConfig.closedLoop.p(150);
-  rotaterConfig.closedLoop.i(0);
-  rotaterConfig.closedLoop.d(0);
- 
-  rotaterConfig.closedLoop.maxMotion.maxVelocity(15.00)
-                            .maxAcceleration(12)
-                            .allowedClosedLoopError(0.1);
+  var talonFXConfigs = new TalonFXConfiguration();
+    var slot0Configs = talonFXConfigs.Slot0;
+    slot0Configs.kG = 0.74;
+    slot0Configs.kA = 0.01; // add 0.24 V to overcome friction
+    slot0Configs.kV = 0.63; // apply 12 V for a target velocity of 100 rps
+    // PID runs on position
+    slot0Configs.kP = 5;
+    slot0Configs.kI = 0;
+    slot0Configs.kD = 0;
+    
+    var motionMagicConfigs = talonFXConfigs.MotionMagic;
+    motionMagicConfigs.MotionMagicCruiseVelocity = 20; // 80 rps cruise velocity
+    motionMagicConfigs.MotionMagicAcceleration = 40; // 160 rps/s acceleration -> 0.5 to reach max speed
+    motionMagicConfigs.MotionMagicJerk = 1600; // 1600 rps/s^2 jerk (0.1 second)
 
-  Rotater.configure(rotaterConfig,ResetMode.kResetSafeParameters,PersistMode.kPersistParameters);
- 
+    Rotater.getConfigurator().apply(talonFXConfigs, 0.05);
+
   intakeArmEncoder.setDistancePerPulse(0.1758); //Degrees/Pulse
  }
 private popperState currentState = popperState.Start;
@@ -110,20 +113,12 @@ public double getPopperPosition() {
   *  not sufficiently sensitive to control the arm.
   */
   //return intakeArmEncoder.getDistance() - armOffset;
-  return Rotater.getEncoder().getPosition();
+  return Rotater.getRotorPosition().getValueAsDouble();
 }
 
 public void setPopperPosition(double setPoint){
   //m_controller.setReference(setPoint, ControlType.kMAXMotionPositionControl);
-  double currentPosition = intakeArmEncoder.getDistance();
-  double popperError = currentPosition-setPoint;
-  double popperVoltage = 0.08 * popperError;
-  Rotater.setVoltage(popperVoltage);
-
-  SmartDashboard.putNumber("Popper voltage", popperVoltage);
-  SmartDashboard.putNumber("Popper Error", popperError);
-  SmartDashboard.putNumber("Popper SetPoint", setPoint);
-  SmartDashboard.putNumber("Popper Position", currentPosition);
+  Rotater.setControl(m_motmag.withPosition(setPoint));
 
 }
 
@@ -206,7 +201,7 @@ public void updatePosition(){
     
     //Note this will run the motors to pre set positions. Do not activate until tested.
     
-    this.updatePosition();
+    //this.updatePosition();
 
 
   }
