@@ -5,33 +5,21 @@
     "data": {
       "commands": [
         {
-          "type": "wait",
+          "type": "path",
           "data": {
-            "waitTime": 0.0
+            "pathName": "Left to Close  J"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "L2 Algea Prep"
+            "name": "L3 Algea"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Mid to H-Close"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "L2 Algea"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "H-Close to H-L3 Score"
+            "pathName": "Close I to L3 I"
           }
         },
         {
@@ -56,6 +44,6 @@
     }
   },
   "resetOdom": true,
-  "folder": null,
+  "folder": "Left Autos",
   "choreoAuto": false
 }

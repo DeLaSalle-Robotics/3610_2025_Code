@@ -47,9 +47,58 @@
           }
         },
         {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "H to Source"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Load"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "autoIntake"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Source to G"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "L3 Raise"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "autoScore"
+          }
+        },
+        {
           "type": "named",
           "data": {
             "name": "Load"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "A to Source"
           }
         }
       ]

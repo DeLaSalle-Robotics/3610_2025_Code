@@ -11,6 +11,7 @@ import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.DriveTrain.AbsoluteDrive;
 import frc.robot.commands.DriveTrain.AbsoluteFieldDrive;
 import frc.robot.commands.DriveTrain.DriveToTarget;
+import frc.robot.commands.Popper.*;
 import frc.robot.subsystems.*;
 import frc.robot.subsystems.ClimberSubsystem.climberState;
 import frc.robot.subsystems.ElevatorSubsystem.elevatorState;
@@ -90,8 +91,14 @@ public class RobotContainer {
     configureBindings();
 
     // Register Named Commands
-    NamedCommands.registerCommand("Level3", Commands.run(() -> m_elevatorSubsystem.setState(elevatorState.L3)));
-    NamedCommands.registerCommand("Load", Commands.run(() -> m_elevatorSubsystem.setState(elevatorState.Load)));
+    NamedCommands.registerCommand("Level3", Commands.runOnce(() -> m_elevatorSubsystem.setState(elevatorState.L3)).
+                                              andThen(Commands.runOnce(() -> m_elevatorSubsystem.updatePosition())));
+    NamedCommands.registerCommand("L2 Algea Prep", Commands.runOnce(() -> m_popper.setPopperState(popperState.L2)).
+                                  andThen(Commands.runOnce(() -> m_popper.updatePosition())));
+    NamedCommands.registerCommand("L2 Algea", new PopperL2Command(m_popper).andThen(Commands.runOnce(() -> m_popper.updatePosition())));
+    NamedCommands.registerCommand("L3 Algea", new PopperL3Command(m_popper).andThen(Commands.runOnce(() -> m_popper.updatePosition())));
+    NamedCommands.registerCommand("Load", Commands.runOnce(() -> m_elevatorSubsystem.setState(elevatorState.Load)).
+                                              andThen(Commands.runOnce(() -> m_elevatorSubsystem.updatePosition())));
     NamedCommands.registerCommand("autoIntake", new IntakeCommand(m_intakeSubsystem, m_leds,() -> -0.5, true));
     NamedCommands.registerCommand("autoScore", new IntakeCommand(m_intakeSubsystem, m_leds, () ->  -0.5, false));
 

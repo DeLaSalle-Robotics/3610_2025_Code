@@ -3,10 +3,15 @@
   "robotLength": 0.8128,
   "holonomicMode": true,
   "pathFolders": [
+    "Score Paths",
     "Paths from Source",
-    "Paths to Source"
+    "Paths to Source",
+    "Start Paths"
   ],
-  "autoFolders": [],
+  "autoFolders": [
+    "Left Autos",
+    "Right Autos"
+  ],
   "defaultMaxVel": 3.0,
   "defaultMaxAccel": 3.0,
   "defaultMaxAngVel": 540.0,

@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 8.0,
-        "y": 4.0
+        "x": 5.089700307014439,
+        "y": 2.5857397543884475
       },
       "prevControl": null,
       "nextControl": {
-        "x": 7.018527159275748,
-        "y": 3.940204961428552
+        "x": 4.623782913875009,
+        "y": 2.2718415997210015
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 5.99470796585083,
-        "y": 4.201589131355286
+        "x": 1.6836698821612766,
+        "y": 0.7566901820046564
       },
       "prevControl": {
-        "x": 7.177219759195564,
-        "y": 4.308746528785902
+        "x": 2.1747961623328074,
+        "y": 1.1392115661076139
       },
       "nextControl": null,
       "isLocked": false,
@@ -31,14 +31,7 @@
   "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
-  "eventMarkers": [
-    {
-      "name": "L3 Raise",
-      "waypointRelativePos": 0.791177844684386,
-      "endWaypointRelativePos": null,
-      "command": null
-    }
-  ],
+  "eventMarkers": [],
   "globalConstraints": {
     "maxVelocity": 3.0,
     "maxAcceleration": 3.0,
@@ -49,13 +42,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 180.0
+    "rotation": 50.84706749922705
   },
   "reversed": false,
-  "folder": null,
+  "folder": "Paths to Source",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 180.0
+    "rotation": 121.56056826046914
   },
   "useDefaultConstraints": true
 }

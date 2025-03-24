@@ -5,15 +5,21 @@
     "data": {
       "commands": [
         {
-          "type": "wait",
+          "type": "path",
           "data": {
-            "waitTime": 0.0
+            "pathName": "Right to Close F"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "L3 Algea"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Mid to H"
+            "pathName": "Close F to L3 F"
           }
         },
         {
@@ -35,7 +41,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "H to Source"
+                  "pathName": "F to Source"
                 }
               },
               {
@@ -46,41 +52,11 @@
               }
             ]
           }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "autoIntake"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Source to F"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "L3 Raise"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "autoScore"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Load"
-          }
         }
       ]
     }
   },
   "resetOdom": true,
-  "folder": null,
+  "folder": "Right Autos",
   "choreoAuto": false
 }
