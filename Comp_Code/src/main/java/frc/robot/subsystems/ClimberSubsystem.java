@@ -61,11 +61,11 @@ public class ClimberSubsystem extends SubsystemBase {
 
   }
 
-  public void stopElevator(){
-    climberMotor.set(Constants.Elevator.holdValue);
+  public void stopClimber(){
+    climberMotor.set(0);
   }
 
-  public void runElevator(double speed){
+  public void runClimber(double speed){
   climberMotor.set(speed);
   }
 
@@ -111,7 +111,7 @@ public class ClimberSubsystem extends SubsystemBase {
   public Command holdCommand() {
     // Inline construction of command goes here.
     // Subsystem::RunOnce implicitly requires `this` subsystem.
-    return run(() -> stopElevator());
+    return run(() -> stopClimber());
   }
 
   /**
@@ -127,7 +127,7 @@ public class ClimberSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     SmartDashboard.putNumber("Climber Encoder", this.getClimberPosition());
-    this.updatePosition();
+    
   }
 
   @Override
