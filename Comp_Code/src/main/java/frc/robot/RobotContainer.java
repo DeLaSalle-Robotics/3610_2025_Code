@@ -155,7 +155,7 @@ public class RobotContainer {
     */  
       
     //Popper Binding
-    m_popper.setDefaultCommand(Commands.run(() -> m_popper.updatePosition()));
+    m_popper.setDefaultCommand(Commands.run(() -> m_popper.updatePosition(), m_popper));
     
     //m_operatorController.rightBumper().onTrue(m_popper.rockAndRoll(m_operatorController.getLeftY()));
     
@@ -170,7 +170,7 @@ public class RobotContainer {
       m_driverController.povLeft().onTrue(Commands.runOnce(()-> m_popper.setPopperState(popperState.L2)));
       m_driverController.povDown().onTrue(Commands.runOnce(()-> m_popper.setPopperState(popperState.Start)));
       //Elevator Bindings
-      m_elevatorSubsystem.setDefaultCommand(Commands.run(()-> m_elevatorSubsystem.updatePosition()));
+      m_elevatorSubsystem.setDefaultCommand(Commands.runOnce(()-> m_elevatorSubsystem.updatePosition(),m_elevatorSubsystem));
       
       m_operatorController.x().onTrue(Commands.runOnce(() -> m_elevatorSubsystem.setState(elevatorState.Load)));
       m_operatorController.a().onTrue(Commands.runOnce(() -> m_elevatorSubsystem.setState(elevatorState.L1)));
