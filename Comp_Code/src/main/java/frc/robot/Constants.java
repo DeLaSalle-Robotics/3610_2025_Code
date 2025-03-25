@@ -50,6 +50,7 @@ public final class Constants {
     public static final double Load_Position = -9.1;
     public static final double L2_Position = -28.5;
     public static final double L3_Position = -48.0;
+    public static final double Position_Error = 0.2;
     
   }
   public static class Popper {
@@ -70,7 +71,7 @@ public final class Constants {
     public static double PopperStep = -0.05;
     public static double maxPosition = 3;
     public static double minPosition = 0.5;
-    
+    public static final double Position_Error = 1.0;
   }
 
   public static class Led {

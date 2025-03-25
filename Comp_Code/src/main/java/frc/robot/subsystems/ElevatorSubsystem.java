@@ -119,6 +119,28 @@ public class ElevatorSubsystem extends SubsystemBase {
     }
   }
 
+    public double getGoalPosition(){
+      switch (this.currentState) {
+        case Start -> {
+          return(Constants.Elevator.Start_Position);
+        }
+        case Load -> {
+          return(Constants.Elevator.Load_Position);
+        }
+        case L1 -> {
+          return(Constants.Elevator.L1_Position);
+        }
+        case L2 -> {
+          return(Constants.Elevator.L2_Position);
+        }
+        case L3 -> {
+          return(Constants.Elevator.L3_Position);
+        }
+        default ->{
+          return(Constants.Elevator.Load_Position);
+        }
+      }
+    }
   /**
    * Example command factory method.
    *

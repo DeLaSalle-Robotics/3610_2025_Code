@@ -92,13 +92,23 @@ public class RobotContainer {
 
     // Register Named Commands
     NamedCommands.registerCommand("Level3", Commands.runOnce(() -> m_elevatorSubsystem.setState(elevatorState.L3)).
-                                              andThen(Commands.runOnce(() -> m_elevatorSubsystem.updatePosition())));
+                                              andThen(Commands.runOnce(() -> m_elevatorSubsystem.updatePosition()).until(
+                                    () -> Math.abs(m_elevatorSubsystem.getGoalPosition() - m_elevatorSubsystem.getPosition()) < Constants.Elevator.Position_Error
+                                  )));
     NamedCommands.registerCommand("L2 Algea Prep", Commands.runOnce(() -> m_popper.setPopperState(popperState.L2)).
-                                  andThen(Commands.runOnce(() -> m_popper.updatePosition())));
-    NamedCommands.registerCommand("L2 Algea", new PopperL2Command(m_popper).andThen(Commands.runOnce(() -> m_popper.updatePosition())));
-    NamedCommands.registerCommand("L3 Algea", new PopperL3Command(m_popper).andThen(Commands.runOnce(() -> m_popper.updatePosition())));
+                                  andThen(Commands.runOnce(() -> m_popper.updatePosition()).until(
+                                    () -> Math.abs(m_popper.getGoalPosition() - m_popper.getPopperPosition()) < Constants.Popper.Position_Error
+                                  )));
+    NamedCommands.registerCommand("L2 Algea", new PopperL2Command(m_popper).andThen(Commands.runOnce(() -> m_popper.updatePosition()).until(
+                                    () -> Math.abs(m_popper.getGoalPosition() - m_popper.getPopperPosition()) < Constants.Popper.Position_Error
+                                  )));
+    NamedCommands.registerCommand("L3 Algea", new PopperL3Command(m_popper).andThen(Commands.runOnce(() -> m_popper.updatePosition()).until(
+      () -> Math.abs(m_popper.getGoalPosition() - m_popper.getPopperPosition()) < Constants.Popper.Position_Error
+                                  )));
     NamedCommands.registerCommand("Load", Commands.runOnce(() -> m_elevatorSubsystem.setState(elevatorState.Load)).
-                                              andThen(Commands.runOnce(() -> m_elevatorSubsystem.updatePosition())));
+                                              andThen(Commands.runOnce(() -> m_elevatorSubsystem.updatePosition()).until(
+                                    () -> Math.abs(m_elevatorSubsystem.getGoalPosition() - m_elevatorSubsystem.getPosition()) < Constants.Elevator.Position_Error
+                                  )));
     NamedCommands.registerCommand("autoIntake", new IntakeCommand(m_intakeSubsystem, m_leds,() -> -0.5, true));
     NamedCommands.registerCommand("autoScore", new IntakeCommand(m_intakeSubsystem, m_leds, () ->  -0.5, false));
 
@@ -155,7 +165,9 @@ public class RobotContainer {
     */  
       
     //Popper Binding
-    m_popper.setDefaultCommand(Commands.run(() -> m_popper.updatePosition(), m_popper));
+    m_popper.setDefaultCommand(Commands.run(() -> m_popper.updatePosition(), m_popper).until(
+      () -> Math.abs(m_popper.getGoalPosition() - m_popper.getPopperPosition()) < Constants.Popper.Position_Error
+    ));
     
     //m_operatorController.rightBumper().onTrue(m_popper.rockAndRoll(m_operatorController.getLeftY()));
     
@@ -170,7 +182,9 @@ public class RobotContainer {
       m_driverController.povLeft().onTrue(Commands.runOnce(()-> m_popper.setPopperState(popperState.L2)));
       m_driverController.povDown().onTrue(Commands.runOnce(()-> m_popper.setPopperState(popperState.Start)));
       //Elevator Bindings
-      m_elevatorSubsystem.setDefaultCommand(Commands.runOnce(()-> m_elevatorSubsystem.updatePosition(),m_elevatorSubsystem));
+      m_elevatorSubsystem.setDefaultCommand(Commands.runOnce(()-> m_elevatorSubsystem.updatePosition(),m_elevatorSubsystem).until(
+        () -> Math.abs(m_elevatorSubsystem.getGoalPosition() - m_elevatorSubsystem.getPosition()) < Constants.Elevator.Position_Error
+      ));
       
       m_operatorController.x().onTrue(Commands.runOnce(() -> m_elevatorSubsystem.setState(elevatorState.Load)));
       m_operatorController.a().onTrue(Commands.runOnce(() -> m_elevatorSubsystem.setState(elevatorState.L1)));

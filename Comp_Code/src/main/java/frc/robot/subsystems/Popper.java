@@ -148,6 +148,23 @@ public void updatePosition(){
     }
   }
 }
+
+public double getGoalPosition(){
+  switch (this.currentState) {
+    case Start -> {
+      return(Constants.Popper.Start_Position);
+    }
+    case L2 -> {
+      return(Constants.Popper.L2_Position);
+    }
+    case L3 -> {
+      return(Constants.Popper.L3_Position);
+    }
+    default ->{
+      return(Constants.Popper.Start_Position);
+    }
+  }
+}
 //Commands====================================
 /**
    * This command will allow spinning and moving of the Popper arm.
