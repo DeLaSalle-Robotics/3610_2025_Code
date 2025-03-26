@@ -8,6 +8,7 @@ import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.Autos;
 import frc.robot.commands.ElevatorCommand;
 import frc.robot.commands.IntakeCommand;
+import frc.robot.commands.PopperCommand;
 import frc.robot.commands.DriveTrain.AbsoluteDrive;
 import frc.robot.commands.DriveTrain.AbsoluteFieldDrive;
 import frc.robot.commands.DriveTrain.DriveToTarget;
@@ -91,7 +92,7 @@ public class RobotContainer {
     configureBindings();
 
     // Register Named Commands
-    NamedCommands.registerCommand("Level3", Commands.runOnce(() -> m_elevatorSubsystem.setState(elevatorState.L3)).
+    NamedCommands.registerCommand("L3 Raise", Commands.runOnce(() -> m_elevatorSubsystem.setState(elevatorState.L3)).
                                               andThen(Commands.runOnce(() -> m_elevatorSubsystem.updatePosition()).until(
                                     () -> Math.abs(m_elevatorSubsystem.getGoalPosition() - m_elevatorSubsystem.getPosition()) < Constants.Elevator.Position_Error
                                   )));
@@ -165,14 +166,13 @@ public class RobotContainer {
     */  
       
     //Popper Binding
-    m_popper.setDefaultCommand(Commands.run(() -> m_popper.updatePosition(), m_popper).until(
-      () -> Math.abs(m_popper.getGoalPosition() - m_popper.getPopperPosition()) < Constants.Popper.Position_Error
-    ));
+    
+    m_popper.setDefaultCommand(new PopperCommand(m_popper));
     
     //m_operatorController.rightBumper().onTrue(m_popper.rockAndRoll(m_operatorController.getLeftY()));
     
-      //m_driverController.leftBumper().whileTrue(m_popper.rock(() ->-0.11));
-      //m_driverController.rightBumper().whileTrue(m_popper.rock(()->0.12));
+      //m_driverController.leftBumper().whileTrue(m_popper.rock(() -> (m_driverController.getLeftTriggerAxis())));
+      //m_driverController.rightBumper().whileTrue(m_popper.rock(()->(-m_driverController.getRightTriggerAxis())));
       
       //m_driverController.b().whileTrue(m_popper.rockAndRoll(-0.11,-0.5));
       //m_driverController.a().whileTrue(m_popper.rockAndRoll(0,0.5));
@@ -181,11 +181,17 @@ public class RobotContainer {
       m_driverController.povUp().onTrue(Commands.runOnce(()-> m_popper.setPopperState(popperState.L3)));
       m_driverController.povLeft().onTrue(Commands.runOnce(()-> m_popper.setPopperState(popperState.L2)));
       m_driverController.povDown().onTrue(Commands.runOnce(()-> m_popper.setPopperState(popperState.Start)));
+      
+      m_driverController.leftBumper().onTrue(new PopperL2Command(m_popper));
+      m_driverController.rightBumper().onTrue(new PopperL3Command(m_popper));
+
       //Elevator Bindings
+      /*
       m_elevatorSubsystem.setDefaultCommand(Commands.runOnce(()-> m_elevatorSubsystem.updatePosition(),m_elevatorSubsystem).until(
         () -> Math.abs(m_elevatorSubsystem.getGoalPosition() - m_elevatorSubsystem.getPosition()) < Constants.Elevator.Position_Error
       ));
-      
+      */
+
       m_operatorController.x().onTrue(Commands.runOnce(() -> m_elevatorSubsystem.setState(elevatorState.Load)));
       m_operatorController.a().onTrue(Commands.runOnce(() -> m_elevatorSubsystem.setState(elevatorState.L1)));
       m_operatorController.b().onTrue(Commands.runOnce(() -> m_elevatorSubsystem.setState(elevatorState.L2)));

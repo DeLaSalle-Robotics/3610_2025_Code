@@ -70,11 +70,11 @@ public class Popper extends SubsystemBase {
    
   var talonFXConfigs = new TalonFXConfiguration();
     var slot0Configs = talonFXConfigs.Slot0;
-    slot0Configs.kG = 0.74;
-    slot0Configs.kA = 0.01; // add 0.24 V to overcome friction
-    slot0Configs.kV = 0.63; // apply 12 V for a target velocity of 100 rps
+    slot0Configs.kG = 0;
+    slot0Configs.kA = 0;
+    slot0Configs.kV = 0;
     // PID runs on position
-    slot0Configs.kP = 5;
+    slot0Configs.kP = 1.5;
     slot0Configs.kI = 0;
     slot0Configs.kD = 0;
     
@@ -84,7 +84,7 @@ public class Popper extends SubsystemBase {
     motionMagicConfigs.MotionMagicJerk = 1600; // 1600 rps/s^2 jerk (0.1 second)
 
     Rotater.getConfigurator().apply(talonFXConfigs, 0.05);
-
+    Rotater.setPosition(0);
   intakeArmEncoder.setDistancePerPulse(0.1758); //Degrees/Pulse
  }
 private popperState currentState = popperState.Start;
@@ -93,6 +93,8 @@ private popperState currentState = popperState.Start;
 
 public void PopperMove(Double speed) {
   SmartDashboard.putNumber("RockSpeed", speed);
+  Rotater.set(speed);
+  /*
   if (Math.abs(speed) > 0.01) {
     double popperPosition = this.getPopperPosition();
     if (popperPosition > Constants.Popper.maxAngle-50  && speed < 0){
@@ -100,11 +102,11 @@ public void PopperMove(Double speed) {
     } else if (popperPosition < Constants.Popper.minAngle+50 && speed > 0) {
       Rotater.set(0);
     } else {
-      Rotater.set(speed);
     }
   } else {
     Rotater.set(0);
   }
+  */
 }
 
 public double getPopperPosition() {
@@ -208,13 +210,14 @@ public double getGoalPosition(){
 
   @Override
   public void periodic() {
-    /*
+    
     SmartDashboard.putNumber("PopperPosition", getPopperPosition());
-    SmartDashboard.putNumber("PopperVoltage", Rotater.getAppliedOutput() );
-    SmartDashboard.putNumber("PopperCurrent", Rotater.getOutputCurrent());
+    SmartDashboard.putNumber("PopperVoltage", Rotater.getMotorVoltage().getValueAsDouble());
+    SmartDashboard.putNumber("PopperCurrent", Rotater.getStatorCurrent().getValueAsDouble());
     SmartDashboard.putString("PopperState",this.currentState.toString());
+    
     //SmartDashboard.putNumber("P", rotaterConfig);
-    */
+    
     
     //Note this will run the motors to pre set positions. Do not activate until tested.
     

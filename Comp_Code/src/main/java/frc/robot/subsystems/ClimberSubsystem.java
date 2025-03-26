@@ -126,7 +126,7 @@ public class ClimberSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    SmartDashboard.putNumber("Climber Encoder", this.getClimberPosition());
+    //SmartDashboard.putNumber("Climber Encoder", this.getClimberPosition());
     
   }
 

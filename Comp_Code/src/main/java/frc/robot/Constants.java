@@ -58,19 +58,19 @@ public final class Constants {
      * SparkMax encoder (i.e. not the through-bore). These do
      * not account for the gearing occurring with the sprockets.
      */
-    public static final double Start_Position = 0;
-    public static final double L2_Position = 106.5;
-    public static final double L3_Position = 95.6;
+    public static final double Start_Position = -0.263671875;
+    public static final double L2_Position = -13.20849609375;
+    public static final double L3_Position = -11.79150390625;
     public static int popperRotateID = 14;
     public static int popperSpinnerID = 15;
     public static int popperEncoderChannelA = 2;
     public static int popperEncoderChannelB = 3;
-    public static double popperSpinnerSpeed = 0;
+    public static double popperSpinnerSpeed = 0.5;
     public static double minAngle = 0;//EncoderValue Not actuly an Angle
     public static double maxAngle = 730;//EncoderValue Not actuly an Angle
-    public static double PopperStep = -0.05;
-    public static double maxPosition = 3;
-    public static double minPosition = 0.5;
+    public static double PopperStep = -0.1;
+    public static double maxPosition = -13;
+    public static double minPosition = -10;
     public static final double Position_Error = 1.0;
   }
 
