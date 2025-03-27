@@ -14,6 +14,7 @@ import java.util.function.DoubleSupplier;
 import edu.wpi.first.networktables.BooleanPublisher;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 
 /** An example command that uses an example subsystem. */
@@ -40,20 +41,21 @@ public class ElevatorPosition extends Command {
     // Called when the command is initially scheduled.
     @Override
     public void initialize() {
-
+        SmartDashboard.putString("Elevator Command","Start");
     }
 
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
         elevator.setPosition(position);
-
+        SmartDashboard.putString("Elevator Command","Running");
     }
 
     // Called once the command ends or is interrupted.
     @Override
     public void end(boolean interrupted) {
         elevator.stopElevator();
+        SmartDashboard.putString("Elevator Command","Ended");
     }
 
     // Returns true when the command should end.

@@ -36,7 +36,7 @@ public class PopperL2Command extends Command {
     // Called when the command is initially scheduled.
     @Override
     public void initialize() {
-
+        SmartDashboard.putString("L2 Popper Command","Started");
         initialPopperPosition = m_popper.getPopperPosition();
         targetPosition = initialPopperPosition;
     }
@@ -48,13 +48,15 @@ public class PopperL2Command extends Command {
         m_popper.PopperSpinL2();
         targetPosition = targetPosition - Constants.Popper.PopperStep;
         m_popper.setPopperPosition(targetPosition);
+        SmartDashboard.putString("L2 Popper Command","Running");
     }
 
     // Called once the command ends or is interrupted.
     @Override
     public void end(boolean interrupted) {
         //m_popper.setPopperState(popperState.Start);
-        
+        m_popper.PopperSpinStop();
+        SmartDashboard.putString("L2 Popper Command","Ended");
     }
 
     // Returns true when the command should end.

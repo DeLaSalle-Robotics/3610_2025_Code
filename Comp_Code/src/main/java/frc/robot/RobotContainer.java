@@ -57,7 +57,6 @@ import com.pathplanner.lib.auto.NamedCommands;
  */
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
- // private final DriveTrain driveTrain = new DriveTrain(new File(Filesystem.getDeployDirectory(),"swerve"));
   private final IntakeSubsystem m_intakeSubsystem = new IntakeSubsystem();
   private final Popper m_popper = new Popper();
   //private final ClimberSubsystem m_climber = new ClimberSubsystem();
@@ -65,7 +64,7 @@ public class RobotContainer {
   private final DriveTrain m_driveTrain = new DriveTrain(new File(Filesystem.getDeployDirectory(),"swerve"));
   private final LedSubsystem m_leds = new LedSubsystem();
 
-  // Allows picking autonomous routines from SmartDashboard
+   // Allows picking autonomous routines from SmartDashboard
   private final SendableChooser<Command> m_autoChooser;
   
   DoubleSubscriber xTarget;
@@ -87,27 +86,33 @@ public class RobotContainer {
     yTarget = table.getDoubleTopic("yTar").subscribe(0);
     thetaTarget = table.getDoubleTopic("thetaTar").subscribe(0);
       
-       
+      //Putting Subsystem Data on the Smartdashboard
+    SmartDashboard.putData("Popper Data", m_popper);
+    SmartDashboard.putData("Elevator Data", m_elevatorSubsystem);
+    //SmartDashboard.putData("Climber Data", m_climber);
+    SmartDashboard.putData("Intake Data", m_intakeSubsystem);
+
+  
     // Configure the trigger bindings
     configureBindings();
 
     // Register Named Commands
     NamedCommands.registerCommand("L3 Raise", Commands.runOnce(() -> m_elevatorSubsystem.setState(elevatorState.L3)).
-                                              andThen(Commands.runOnce(() -> m_elevatorSubsystem.updatePosition()).until(
+                                              andThen(Commands.run(() -> m_elevatorSubsystem.updatePosition()).until(
                                     () -> Math.abs(m_elevatorSubsystem.getGoalPosition() - m_elevatorSubsystem.getPosition()) < Constants.Elevator.Position_Error
                                   )));
     NamedCommands.registerCommand("L2 Algea Prep", Commands.runOnce(() -> m_popper.setPopperState(popperState.L2)).
-                                  andThen(Commands.runOnce(() -> m_popper.updatePosition()).until(
+                                  andThen(Commands.run(() -> m_popper.updatePosition()).until(
                                     () -> Math.abs(m_popper.getGoalPosition() - m_popper.getPopperPosition()) < Constants.Popper.Position_Error
                                   )));
-    NamedCommands.registerCommand("L2 Algea", new PopperL2Command(m_popper).andThen(Commands.runOnce(() -> m_popper.updatePosition()).until(
+    NamedCommands.registerCommand("L2 Algea", new PopperL2Command(m_popper).andThen(Commands.run(() -> m_popper.updatePosition()).until(
                                     () -> Math.abs(m_popper.getGoalPosition() - m_popper.getPopperPosition()) < Constants.Popper.Position_Error
                                   )));
-    NamedCommands.registerCommand("L3 Algea", new PopperL3Command(m_popper).andThen(Commands.runOnce(() -> m_popper.updatePosition()).until(
+    NamedCommands.registerCommand("L3 Algea", new PopperL3Command(m_popper).andThen(Commands.run(() -> m_popper.updatePosition()).until(
       () -> Math.abs(m_popper.getGoalPosition() - m_popper.getPopperPosition()) < Constants.Popper.Position_Error
                                   )));
     NamedCommands.registerCommand("Load", Commands.runOnce(() -> m_elevatorSubsystem.setState(elevatorState.Load)).
-                                              andThen(Commands.runOnce(() -> m_elevatorSubsystem.updatePosition()).until(
+                                              andThen(Commands.run(() -> m_elevatorSubsystem.updatePosition()).until(
                                     () -> Math.abs(m_elevatorSubsystem.getGoalPosition() - m_elevatorSubsystem.getPosition()) < Constants.Elevator.Position_Error
                                   )));
     NamedCommands.registerCommand("autoIntake", new IntakeCommand(m_intakeSubsystem, m_leds,() -> -0.5, true));

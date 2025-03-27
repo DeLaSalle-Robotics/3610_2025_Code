@@ -6,19 +6,12 @@ package frc.robot.commands;
 
 import frc.robot.Constants;
 import frc.robot.subsystems.Popper;
-import frc.robot.subsystems.Popper.popperState;
-
-import java.util.function.DoubleSupplier;
-
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 
 /** An example command that uses an example subsystem. */
 public class PopperCommand extends Command {
     @SuppressWarnings({ "PMD.UnusedPrivateField", "PMD.SingularField" })
     private final Popper m_popper;
-    private double targetPosition;
-    private double initialPopperPosition;
     /**
      * Goal of this Command is to control the Popper arm movement 
      * down through the Algea position to a defined arc. Meant to

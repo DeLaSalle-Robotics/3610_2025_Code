@@ -133,7 +133,9 @@ public void PopperSpinL3(){
 public void PopperSpinL2(){
   Spinner.set(-Constants.Popper.popperSpinnerSpeed);
 }
-
+public void PopperSpinStop(){
+  Spinner.set(0);
+}
 public void updatePosition(){
   switch (this.currentState) {
     case Start -> {
