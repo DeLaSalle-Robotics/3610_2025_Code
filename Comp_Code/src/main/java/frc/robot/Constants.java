@@ -60,7 +60,9 @@ public final class Constants {
      */
     public static final double Start_Position = -0.263671875;
     public static final double L2_Position = -13.20849609375;
+    public static final double L2Plus_Position = -15.0;
     public static final double L3_Position = -11.79150390625;
+    public static final double L3Plus_Position = -13.0;
     public static int popperRotateID = 14;
     public static int popperSpinnerID = 15;
     public static int popperEncoderChannelA = 2;

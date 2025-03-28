@@ -187,8 +187,8 @@ public class RobotContainer {
       m_driverController.povLeft().onTrue(Commands.runOnce(()-> m_popper.setPopperState(popperState.L2)));
       m_driverController.povDown().onTrue(Commands.runOnce(()-> m_popper.setPopperState(popperState.Start)));
       
-      m_driverController.leftBumper().onTrue(new PopperL2Command(m_popper));
-      m_driverController.rightBumper().onTrue(new PopperL3Command(m_popper));
+      m_driverController.leftBumper().onTrue(new PopperL2Remove(m_popper));
+      m_driverController.rightBumper().onTrue(new PopperL3Remove(m_popper));
 
       //Elevator Bindings
       /*

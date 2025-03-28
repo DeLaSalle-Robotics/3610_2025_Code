@@ -58,7 +58,9 @@ public class Popper extends SubsystemBase {
  public enum popperState{
   Start,
   L2,
-  L3
+  L2Plus,
+  L3,
+  L3Plus
  }
 
  //Declaring the Subsystem \/
@@ -146,6 +148,12 @@ public void updatePosition(){
     }
     case L3 -> {
       this.setPopperPosition(Constants.Popper.L3_Position);
+    }
+    case L2Plus -> {
+      this.setPopperPosition(Constants.Popper.L2Plus_Position);
+    }
+    case L3Plus -> {
+      this.setPopperPosition(Constants.Popper.L3Plus_Position);
     }
     default ->{
       this.setPopperPosition(Constants.Popper.Start_Position);
