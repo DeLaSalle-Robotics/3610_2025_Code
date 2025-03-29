@@ -35,15 +35,41 @@
           }
         },
         {
-          "type": "named",
+          "type": "parallel",
           "data": {
-            "name": "L3 Raise"
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "L3 Raise"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Stow Popper"
+                }
+              }
+            ]
           }
         },
         {
-          "type": "named",
+          "type": "race",
           "data": {
-            "name": "autoScore"
+            "commands": [
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 0.5
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "autoScore"
+                }
+              }
+            ]
           }
         },
         {
@@ -84,9 +110,22 @@
           }
         },
         {
-          "type": "named",
+          "type": "race",
           "data": {
-            "name": "autoScore"
+            "commands": [
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 0.5
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "autoScore"
+                }
+              }
+            ]
           }
         },
         {
@@ -105,6 +144,6 @@
     }
   },
   "resetOdom": true,
-  "folder": null,
+  "folder": "Mid Autos",
   "choreoAuto": false
 }
