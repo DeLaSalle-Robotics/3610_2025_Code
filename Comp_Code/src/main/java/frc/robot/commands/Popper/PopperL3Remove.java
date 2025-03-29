@@ -42,7 +42,7 @@ public class PopperL3Remove extends Command {
     @Override
     public void execute() {
         SmartDashboard.putNumber("PoperTargetPostiton", m_popper.getGoalPosition());
-        m_popper.PopperSpinL2();
+        m_popper.PopperSpinL3();
         m_popper.updatePosition();
         SmartDashboard.putString("L3 Popper Remove","Running");
     }

@@ -172,6 +172,12 @@ public double getGoalPosition(){
     case L3 -> {
       return(Constants.Popper.L3_Position);
     }
+    case L2Plus ->{
+      return(-14.2);
+    }
+    case L3Plus -> {
+      return(Constants.Popper.L3Plus_Position);
+    }
     default ->{
       return(Constants.Popper.Start_Position);
     }
@@ -183,13 +189,16 @@ public double getGoalPosition(){
    *
    * @return a rockAndRoll Command
    */
-  public Command rockAndRoll(double speed,double spinSpeed) {
+  public Command rockAndRoll(DoubleSupplier speed,DoubleSupplier spinSpeed) {
     // Inline construction of command goes here.
     // Subsystem::RunOnce implicitly requires `this` subsystem.
     return run(
         () -> {
-          PopperMove(speed);
-          PopperSpinL2();
+          PopperMove(speed.getAsDouble());
+          if(spinSpeed.getAsDouble() >= 0.2){
+            Spinner.set(0.2);  
+          }
+          else{Spinner.set(spinSpeed.getAsDouble());}
         });
   }
   
@@ -225,6 +234,8 @@ public double getGoalPosition(){
     SmartDashboard.putNumber("PopperVoltage", Rotater.getMotorVoltage().getValueAsDouble());
     SmartDashboard.putNumber("PopperCurrent", Rotater.getStatorCurrent().getValueAsDouble());
     SmartDashboard.putString("PopperState",this.currentState.toString());
+    SmartDashboard.putNumber("PopperGoal", getGoalPosition());
+    SmartDashboard.putNumber("PopperError", Math.abs(getPopperPosition() - getGoalPosition()));
     
     //SmartDashboard.putNumber("P", rotaterConfig);
     

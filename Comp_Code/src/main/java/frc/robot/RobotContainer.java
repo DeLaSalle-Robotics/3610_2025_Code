@@ -105,9 +105,11 @@ public class RobotContainer {
                                   andThen(Commands.run(() -> m_popper.updatePosition()).until(
                                     () -> Math.abs(m_popper.getGoalPosition() - m_popper.getPopperPosition()) < Constants.Popper.Position_Error
                                   )));
-    NamedCommands.registerCommand("L2 Algea", new PopperL2Command(m_popper).andThen(Commands.run(() -> m_popper.updatePosition()).until(
+    NamedCommands.registerCommand("Stow Popper", Commands.runOnce(() -> m_popper.setPopperState(popperState.Start)).
+                                  andThen(Commands.run(() -> m_popper.updatePosition()).until(
                                     () -> Math.abs(m_popper.getGoalPosition() - m_popper.getPopperPosition()) < Constants.Popper.Position_Error
                                   )));
+    NamedCommands.registerCommand("L2 Algea", new PopperL2Command(m_popper));
     NamedCommands.registerCommand("L3 Algea", new PopperL3Command(m_popper).andThen(Commands.run(() -> m_popper.updatePosition()).until(
       () -> Math.abs(m_popper.getGoalPosition() - m_popper.getPopperPosition()) < Constants.Popper.Position_Error
                                   )));
@@ -116,7 +118,7 @@ public class RobotContainer {
                                     () -> Math.abs(m_elevatorSubsystem.getGoalPosition() - m_elevatorSubsystem.getPosition()) < Constants.Elevator.Position_Error
                                   )));
     NamedCommands.registerCommand("autoIntake", new IntakeCommand(m_intakeSubsystem, m_leds,() -> -0.5, true));
-    NamedCommands.registerCommand("autoScore", new IntakeCommand(m_intakeSubsystem, m_leds, () ->  -0.5, false));
+    NamedCommands.registerCommand("autoScore", new IntakeCommand(m_intakeSubsystem, m_leds, () ->  -0.5, true));
 
     // Build an auto chooser
     m_autoChooser = AutoBuilder.buildAutoChooser();
@@ -172,7 +174,9 @@ public class RobotContainer {
       
     //Popper Binding
     
-    m_popper.setDefaultCommand(new PopperCommand(m_popper));
+    //m_popper.setDefaultCommand(new PopperCommand(m_popper));
+    m_popper.setDefaultCommand(m_popper.rockAndRoll(() -> m_operatorController.getRightY(), () -> m_operatorController.getLeftY()));
+    m_operatorController.back().whileTrue(new PopperCommand(m_popper));
     
     //m_operatorController.rightBumper().onTrue(m_popper.rockAndRoll(m_operatorController.getLeftY()));
     
@@ -191,19 +195,21 @@ public class RobotContainer {
       m_driverController.rightBumper().onTrue(new PopperL3Remove(m_popper));
 
       //Elevator Bindings
-      /*
+      
       m_elevatorSubsystem.setDefaultCommand(Commands.runOnce(()-> m_elevatorSubsystem.updatePosition(),m_elevatorSubsystem).until(
         () -> Math.abs(m_elevatorSubsystem.getGoalPosition() - m_elevatorSubsystem.getPosition()) < Constants.Elevator.Position_Error
       ));
-      */
+      
 
       m_operatorController.x().onTrue(Commands.runOnce(() -> m_elevatorSubsystem.setState(elevatorState.Load)));
       m_operatorController.a().onTrue(Commands.runOnce(() -> m_elevatorSubsystem.setState(elevatorState.L1)));
       m_operatorController.b().onTrue(Commands.runOnce(() -> m_elevatorSubsystem.setState(elevatorState.L2)));
       m_operatorController.y().onTrue(Commands.runOnce(() -> m_elevatorSubsystem.setState(elevatorState.L3)));  
-      m_operatorController.leftBumper().whileTrue(new IntakeCommand(m_intakeSubsystem, m_leds,() -> -0.5,true));
-      m_operatorController.rightBumper().whileTrue(new IntakeCommand(m_intakeSubsystem, m_leds,() -> -0.5,false));
-      m_operatorController.povDown().whileTrue(new IntakeCommand(m_intakeSubsystem, m_leds, () -> 0.8, false));
+      m_operatorController.leftBumper().whileTrue(new IntakeCommand(m_intakeSubsystem, m_leds,() -> -0.3,true));
+      //m_operatorController.rightBumper().whileTrue(new IntakeCommand(m_intakeSubsystem, m_leds,() -> -0.5,false));
+      m_operatorController.povDown().whileTrue(new IntakeCommand(m_intakeSubsystem, m_leds, () -> 0.8, true));
+      
+      
       m_operatorController.start().whileTrue(new ElevatorCommand(m_elevatorSubsystem,()->m_operatorController.getRightY()));
       
       
