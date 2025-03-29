@@ -65,6 +65,8 @@ public class AbsoluteFieldDrive extends Command {
     ChassisSpeeds desiredSpeeds = swerve.getTargetSpeeds(vX.getAsDouble(), vY.getAsDouble(),
                                                       new Rotation2d(heading2 * Math.PI));
     Translation2d translation = SwerveController.getTranslation2d(desiredSpeeds);
+    Translation2d fieldVelocity=SwerveController.getTranslation2d(swerve.getFieldVelocity());
+    if (!(translation.equals(fieldVelocity))) {
     translation = SwerveMath.limitVelocity(translation, swerve.getFieldVelocity(),
                                             swerve.getPose(),
                                             Constants.Swerve.LOOP_TIME, 
@@ -77,7 +79,7 @@ public class AbsoluteFieldDrive extends Command {
     SmartDashboard.putNumber("AFD Heading2", desiredSpeeds.omegaRadiansPerSecond);
 
     swerve.drive(translation, heading2 * Math.PI, relativeToField.getAsBoolean(), false);
-
+  }
   }
 
   // Called once the command ends or is interrupted.
