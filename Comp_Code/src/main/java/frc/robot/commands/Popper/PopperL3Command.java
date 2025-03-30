@@ -39,7 +39,7 @@ public class PopperL3Command extends Command {
 
         initialPopperPosition = m_popper.getPopperPosition();
         targetPosition = initialPopperPosition;
-        SmartDashboard.putString("L3 Popper Command","Started");
+        if (Constants.Verbose) {SmartDashboard.putString("L3 Popper Command","Started");}
     }
 
     // Called every time the scheduler runs while the command is scheduled.
@@ -48,7 +48,7 @@ public class PopperL3Command extends Command {
         m_popper.PopperSpinL3();
         targetPosition = targetPosition + Constants.Popper.PopperStep;
         m_popper.setPopperPosition(targetPosition);
-        SmartDashboard.putString("L3 Popper Command","Running");
+        if (Constants.Verbose) {SmartDashboard.putString("L3 Popper Command","Running");}
     }
 
     // Called once the command ends or is interrupted.
@@ -56,7 +56,7 @@ public class PopperL3Command extends Command {
     public void end(boolean interrupted) {
         m_popper.setPopperState(popperState.L2);
         m_popper.PopperSpinStop();
-        SmartDashboard.putString("L3 Popper Command","Ended");
+        if (Constants.Verbose) {SmartDashboard.putString("L3 Popper Command","Ended");}
     }
 
     // Returns true when the command should end.

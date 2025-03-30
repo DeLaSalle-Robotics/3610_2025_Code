@@ -34,17 +34,18 @@ public class PopperL3Remove extends Command {
     // Called when the command is initially scheduled.
     @Override
     public void initialize() {
-        SmartDashboard.putString("L3 Popper Remove","Started");
+        if (Constants.Verbose) {SmartDashboard.putString("L3 Popper Remove","Started");}
         m_popper.setPopperState(popperState.L3Plus);
     }
 
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
-        SmartDashboard.putNumber("PoperTargetPostiton", m_popper.getGoalPosition());
+        if (Constants.Verbose) {SmartDashboard.putNumber("PoperTargetPostiton", m_popper.getGoalPosition());
+        SmartDashboard.putString("L3 Popper Remove","Running");}
         m_popper.PopperSpinL2();
         m_popper.updatePosition();
-        SmartDashboard.putString("L3 Popper Remove","Running");
+        
     }
 
     // Called once the command ends or is interrupted.
@@ -52,7 +53,7 @@ public class PopperL3Remove extends Command {
     public void end(boolean interrupted) {
         //m_popper.setPopperState(popperState.Start);
         m_popper.PopperSpinStop();
-        SmartDashboard.putString("L3 Popper Remove","Ended");
+        if (Constants.Verbose) {SmartDashboard.putString("L3 Popper Remove","Ended");}
     }
 
     // Returns true when the command should end.

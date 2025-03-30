@@ -21,6 +21,9 @@ import swervelib.math.Matter;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
+
+  public static boolean Verbose = false;
+
   public static class Swerve {
     public static final double MAX_SPEED = 4.5;
     public static final double LOOP_TIME = 0.13;

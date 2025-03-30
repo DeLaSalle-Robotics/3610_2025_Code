@@ -6,9 +6,9 @@ package frc.robot.subsystems;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
+//import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+//import java.util.Map;
 import java.util.Optional;
 import java.util.function.Supplier;
 import java.awt.Desktop;
@@ -74,8 +74,9 @@ public class Vision extends SubsystemBase {
   
 
   final private boolean visionTroubleShoot = false;
-
-  private List<Number> scoringTargets = Arrays.asList(6, 7, 8, 9, 10, 11, 22, 17, 18, 19, 20, 21);
+  // This array was designed to aid in defining apriltags useful for targeting.
+  //private List<Number> scoringTargets = Arrays.asList(6, 7, 8, 9, 10, 11, 22, 17, 18, 19, 20, 21);
+  
   /**
    * Current pose from the pose estimator using wheel odometry.
    */
@@ -85,7 +86,7 @@ public class Vision extends SubsystemBase {
    */
   private Field2d field2d;
 
-  
+  /*
   public enum LevelTarget {
     Level1, Level2, Level3
   }
@@ -95,8 +96,10 @@ public class Vision extends SubsystemBase {
   DoublePublisher yTarget;
   DoublePublisher thetaTarget;
 
-  Map<Integer, Pose2d> RtargetLookup = new HashMap<Integer, Pose2d>();
-  Map<Integer, Pose2d> LtargetLookup = new HashMap<Integer, Pose2d>();
+  //Map<Integer, Pose2d> RtargetLookup = new HashMap<Integer, Pose2d>();
+  //Map<Integer, Pose2d> LtargetLookup = new HashMap<Integer, Pose2d>();
+  */
+  
   /**
      * Constructor for the Vision class.
      *
@@ -132,7 +135,7 @@ public class Vision extends SubsystemBase {
         openSimCameraViews();
         }
 
-       
+       /*The following was removed to address memory issues with the Rio1
         //Red AprilTag Targets
         RtargetLookup.put(6,new Pose2d(541.75,123.67,new Rotation2d(300)));
         RtargetLookup.put(7,new Pose2d(546.87,145.5,new Rotation2d(0)));
@@ -178,7 +181,7 @@ public class Vision extends SubsystemBase {
         thetaTarget.set(0);
 
         rightTarget = table.getBooleanTopic("rightTarget").subscribe(false);
-
+*/
   }
   /**
    * Calculates a target pose relative to an AprilTag on the field.
@@ -649,12 +652,13 @@ public class Vision extends SubsystemBase {
     // Query some boolean state, such as a digital sensor.
     return false;
   }
-
+ 
   /**
    * This method is designed to return a Pose2d for the desired Scoring Position
    * based on current position and selected targets.
    */
-  public void getTargetPose(){
+/*
+   public void getTargetPose(){
     Pose2d target;
     for (PhotonPipelineResult result : Cameras.FRONT_CAM.resultsList)
     {
@@ -676,7 +680,7 @@ public class Vision extends SubsystemBase {
           } 
         }
       }
-
+*/
 
 
 

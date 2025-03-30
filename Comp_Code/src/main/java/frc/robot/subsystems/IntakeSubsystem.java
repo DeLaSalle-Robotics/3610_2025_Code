@@ -36,7 +36,7 @@ public class IntakeSubsystem extends SubsystemBase {
         boolean has = sensor.get();
         if (has != hasCoral) {
             hasCoral = has;
-            SmartDashboard.putBoolean("Has Coral", has);
+            if (Constants.Verbose) {SmartDashboard.putBoolean("Has Coral", has);}
         }
         /*
         if (sensor.get() && !hasCoral) {

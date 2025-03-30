@@ -71,10 +71,11 @@ public class AbsoluteFieldDrive extends Command {
                                             Constants.Swerve.ROBOT_MASS, 
                                             List.of(Constants.Swerve.CHASSIS), 
                                             swerve.getSwerveDriveConfiguration());
-    SmartDashboard.putNumber("LimitedTranslation", translation.getX());
+    if (Constants.Verbose)
+    {SmartDashboard.putNumber("LimitedTranslation", translation.getX());
     SmartDashboard.putString("Translation", translation.toString());
     SmartDashboard.putNumber("AFD Heading", heading2 * Math.PI);
-    SmartDashboard.putNumber("AFD Heading2", desiredSpeeds.omegaRadiansPerSecond);
+    SmartDashboard.putNumber("AFD Heading2", desiredSpeeds.omegaRadiansPerSecond);}
 
     swerve.drive(translation, heading2 * Math.PI, relativeToField.getAsBoolean(), false);
 
