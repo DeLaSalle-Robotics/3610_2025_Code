@@ -14,7 +14,6 @@ import frc.robot.commands.DriveTrain.AbsoluteFieldDrive;
 import frc.robot.commands.DriveTrain.DriveToTarget;
 import frc.robot.commands.Popper.*;
 import frc.robot.subsystems.*;
-import frc.robot.subsystems.ClimberSubsystem.climberState;
 import frc.robot.subsystems.ElevatorSubsystem.elevatorState;
 import frc.robot.subsystems.Popper.popperState;
 import frc.robot.commands.IntakeCommand;
@@ -59,17 +58,17 @@ public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   private final IntakeSubsystem m_intakeSubsystem = new IntakeSubsystem();
   private final Popper m_popper = new Popper();
-  //private final ClimberSubsystem m_climber = new ClimberSubsystem();
   private final ElevatorSubsystem m_elevatorSubsystem = new ElevatorSubsystem();
   private final DriveTrain m_driveTrain = new DriveTrain(new File(Filesystem.getDeployDirectory(),"swerve"));
   private final LedSubsystem m_leds = new LedSubsystem();
 
    // Allows picking autonomous routines from SmartDashboard
   private final SendableChooser<Command> m_autoChooser;
-  
+  /*
   DoubleSubscriber xTarget;
   DoubleSubscriber yTarget;
   DoubleSubscriber thetaTarget;
+*/
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
   private final CommandXboxController m_driverController =
@@ -80,18 +79,18 @@ public class RobotContainer {
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
+    /*
     NetworkTableInstance inst = NetworkTableInstance.getDefault();
     NetworkTable table = inst.getTable("datatable");
     xTarget = table.getDoubleTopic("xTar").subscribe(0);
     yTarget = table.getDoubleTopic("yTar").subscribe(0);
     thetaTarget = table.getDoubleTopic("thetaTar").subscribe(0);
-      
+    */  
       //Putting Subsystem Data on the Smartdashboard
-    SmartDashboard.putData("Popper Data", m_popper);
+    if (Constants.Verbose) {SmartDashboard.putData("Popper Data", m_popper);
     SmartDashboard.putData("Elevator Data", m_elevatorSubsystem);
-    //SmartDashboard.putData("Climber Data", m_climber);
-    SmartDashboard.putData("Intake Data", m_intakeSubsystem);
-    
+    SmartDashboard.putData("Intake Data", m_intakeSubsystem);}
+
   
     // Configure the trigger bindings
     configureBindings();

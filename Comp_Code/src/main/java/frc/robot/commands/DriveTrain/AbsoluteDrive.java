@@ -95,9 +95,10 @@ public class AbsoluteDrive extends Command
     translation = SwerveMath.limitVelocity(translation, swerve.getFieldVelocity(), swerve.getPose(),
                                            Constants.Swerve.LOOP_TIME, Constants.Swerve.ROBOT_MASS, List.of(Constants.Swerve.CHASSIS),
                                            swerve.getSwerveDriveConfiguration());
+    if (Constants.Verbose) {
     SmartDashboard.putNumber("LimitedTranslation", translation.getX());
     SmartDashboard.putString("Translation", translation.toString());
-
+    }
     // Make the robot move
     swerve.drive(translation, desiredSpeeds.omegaRadiansPerSecond, true, false);
 

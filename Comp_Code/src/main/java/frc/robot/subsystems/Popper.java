@@ -94,7 +94,7 @@ private popperState currentState = popperState.Start;
 //Methods===================
 
 public void PopperMove(Double speed) {
-  SmartDashboard.putNumber("RockSpeed", speed);
+  if (Constants.Verbose) {SmartDashboard.putNumber("RockSpeed", speed);}
   Rotater.set(speed);
   /*
   if (Math.abs(speed) > 0.01) {
@@ -231,12 +231,13 @@ public double getGoalPosition(){
   @Override
   public void periodic() {
     
-    SmartDashboard.putNumber("PopperPosition", getPopperPosition());
+    if (Constants.Verbose) {SmartDashboard.putNumber("PopperPosition", getPopperPosition());
     SmartDashboard.putNumber("PopperVoltage", Rotater.getMotorVoltage().getValueAsDouble());
     SmartDashboard.putNumber("PopperCurrent", Rotater.getStatorCurrent().getValueAsDouble());
     SmartDashboard.putString("PopperState",this.currentState.toString());
     SmartDashboard.putNumber("PopperGoal", getGoalPosition());
     SmartDashboard.putNumber("PopperError", Math.abs(getPopperPosition() - getGoalPosition()));
+  }
     
     //SmartDashboard.putNumber("P", rotaterConfig);
     
