@@ -45,14 +45,14 @@ public final class Constants {
     public static final int elevatorMotorId = 18;
     public static final int sensorId = 0;
 
-    public static final double holdValue = -0.04;
+    public static final double holdValue = 0.04;
     public static final double threshold = 50;
     //Values of positions are rotations of the motor shaft.
-    public static final double Start_Position = -1;
-    public static final double L1_Position = -1;
-    public static final double Load_Position = -9.6;
-    public static final double L2_Position = -29;
-    public static final double L3_Position = -49.0;
+    public static final double Start_Position = 1;
+    public static final double L1_Position = 1;
+    public static final double Load_Position = 9.6;
+    public static final double L2_Position = 29;
+    public static final double L3_Position = 49.0;
     public static final double Position_Error = 0.2;
     
   }

@@ -13,6 +13,7 @@ import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.networktables.BooleanSubscriber;
@@ -45,13 +46,14 @@ public class ElevatorSubsystem extends SubsystemBase {
     public ElevatorSubsystem() {
     elevatorMotor.getConfigurator().apply(new TalonFXConfiguration());
     elevatorMotor.setNeutralMode(NeutralModeValue.Brake);
+    
     //elevatorMotor.setInverted(true);
     currentState = elevatorState.Start;
 
     var talonFXConfigs = new TalonFXConfiguration();
     var slot0Configs = talonFXConfigs.Slot0;
-    slot0Configs.kG = -0.28;
-    slot0Configs.kS = -0.72; // add 0.24 V to overcome friction
+    slot0Configs.kG = 0.28;
+    slot0Configs.kS = 0.72; // add 0.24 V to overcome friction
     slot0Configs.kV = 0.0; // apply 12 V for a target velocity of 100 rps
     // PID runs on position
     slot0Configs.kP = 5;
@@ -62,6 +64,11 @@ public class ElevatorSubsystem extends SubsystemBase {
     motionMagicConfigs.MotionMagicCruiseVelocity = 80; // 80 rps cruise velocity
     motionMagicConfigs.MotionMagicAcceleration = 160; // 160 rps/s acceleration -> 0.5 to reach max speed
     motionMagicConfigs.MotionMagicJerk = 1600; // 1600 rps/s^2 jerk (0.1 second)
+    
+    talonFXConfigs.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+    talonFXConfigs.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+    talonFXConfigs.CurrentLimits.StatorCurrentLimit=20;
+    talonFXConfigs.CurrentLimits.StatorCurrentLimitEnable = true;
 
     elevatorMotor.getConfigurator().apply(talonFXConfigs, 0.05);
 
@@ -156,9 +163,10 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     @Override
   public void periodic() {
+    //This should zero the encoder and reset elevator state to Start if the bottom limit is hit.
     if(getSensor() /*&& goingUp.get()*/){
-      //zeroEncoders();
-      runElevator(0.0);
+      this.zeroEncoders();
+      this.setState(elevatorState.Start);
     }
     if (Constants.Verbose) {SmartDashboard.putNumber("Elevator Encoder", this.getPosition());
     SmartDashboard.putNumber("Elevator Voltage", elevatorMotor.getMotorVoltage().getValueAsDouble());}
