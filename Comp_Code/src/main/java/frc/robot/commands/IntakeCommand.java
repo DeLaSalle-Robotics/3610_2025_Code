@@ -19,6 +19,7 @@ public class IntakeCommand extends Command {
     private final LedSubsystem led;
     private boolean stopOnSensor;
     private DoubleSupplier speed;
+    private boolean startState;
     /**
      * Creates a new ExampleCommand.
      *
@@ -36,7 +37,7 @@ public class IntakeCommand extends Command {
     // Called when the command is initially scheduled.
     @Override
     public void initialize() {
-
+        startState = intake.detectCoral();
     }
 
     // Called every time the scheduler runs while the command is scheduled.
@@ -50,8 +51,8 @@ public class IntakeCommand extends Command {
     public void end(boolean interrupted) {
         intake.stopIntake();
         LedState ledState = led.getState();
+        led.setState(ledState.Idle);
         if (ledState == LedState.HasCoral){
-            led.setState(ledState.Idle);
         } else {
             led.setState(ledState.HasCoral);
         }
@@ -60,6 +61,6 @@ public class IntakeCommand extends Command {
     // Returns true when the command should end.
     @Override
     public boolean isFinished() {
-        return (intake.detectCoral() && stopOnSensor);
+        return (intake.detectCoral() != startState && stopOnSensor);
     }
 }

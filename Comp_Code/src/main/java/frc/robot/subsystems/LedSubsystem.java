@@ -91,7 +91,7 @@ public class LedSubsystem extends SubsystemBase {
                 this.setAllLeds(Color.kGreen);
             }
             case Idle -> {
-                this.setAllLeds(Color.kBlack);
+                rainbow();
             }
             default -> {
                 setAllLeds(Color.kBlack);
@@ -125,7 +125,8 @@ public class LedSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-        //updateLeds(currentState);
+        updateLeds(currentState);
+        SmartDashboard.putString("LED State", ledStateToString(this.getState()));
     }
 
     @Override

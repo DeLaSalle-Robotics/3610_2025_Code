@@ -17,27 +17,54 @@
           }
         },
         {
-          "type": "path",
+          "type": "race",
           "data": {
-            "pathName": "Mid to H-Close"
+            "commands": [
+              {
+                "type": "sequential",
+                "data": {
+                  "commands": [
+                    {
+                      "type": "path",
+                      "data": {
+                        "pathName": "Mid to H-Close"
+                      }
+                    },
+                    {
+                      "type": "path",
+                      "data": {
+                        "pathName": "H-Close to H-L3 Score"
+                      }
+                    }
+                  ]
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "L2 Algea"
+                }
+              }
+            ]
           }
         },
         {
-          "type": "named",
+          "type": "parallel",
           "data": {
-            "name": "L2 Algea"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "H-Close to H-L3 Score"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "L3 Raise"
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "L3 Raise"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Stow Popper"
+                }
+              }
+            ]
           }
         },
         {
@@ -56,6 +83,6 @@
     }
   },
   "resetOdom": true,
-  "folder": null,
+  "folder": "Mid Autos",
   "choreoAuto": false
 }

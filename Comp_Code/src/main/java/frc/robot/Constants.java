@@ -63,14 +63,14 @@ public final class Constants {
      */
     public static final double Start_Position = -0.263671875;
     public static final double L2_Position = -13.20849609375;
-    public static final double L2Plus_Position = -15.0;
-    public static final double L3_Position = -11.79150390625;
-    public static final double L3Plus_Position = -13.0;
+    public static final double L2Plus_Position = -13;
+    public static final double L3_Position = -13.0;
+    public static final double L3Plus_Position = -16.0;
     public static int popperRotateID = 14;
     public static int popperSpinnerID = 15;
     public static int popperEncoderChannelA = 2;
     public static int popperEncoderChannelB = 3;
-    public static double popperSpinnerSpeed = 0.5;
+    public static double popperSpinnerSpeed = 0.2;
     public static double minAngle = 0;//EncoderValue Not actuly an Angle
     public static double maxAngle = 730;//EncoderValue Not actuly an Angle
     public static double PopperStep = -0.1;
