@@ -6,12 +6,11 @@ package frc.robot;
 
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.Autos;
-import frc.robot.commands.ElevatorCommand;
 import frc.robot.commands.IntakeCommand;
-import frc.robot.commands.PopperCommand;
 import frc.robot.commands.DriveTrain.AbsoluteDrive;
 import frc.robot.commands.DriveTrain.AbsoluteFieldDrive;
 import frc.robot.commands.DriveTrain.DriveToTarget;
+import frc.robot.commands.Elevator.ElevatorCommand;
 import frc.robot.commands.Popper.*;
 import frc.robot.subsystems.*;
 import frc.robot.subsystems.ElevatorSubsystem.elevatorState;
@@ -143,10 +142,6 @@ public class RobotContainer {
                                                                 () -> m_driverController.getLeftY(),
                                                                 () -> m_driverController.getRightX(), 
                                                                 m_driverController.x()));
-      // driveTrain.setDefaultCommand(new AbsoluteDrive(driveTrain, () -> m_driverController.getLeftX(), 
-      //                                                           () -> m_driverController.getLeftY(),
-      //                                                           () -> m_driverController.getRightX(),
-      //                                                           () -> m_driverController.getRightY()));
       
     } else 
     {
@@ -155,11 +150,6 @@ public class RobotContainer {
                                                                 () -> -m_driverController.getLeftX(), 
                                                                 () -> -m_driverController.getRightX(),
                                                                 () -> m_driverController.getRightTriggerAxis()<0.5));
-  
-      // driveTrain.setDefaultCommand(new AbsoluteDrive(driveTrain, () -> m_driverController.getLeftX(), 
-      //                                                           () -> m_driverController.getLeftY(),
-      //                                                           () -> m_driverController.getRightX(),
-      //                                                           () -> m_driverController.getRightY()));
     }
     
     /*
