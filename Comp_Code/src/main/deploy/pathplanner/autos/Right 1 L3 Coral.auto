@@ -5,9 +5,22 @@
     "data": {
       "commands": [
         {
-          "type": "path",
+          "type": "parallel",
           "data": {
-            "pathName": "Right to Close F"
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Right to Close F"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "L2 Algea Prep"
+                }
+              }
+            ]
           }
         },
         {
@@ -32,6 +45,12 @@
           "type": "named",
           "data": {
             "name": "autoScore"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Load"
           }
         }
       ]

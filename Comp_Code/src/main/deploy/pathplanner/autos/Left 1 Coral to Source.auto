@@ -5,9 +5,22 @@
     "data": {
       "commands": [
         {
-          "type": "path",
+          "type": "parallel",
           "data": {
-            "pathName": "Left to Close  J"
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Left to Close  J"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "L2 Algea Prep"
+                }
+              }
+            ]
           }
         },
         {
