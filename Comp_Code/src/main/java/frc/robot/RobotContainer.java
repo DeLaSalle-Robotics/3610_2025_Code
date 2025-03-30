@@ -136,6 +136,7 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
+    //Drivetrain Bindings
     if(Robot.isSimulation()) {
       
       m_driveTrain.setDefaultCommand(new AbsoluteFieldDrive(m_driveTrain, () -> m_driverController.getLeftX(), 
@@ -151,7 +152,7 @@ public class RobotContainer {
                                                                 () -> -m_driverController.getRightX(),
                                                                 () -> m_driverController.getRightTriggerAxis()<0.5));
     }
-    
+    m_driverController.start().onTrue(Commands.runOnce(() -> m_driveTrain.zeroGyro()));
     /*
     * Auto Driving Commands- not currently working
     m_driverController.a().onTrue( m_driveTrain.driveToPose(new Pose2d(new Translation2d(1.588, 0.799), 
@@ -160,32 +161,40 @@ public class RobotContainer {
 
     m_driverController.b().onTrue(Commands.defer(m_driveTrain.driveSupplier(), Set.of(m_driveTrain)));
     */  
-      
-    //Popper Binding
-    
-    m_popper.setDefaultCommand(new PopperCommand(m_popper));
+     
+    //Elevator Bindings
+    /*Default command updates position continuously until goal is met - Although it is not clear that the until means anything
+      * given that the command restarts immediatly after.
+    */
     m_elevatorSubsystem.setDefaultCommand(Commands.runOnce(()-> m_elevatorSubsystem.updatePosition(),m_elevatorSubsystem).until(
         () -> Math.abs(m_elevatorSubsystem.getGoalPosition() - m_elevatorSubsystem.getPosition()) < Constants.Elevator.Position_Error
       ));
-    //m_popper.setDefaultCommand(m_popper.rockAndRoll(() -> m_operatorController.getRightY(), () -> m_operatorController.getLeftY()));
-    //m_operatorController.back().whileTrue(new PopperCommand(m_popper));
-    
-    
-    m_driverController.start().onTrue(Commands.runOnce(() -> m_driveTrain.zeroGyro()));
-     
+      m_operatorController.x().onTrue(Commands.runOnce(() -> m_elevatorSubsystem.setState(elevatorState.Load)));
+      m_operatorController.a().onTrue(Commands.runOnce(() -> m_elevatorSubsystem.setState(elevatorState.L1)));
+      m_operatorController.b().onTrue(Commands.runOnce(() -> m_elevatorSubsystem.setState(elevatorState.L2)));
+      m_operatorController.y().onTrue(Commands.runOnce(() -> m_elevatorSubsystem.setState(elevatorState.L3)));  
 
+      m_operatorController.rightTrigger(0.9).whileTrue(new ElevatorCommand(m_elevatorSubsystem, () -> m_operatorController.getLeftY()));
     
+      //Popper Binding
+    /*
+     * Default Popper command is meant to continuously update the position of the popper arm
+    */
+    m_popper.setDefaultCommand(new PopperCommand(m_popper));
+        
+    //Popper Movement
     m_operatorController.povLeft().onTrue(Commands.runOnce(()-> m_popper.setPopperState(popperState.L3)));
     m_operatorController.povDown().onTrue(Commands.runOnce(()-> m_popper.setPopperState(popperState.Start)));
-    m_operatorController.povRight().whileTrue(new PopperL2Remove(m_popper));
+    m_operatorController.leftTrigger(0.9).whileTrue(m_popper.rock(() -> m_operatorController.getRightY()));
+    
+    //Popper Commands
+    m_operatorController.povRight().whileTrue(new PopperL2Remove(m_popper)); //Note this command doesn't end on its
     m_operatorController.povUp().onTrue(new PopperL3Remove(m_popper));
     
     m_operatorController.back().onTrue(Commands.runOnce(() -> m_elevatorSubsystem.zeroEncoders()));
+    m_operatorController.start().onTrue(Commands.runOnce(() -> m_popper.zeroArm()));
     
-    m_operatorController.x().onTrue(Commands.runOnce(() -> m_elevatorSubsystem.setState(elevatorState.Load)));
-    m_operatorController.a().onTrue(Commands.runOnce(() -> m_elevatorSubsystem.setState(elevatorState.L1)));
-    m_operatorController.b().onTrue(Commands.runOnce(() -> m_elevatorSubsystem.setState(elevatorState.L2)));
-    m_operatorController.y().onTrue(Commands.runOnce(() -> m_elevatorSubsystem.setState(elevatorState.L3)));  
+    
     m_operatorController.leftBumper().whileTrue(new IntakeCommand(m_intakeSubsystem, m_leds,() -> -0.3,true));
     m_operatorController.rightBumper().whileTrue(new IntakeCommand(m_intakeSubsystem, m_leds, () -> 0.8, true));
     

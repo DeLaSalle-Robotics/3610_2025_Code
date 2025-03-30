@@ -53,6 +53,7 @@ public class IntakeCommand extends Command {
         LedState ledState = led.getState();
         led.setState(ledState.Idle);
         if (ledState == LedState.HasCoral){
+            
         } else {
             led.setState(ledState.HasCoral);
         }
