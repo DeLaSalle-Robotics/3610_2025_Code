@@ -59,6 +59,6 @@ public class PopperL2Remove extends Command {
     // Returns true when the command should end.
     @Override
     public boolean isFinished() {
-        return (Math.abs(m_popper.getPopperPosition() - m_popper.getGoalPosition()) < Constants.Popper.Position_Error);
+        return false;
     }
 }

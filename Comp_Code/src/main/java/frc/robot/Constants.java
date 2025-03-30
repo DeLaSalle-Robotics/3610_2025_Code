@@ -48,11 +48,11 @@ public final class Constants {
     public static final double holdValue = -0.04;
     public static final double threshold = 50;
     //Values of positions are rotations of the motor shaft.
-    public static final double Start_Position = -0.5;
-    public static final double L1_Position = -0.5;
-    public static final double Load_Position = -9.1;
-    public static final double L2_Position = -28.5;
-    public static final double L3_Position = -48.0;
+    public static final double Start_Position = -1;
+    public static final double L1_Position = -1;
+    public static final double Load_Position = -9.6;
+    public static final double L2_Position = -29;
+    public static final double L3_Position = -49.0;
     public static final double Position_Error = 0.2;
     
   }
@@ -89,8 +89,8 @@ public final class Constants {
     public static final int climberID = 17;
 
     public static final double Start_Position = 0;
-    public static final double Down_Position = 0;
-    public static final double Climb_Position = -9.1;
+    public static final double Down_Position = -31.50146484375;
+    public static final double Climb_Position = 25.166015625;
 
 
   }
