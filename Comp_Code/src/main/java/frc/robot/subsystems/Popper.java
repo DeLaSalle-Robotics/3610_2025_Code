@@ -126,6 +126,7 @@ public void setPopperPosition(double setPoint){
 
 }
 
+public void zeroArm
 public void setPopperState(popperState newState){
   this.currentState = newState;
 }

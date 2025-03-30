@@ -43,11 +43,11 @@ public class ClimberSubsystem extends SubsystemBase {
 
     var talonFXConfigs = new TalonFXConfiguration();
     var slot0Configs = talonFXConfigs.Slot0;
-    slot0Configs.kG = 0.24;
+    slot0Configs.kG = 0.0;
     slot0Configs.kS = 0.0; // add 0.24 V to overcome friction
     slot0Configs.kV = 0.0; // apply 12 V for a target velocity of 100 rps
     // PID runs on position
-    slot0Configs.kP = 4.8;
+    slot0Configs.kP = 1;
     slot0Configs.kI = 0;
     slot0Configs.kD = 0;
     
@@ -58,7 +58,7 @@ public class ClimberSubsystem extends SubsystemBase {
     motionMagicConfigs.MotionMagicJerk = 1600; // 1600 rps/s^2 jerk (0.1 second)
 
     climberMotor.getConfigurator().apply(talonFXConfigs, 0.05);
-
+    climberMotor.setPosition(0);
   }
 
   public void stopClimber(){
@@ -103,6 +103,9 @@ public class ClimberSubsystem extends SubsystemBase {
     }
   }
 
+  public String getState(){
+    return this.currentState.toString();
+  }
   /**
    * Example command factory method.
    *
@@ -126,8 +129,11 @@ public class ClimberSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    //SmartDashboard.putNumber("Climber Encoder", this.getClimberPosition());
-    
+    SmartDashboard.putNumber("Climber Encoder", this.getClimberPosition());
+    this.updatePosition();
+    SmartDashboard.putNumber("CLimber Curent", climberMotor.getStatorCurrent().getValueAsDouble());
+    SmartDashboard.putString("Climber State", this.getState());
+
   }
 
   @Override
