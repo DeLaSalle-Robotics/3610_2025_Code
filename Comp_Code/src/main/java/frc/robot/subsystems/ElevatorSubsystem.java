@@ -65,7 +65,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     motionMagicConfigs.MotionMagicAcceleration = 160; // 160 rps/s acceleration -> 0.5 to reach max speed
     motionMagicConfigs.MotionMagicJerk = 1600; // 1600 rps/s^2 jerk (0.1 second)
     
-    talonFXConfigs.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+    talonFXConfigs.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
     talonFXConfigs.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     talonFXConfigs.CurrentLimits.StatorCurrentLimit=20;
     talonFXConfigs.CurrentLimits.StatorCurrentLimitEnable = true;
@@ -164,12 +164,14 @@ public class ElevatorSubsystem extends SubsystemBase {
     @Override
   public void periodic() {
     //This should zero the encoder and reset elevator state to Start if the bottom limit is hit.
-    if(getSensor() /*&& goingUp.get()*/){
+    if(getSensor()){
       this.zeroEncoders();
       this.setState(elevatorState.Start);
     }
-    if (Constants.Verbose) {SmartDashboard.putNumber("Elevator Encoder", this.getPosition());
-    SmartDashboard.putNumber("Elevator Voltage", elevatorMotor.getMotorVoltage().getValueAsDouble());}
+    if (Constants.Verbose) {
+      SmartDashboard.putNumber("Elevator Encoder", this.getPosition());
+      SmartDashboard.putNumber("Elevator Voltage", elevatorMotor.getMotorVoltage().getValueAsDouble());
+    }
     //this.updatePosition();
   }
 

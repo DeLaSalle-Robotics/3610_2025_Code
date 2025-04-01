@@ -86,9 +86,11 @@ public class RobotContainer {
     thetaTarget = table.getDoubleTopic("thetaTar").subscribe(0);
     */  
       //Putting Subsystem Data on the Smartdashboard
-    if (Constants.Verbose) {SmartDashboard.putData("Popper Data", m_popper);
-    SmartDashboard.putData("Elevator Data", m_elevatorSubsystem);
-    SmartDashboard.putData("Intake Data", m_intakeSubsystem);}
+    if (Constants.Verbose) {
+      SmartDashboard.putData("Popper Data", m_popper);
+      SmartDashboard.putData("Elevator Data", m_elevatorSubsystem);
+      SmartDashboard.putData("Intake Data", m_intakeSubsystem);
+    }
 
   
     // Configure the trigger bindings
@@ -166,7 +168,7 @@ public class RobotContainer {
     /*Default command updates position continuously until goal is met - Although it is not clear that the until means anything
       * given that the command restarts immediatly after.
     */
-    m_elevatorSubsystem.setDefaultCommand(Commands.runOnce(()-> m_elevatorSubsystem.updatePosition(),m_elevatorSubsystem).until(
+    m_elevatorSubsystem.setDefaultCommand(Commands.run(()-> m_elevatorSubsystem.updatePosition(),m_elevatorSubsystem).until(
         () -> Math.abs(m_elevatorSubsystem.getGoalPosition() - m_elevatorSubsystem.getPosition()) < Constants.Elevator.Position_Error
       ));
       m_operatorController.x().onTrue(Commands.runOnce(() -> m_elevatorSubsystem.setState(elevatorState.Load)));

@@ -81,8 +81,8 @@ public class Popper extends SubsystemBase {
     slot0Configs.kD = 0;
     
     var motionMagicConfigs = talonFXConfigs.MotionMagic;
-    motionMagicConfigs.MotionMagicCruiseVelocity = 20; // 80 rps cruise velocity
-    motionMagicConfigs.MotionMagicAcceleration = 40; // 160 rps/s acceleration -> 0.5 to reach max speed
+    motionMagicConfigs.MotionMagicCruiseVelocity = 40; // 80 rps cruise velocity
+    motionMagicConfigs.MotionMagicAcceleration = 80; // 160 rps/s acceleration -> 0.5 to reach max speed
     motionMagicConfigs.MotionMagicJerk = 1600; // 1600 rps/s^2 jerk (0.1 second)
 
     Rotater.getConfigurator().apply(talonFXConfigs, 0.05);
@@ -134,7 +134,7 @@ public void setPopperState(popperState newState){
   this.currentState = newState;
 }
 public void PopperSpinL3(){
-  Spinner.set(Constants.Popper.popperSpinnerSpeed);
+  Spinner.set(-Constants.Popper.popperSpinnerSpeed);
 }
 public void PopperSpinL2(){
   Spinner.set(-Constants.Popper.popperSpinnerSpeed);
