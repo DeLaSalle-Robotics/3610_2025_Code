@@ -23,6 +23,12 @@
           }
         },
         {
+          "type": "named",
+          "data": {
+            "name": "Load"
+          }
+        },
+        {
           "type": "path",
           "data": {
             "pathName": "F to Source Post L2 Score"

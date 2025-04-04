@@ -23,6 +23,12 @@
           }
         },
         {
+          "type": "named",
+          "data": {
+            "name": "Load"
+          }
+        },
+        {
           "type": "path",
           "data": {
             "pathName": "J to Source-Post L2"
