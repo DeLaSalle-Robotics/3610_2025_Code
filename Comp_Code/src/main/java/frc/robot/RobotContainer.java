@@ -101,6 +101,10 @@ public class RobotContainer {
                                               andThen(Commands.run(() -> m_elevatorSubsystem.updatePosition()).until(
                                     () -> Math.abs(m_elevatorSubsystem.getGoalPosition() - m_elevatorSubsystem.getPosition()) < Constants.Elevator.Position_Error
                                   )));
+    NamedCommands.registerCommand("L2 Raise", Commands.runOnce(() -> m_elevatorSubsystem.setState(elevatorState.L2)).
+                                  andThen(Commands.run(() -> m_elevatorSubsystem.updatePosition()).until(
+                        () -> Math.abs(m_elevatorSubsystem.getGoalPosition() - m_elevatorSubsystem.getPosition()) < Constants.Elevator.Position_Error
+                      )));
     NamedCommands.registerCommand("L2 Algea Prep", Commands.runOnce(() -> m_popper.setPopperState(popperState.L2)).
                                   andThen(Commands.run(() -> m_popper.updatePosition()).until(
                                     () -> Math.abs(m_popper.getGoalPosition() - m_popper.getPopperPosition()) < Constants.Popper.Position_Error
