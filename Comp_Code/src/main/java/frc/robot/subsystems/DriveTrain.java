@@ -282,8 +282,8 @@ public class DriveTrain extends SubsystemBase {
             }
           },
           new PPHolonomicDriveController(
-            new PIDConstants(5.0, 0.0, 0.0 ),
-            new PIDConstants(5.0,0.0,0.0)
+            new PIDConstants(2.5, 0.0, 0.0 ),
+            new PIDConstants(2.5,0.0,0.0)
             ),
             config,
             () -> {

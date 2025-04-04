@@ -3,6 +3,7 @@
   "robotLength": 0.8128,
   "holonomicMode": true,
   "pathFolders": [
+    "Other Paths",
     "Paths from Source",
     "Paths to Source",
     "Score Paths",

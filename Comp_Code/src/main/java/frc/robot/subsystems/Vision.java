@@ -339,15 +339,15 @@ public class Vision extends SubsystemBase {
   {
     FRONT_CAM("Arducam_OV9782_USB_Camera1",
               new Rotation3d(0,0,0),
-              new Translation3d(Units.inchesToMeters(13.0),
-                                Units.inchesToMeters(0),
-                                Units.inchesToMeters(7.5)),
+              new Translation3d(Units.inchesToMeters(2),
+                                Units.inchesToMeters(18),
+                                Units.inchesToMeters(6.5)),
               VecBuilder.fill(4, 4, 8), VecBuilder.fill(0.5, 0.5, 1)),
     REAR_CAM("Arducam_OV9782_USB_Camera2",
               new Rotation3d(0,0,Math.PI),
-              new Translation3d(Units.inchesToMeters(-13.0),
-                                Units.inchesToMeters(0),
-                                Units.inchesToMeters(7.5)),
+              new Translation3d(Units.inchesToMeters(-5),
+                                Units.inchesToMeters(22),
+                                Units.inchesToMeters(0)),
               VecBuilder.fill(4, 4, 8), VecBuilder.fill(0.5, 0.5, 1));
               
     /*
