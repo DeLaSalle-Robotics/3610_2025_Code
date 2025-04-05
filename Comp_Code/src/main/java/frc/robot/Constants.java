@@ -25,7 +25,7 @@ public final class Constants {
   public static boolean Verbose = true;
 
   public static class Swerve {
-    public static final double MAX_SPEED = 10;
+    public static final double MAX_SPEED = 15;
     public static final double LOOP_TIME = 0.13;
     public static final double ROBOT_MASS = 45.5;
     public static final Matter CHASSIS = new Matter(new Translation3d(0, 0, Units.inchesToMeters(8)), ROBOT_MASS);
@@ -50,9 +50,9 @@ public final class Constants {
     //Values of positions are rotations of the motor shaft.
     public static final double Start_Position = 1;
     public static final double L1_Position = 1;
-    public static final double Load_Position = 9.6;
-    public static final double L2_Position = 29;
-    public static final double L3_Position = 49.0;
+    public static final double Load_Position = 10;
+    public static final double L2_Position = 28;
+    public static final double L3_Position = 47.5;
     public static final double Position_Error = 0.2;
     
   }

@@ -164,14 +164,17 @@ public class ElevatorSubsystem extends SubsystemBase {
     @Override
   public void periodic() {
     //This should zero the encoder and reset elevator state to Start if the bottom limit is hit.
+    
+    /*
     if(getSensor()){
       this.zeroEncoders();
       this.setState(elevatorState.Start);
     }
+      */
     if (Constants.Verbose) {
       SmartDashboard.putNumber("Elevator Encoder", this.getPosition());
       SmartDashboard.putNumber("Elevator Voltage", elevatorMotor.getMotorVoltage().getValueAsDouble());
-    }
+    } 
     //this.updatePosition();
   }
 
