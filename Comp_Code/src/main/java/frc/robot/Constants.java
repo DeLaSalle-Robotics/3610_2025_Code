@@ -25,7 +25,7 @@ public final class Constants {
   public static boolean Verbose = true;
 
   public static class Swerve {
-    public static final double MAX_SPEED = 4.5;
+    public static final double MAX_SPEED = 10;
     public static final double LOOP_TIME = 0.13;
     public static final double ROBOT_MASS = 45.5;
     public static final Matter CHASSIS = new Matter(new Translation3d(0, 0, Units.inchesToMeters(8)), ROBOT_MASS);
