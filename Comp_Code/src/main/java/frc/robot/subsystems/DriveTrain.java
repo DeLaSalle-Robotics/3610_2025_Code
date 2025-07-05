@@ -48,6 +48,7 @@ import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import static edu.wpi.first.units.Units.Meter;
 
@@ -327,9 +328,17 @@ public class DriveTrain extends SubsystemBase {
     return swerveDrive.getRobotVelocity();
   }
 
-  
+  public Command DriveTo60(Pose2d pose2d){
+    return new frc.robot.commands.DriveTrain.DriveToPoint(this, 
+                new Pose2d(pose2d.getX(),pose2d.getY(),new Rotation2d(Units.degreesToRadians(60))));
+  }
+  public Command DriveToAngle(double degree){
+    SmartDashboard.putNumber("Desired Angle", degree);
+    return new frc.robot.commands.DriveTrain.DriveToPoint(this, new Pose2d(getPose().getX(),getPose().getY(),new Rotation2d(Units.degreesToRadians(degree))));
+  }
+
   public Command DriveToPoint(Pose2d finalPose) {
-        
+    SmartDashboard.putNumber("Desired Angle", finalPose.getRotation().getDegrees());    
     try {
         RobotConfig config = RobotConfig.fromGUISettings();
         PathConstraints constraints = new PathConstraints(3.0, 3.0, 2 * Math.PI, 4 * Math.PI);
@@ -351,7 +360,7 @@ public class DriveTrain extends SubsystemBase {
                                     ),
                                     config,
                                     this
-                                );
+                                ).withTimeout(3);
     } catch (Exception e) {
       e.printStackTrace();
       return Commands.none();

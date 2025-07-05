@@ -10,6 +10,7 @@ import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.DriveTrain.AbsoluteDrive;
 import frc.robot.commands.DriveTrain.AbsoluteFieldDrive;
 import frc.robot.commands.DriveTrain.DriveToTarget;
+import frc.robot.commands.DriveTrain.TurnToAngle;
 import frc.robot.commands.Elevator.ElevatorCommand;
 import frc.robot.commands.Popper.*;
 import frc.robot.subsystems.*;
@@ -90,6 +91,7 @@ public class RobotContainer {
       SmartDashboard.putData("Popper Data", m_popper);
       SmartDashboard.putData("Elevator Data", m_elevatorSubsystem);
       SmartDashboard.putData("Intake Data", m_intakeSubsystem);
+      SmartDashboard.putData("DriveTrain Data", m_driveTrain);
     }
 
   
@@ -145,9 +147,9 @@ public class RobotContainer {
     //Drivetrain Bindings
     if(Robot.isSimulation()) {
       
-      m_driveTrain.setDefaultCommand(new AbsoluteFieldDrive(m_driveTrain, () -> m_driverController.getLeftX(), 
-                                                                () -> m_driverController.getLeftY(),
-                                                                () -> m_driverController.getRightX(), 
+      m_driveTrain.setDefaultCommand(new AbsoluteFieldDrive(m_driveTrain, () -> -m_driverController.getLeftX(), 
+                                                                () -> -m_driverController.getLeftY(),
+                                                                () -> -m_driverController.getRightX(), 
                                                                 m_driverController.x()));
       
     } else 
@@ -159,14 +161,16 @@ public class RobotContainer {
                                                                 () -> m_driverController.getRightTriggerAxis()<0.5));
     }
     m_driverController.start().onTrue(Commands.runOnce(() -> m_driveTrain.zeroGyro()));
-    /*
-    * Auto Driving Commands- not currently working
-    m_driverController.a().onTrue( m_driveTrain.driveToPose(new Pose2d(new Translation2d(1.588, 0.799), 
-                                                          new Rotation2d(Units.degreesToRadians(40)))
-                                                          ));
+     //Auto Driving Commands- not currently working
+     m_driverController.a().onTrue( m_driveTrain.driveToPose(new Pose2d(new Translation2d(1.588, 0.799), 
+     new Rotation2d(Units.degreesToRadians(60)))
+     ));
 
-    m_driverController.b().onTrue(Commands.defer(m_driveTrain.driveSupplier(), Set.of(m_driveTrain)));
-    */  
+    m_driverController.pov(45).onTrue(m_driveTrain.driveToPose(Constants.Target.L_LeftBack_Blue).withTimeout(3));
+    m_driverController.povUp().onTrue( new TurnToAngle(m_driveTrain, 60));
+
+    //m_driverController.b().onTrue(Commands.defer(m_driveTrain.driveSupplier(), Set.of(m_driveTrain)));
+     
      
     //Elevator Bindings
     /*Default command updates position continuously until goal is met - Although it is not clear that the until means anything
