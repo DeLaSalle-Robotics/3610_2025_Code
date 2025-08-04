@@ -161,7 +161,8 @@ public class RobotContainer {
                                                                 () -> m_driverController.getRightTriggerAxis()<0.5));
     }
     m_driverController.start().onTrue(Commands.runOnce(() -> m_driveTrain.zeroGyro()));
-     //Auto Driving Commands- not currently working
+     
+    //Auto Driving Commands- not currently working
      m_driverController.a().onTrue( m_driveTrain.driveToPose(new Pose2d(new Translation2d(1.588, 0.799), 
      new Rotation2d(Units.degreesToRadians(60)))
      ));
@@ -211,7 +212,7 @@ public class RobotContainer {
     m_operatorController.leftBumper().whileTrue(new IntakeCommand(m_intakeSubsystem, m_leds,() -> -0.3,true));
     m_operatorController.rightBumper().whileTrue(new IntakeCommand(m_intakeSubsystem, m_leds, () -> 0.8, true));
     
-      System.out.println("End of configureBinfings");
+      System.out.println("End of configure Bindings");
       
       }
                                                           
