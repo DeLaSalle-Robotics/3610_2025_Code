@@ -146,7 +146,7 @@ public class DriveTrain extends SubsystemBase {
 
 /**
    * Get the chassis speeds based on controller input of 1 joystick and one angle. Control the robot at an offset of
-   * 90deg.
+   * 90deg. Cubes the joystick values to provide better control. 
    *
    * @param xInput X joystick input for the robot to move in the X direction.
    * @param yInput Y joystick input for the robot to move in the Y direction.

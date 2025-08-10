@@ -149,8 +149,11 @@ public class RobotContainer {
       
       m_driveTrain.setDefaultCommand(new AbsoluteFieldDrive(m_driveTrain, () -> -m_driverController.getLeftX(), 
                                                                 () -> -m_driverController.getLeftY(),
-                                                                () -> -m_driverController.getRightX(), 
-                                                                m_driverController.x()));
+                                                                () -> -m_driverController.getRightX(),
+                                                                () -> -m_driverController.getRightY(), 
+                                                                m_driverController.x().negate()));
+
+      DriverStation.silenceJoystickConnectionWarning(true);
       
     } else 
     {
@@ -158,6 +161,7 @@ public class RobotContainer {
       m_driveTrain.setDefaultCommand(new AbsoluteFieldDrive(m_driveTrain, () -> -m_driverController.getLeftY(),
                                                                 () -> -m_driverController.getLeftX(), 
                                                                 () -> -m_driverController.getRightX(),
+                                                                () -> -m_driverController.getRightY(),
                                                                 () -> m_driverController.getRightTriggerAxis()<0.5));
     }
     m_driverController.start().onTrue(Commands.runOnce(() -> m_driveTrain.zeroGyro()));

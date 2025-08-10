@@ -243,6 +243,7 @@ package Drivetrain {
         ..Methods..
         +getTargetSpeeds(double, double, double, double): ChassisSpeeds
         +getTargetSpeeds(double, double, Rotation2d): ChassisSpeeds
+        --Takes the inputs from the move and rotate sticks.
         +getHeading():Rotation2d
         +getPose2d():Pose2d
         +drive(Translate2d, double, boolean, boolean):void
@@ -625,5 +626,7 @@ note right of AbsoluteFieldDrive #SkyBlue
     is a Command Class that requires
     a subsystem.
 end note
+
+
 
 @enduml

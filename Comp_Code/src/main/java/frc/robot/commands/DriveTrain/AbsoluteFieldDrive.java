@@ -22,7 +22,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 /** An example command that uses an example subsystem. */
 public class AbsoluteFieldDrive extends Command {
   private final DriveTrain swerve;
-  private final DoubleSupplier vX, vY, heading;
+  private final DoubleSupplier vX, vY, hX, hY;
   private final BooleanSupplier relativeToField;
 
  /**
@@ -37,15 +37,17 @@ public class AbsoluteFieldDrive extends Command {
    * @param vY      DoubleSupplier that supplies the y-translation joystick input.  Should be in the range -1 to 1 with
    *                deadband already accounted for.  Positive Y is towards the left wall when looking through the driver
    *                station glass.
-   * @param heading DoubleSupplier that supplies the robot's heading angle.
+   * @param hX DoubleSupplier that supplies the x componsend of the robot's heading angle.
+   * @param hY DoubleSupplier that supplies the x componsend of the robot's heading angle.
    */
   public AbsoluteFieldDrive(DriveTrain swerve, DoubleSupplier vX, DoubleSupplier vY,
-                            DoubleSupplier heading, BooleanSupplier relativeToField)
+                            DoubleSupplier hX, DoubleSupplier hY, BooleanSupplier relativeToField)
   {
     this.swerve = swerve;
     this.vX = vX;
     this.vY = vY;
-    this.heading = heading;
+    this.hX = hX;
+    this.hY = hY;
     this.relativeToField = relativeToField;
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(swerve);
@@ -58,17 +60,18 @@ public class AbsoluteFieldDrive extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    double heading2 = heading.getAsDouble();
-    if(Math.abs(heading2)<0.1){
-      heading2 = 0;
-    }
+    Translation2d targetHeading = new Translation2d(hX.getAsDouble(),hY.getAsDouble());
+    //This method uses the various inputs to return the target velocities.
     ChassisSpeeds desiredSpeeds = swerve.getTargetSpeeds(vX.getAsDouble(), vY.getAsDouble(),
-                                                      new Rotation2d(heading2 * Math.PI));
+                                                      targetHeading.getAngle());
+    // Essential removes the heading focuses on movement vector.
     Translation2d translation = SwerveController.getTranslation2d(desiredSpeeds);
+    //Gets the previous location and heading
     Translation2d fieldVelocity=SwerveController.getTranslation2d(swerve.getFieldVelocity());
+    //Calculates the desired change in velocity vector - heading is not included.
     Translation2d deltaV = translation.minus(fieldVelocity);
 
-//    if (deltaV.getNorm()!=0) { 
+  if (deltaV.getNorm()!=0) { 
     translation = SwerveMath.limitVelocity(translation, swerve.getFieldVelocity(),
                                             swerve.getPose(),
                                             Constants.Swerve.LOOP_TIME, 
@@ -78,12 +81,12 @@ public class AbsoluteFieldDrive extends Command {
     if (Constants.Verbose)
     {SmartDashboard.putNumber("LimitedTranslation", translation.getX());
     SmartDashboard.putString("Translation", translation.toString());
-    SmartDashboard.putNumber("AFD Heading", heading2 * Math.PI);
+    SmartDashboard.putNumber("AFD Heading", targetHeading.getAngle().getRadians());
     SmartDashboard.putNumber("AFD Heading2", desiredSpeeds.omegaRadiansPerSecond);}
 
-    swerve.drive(translation, heading2 * Math.PI, relativeToField.getAsBoolean(), false);
-  
+    swerve.drive(translation, desiredSpeeds.omegaRadiansPerSecond, relativeToField.getAsBoolean(), false);  
   }
+}
 
   // Called once the command ends or is interrupted.
   @Override
