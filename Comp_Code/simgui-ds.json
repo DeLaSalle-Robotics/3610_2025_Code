@@ -8,8 +8,8 @@
     {
       "axisConfig": [
         {
-          "decKey": 65,
-          "incKey": 68
+          "decKey": 68,
+          "incKey": 65
         },
         {
           "decKey": 87,
@@ -21,11 +21,15 @@
         },
         {},
         {
-          "decKey": 69,
-          "incKey": 82
+          "decKey": 75,
+          "incKey": 73
+        },
+        {
+          "decKey": 76,
+          "incKey": 74
         }
       ],
-      "axisCount": 5,
+      "axisCount": 6,
       "buttonCount": 4,
       "buttonKeys": [
         90,
@@ -48,16 +52,6 @@
       "povCount": 1
     },
     {
-      "axisConfig": [
-        {
-          "decKey": 74,
-          "incKey": 76
-        },
-        {
-          "decKey": 73,
-          "incKey": 75
-        }
-      ],
       "axisCount": 2,
       "buttonCount": 4,
       "buttonKeys": [
