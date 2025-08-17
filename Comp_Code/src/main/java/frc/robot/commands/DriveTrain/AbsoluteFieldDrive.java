@@ -10,6 +10,7 @@ import swervelib.SwerveController;
 import swervelib.math.SwerveMath;
 
 import java.util.List;
+import java.util.concurrent.TransferQueue;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
@@ -61,6 +62,9 @@ public class AbsoluteFieldDrive extends Command {
   @Override
   public void execute() {
     Translation2d targetHeading = new Translation2d(hX.getAsDouble(),hY.getAsDouble());
+    if (targetHeading.getNorm() < 0.3) {
+      targetHeading = new Translation2d(1, swerve.getHeading());
+    }
     //This method uses the various inputs to return the target velocities.
     ChassisSpeeds desiredSpeeds = swerve.getTargetSpeeds(vX.getAsDouble(), vY.getAsDouble(),
                                                       targetHeading.getAngle());
@@ -85,6 +89,8 @@ public class AbsoluteFieldDrive extends Command {
     SmartDashboard.putNumber("AFD Heading2", desiredSpeeds.omegaRadiansPerSecond);}
 
     swerve.drive(translation, desiredSpeeds.omegaRadiansPerSecond, relativeToField.getAsBoolean(), false);  
+  } else {
+    swerve.drive(translation, targetHeading.getAngle().getRadians(), relativeToField.getAsBoolean(), false); 
   }
 }
 
