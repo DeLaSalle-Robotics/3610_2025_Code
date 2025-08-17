@@ -6,6 +6,7 @@ package frc.robot;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -111,18 +112,30 @@ public final class Constants {
       public static final Pose2d L_Back_Red = new Pose2d(481.39,145.5,new Rotation2d(Units.degreesToRadians(180)));
       public static final Pose2d L_RightBack_Red = new Pose2d(509.03,180.33,new Rotation2d(Units.degreesToRadians(120)));
       public static final Pose2d L_RightFront_Red = new Pose2d(541.75,193.33,new Rotation2d(Units.degreesToRadians(60)));
-      public static final Pose2d R_Front_Blue = new Pose2d(144.0,171.5,new Rotation2d(Units.degreesToRadians(180)));
-      public static final Pose2d R_LeftFront_Blue =  new Pose2d(149.13,193.33,new Rotation2d(Units.degreesToRadians(120)));
-      public static final Pose2d R_LeftBack_Blue = new Pose2d(181.84,180.33,new Rotation2d(Units.degreesToRadians(60)));
-      public static final Pose2d R_Back_Blue = new Pose2d(209.49,145.5,new Rotation2d(0));
-      public static final Pose2d R_RightBack_Blue = new Pose2d(204.36,123.67,new Rotation2d(Units.degreesToRadians(300)));
-      public static final Pose2d R_RightFront_Blue = new Pose2d(171.65,136.67,new Rotation2d(Units.degreesToRadians(240)));
-      public static final Pose2d L_Front_Blue = new Pose2d(144.0,145.5,new Rotation2d(Units.degreesToRadians(180)));
-      public static final Pose2d L_LeftFront_Blue = new Pose2d(171.65,180.33,new Rotation2d(Units.degreesToRadians(120)));
-      public static final Pose2d L_LeftBack_Blue = new Pose2d(204.36,193.33,new Rotation2d(Units.degreesToRadians(60)));
-      public static final Pose2d L_Back_Blue = new Pose2d(209.49,171.5,new Rotation2d(0));
-      public static final Pose2d L_RightBack_Blue = new Pose2d(181.84,136.67,new Rotation2d(Units.degreesToRadians(300)));
-      public static final Pose2d L_RightFront_Blue = new Pose2d(149.13,123.67,new Rotation2d(Units.degreesToRadians(240)));
+      public static final Pose2d R_Front_Blue = new Pose2d(new Translation2d(2.888,3.788),
+                                                        new Rotation2d(Units.degreesToRadians(180)));
+      public static final Pose2d R_LeftFront_Blue =  new Pose2d(new Translation2d(3.582, 5.223),
+                                                        new Rotation2d(Units.degreesToRadians(120)));
+      public static final Pose2d R_LeftBack_Blue = new Pose2d(new Translation2d(5.055, 5.331),
+                                                        new Rotation2d(Units.degreesToRadians(60)));
+      public static final Pose2d R_Back_Blue = new Pose2d(new Translation2d(5.868, 4.248),
+                                                        new Rotation2d(0));
+      public static final Pose2d R_RightBack_Blue = new Pose2d(new Translation2d(5.346, 2.990),
+                                                        new Rotation2d(Units.degreesToRadians(300)));
+      public static final Pose2d R_RightFront_Blue = new Pose2d(new Translation2d(3.951, 2.821),
+                                                        new Rotation2d(Units.degreesToRadians(240)));
+      public static final Pose2d L_Front_Blue = new Pose2d(new Translation2d(2.888, 4.151),
+                                                        new Rotation2d(Units.degreesToRadians(180)));
+      public static final Pose2d L_LeftFront_Blue = new Pose2d(new Translation2d(3.951, 5.538),
+                                                        new Rotation2d(Units.degreesToRadians(120)));
+      public static final Pose2d L_LeftBack_Blue = new Pose2d(new Translation2d(5.335, 5.154),
+                                                        new Rotation2d(Units.degreesToRadians(60)));
+      public static final Pose2d L_Back_Blue = new Pose2d(new Translation2d(5.868, 3.886),
+                                                        new Rotation2d(0));
+      public static final Pose2d L_RightBack_Blue = new Pose2d(new Translation2d(5.068, 2.821),
+                                                        new Rotation2d(Units.degreesToRadians(300)));
+      public static final Pose2d L_RightFront_Blue = new Pose2d(new Translation2d(3.582, 2.990),
+                                                        new Rotation2d(Units.degreesToRadians(240)));
     
 
   }
