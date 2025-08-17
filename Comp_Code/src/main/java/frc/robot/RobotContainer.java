@@ -171,8 +171,16 @@ public class RobotContainer {
      new Rotation2d(Units.degreesToRadians(60)))
      ));
 
-    m_driverController.pov(45).onTrue(m_driveTrain.driveToPose(Constants.Target.L_LeftBack_Blue).withTimeout(3));
-    m_driverController.povUp().onTrue( new TurnToAngle(m_driveTrain, 60));
+    m_driverController.pov(45).onTrue(m_driveTrain.driveToPose(new Pose2d(new Translation2d(1.588, 0.799), 
+    new Rotation2d(Units.degreesToRadians(60)))).withTimeout(3));
+
+    m_driverController.pov(0).onTrue(m_driveTrain.driveToPose(Constants.Target.R_Front_Blue));
+    m_driverController.pov(0).and(m_driverController.b()).onTrue(m_driveTrain.driveToPose(Constants.Target.L_Front_Blue));
+
+        //.onFalse(m_driveTrain.driveToPose(new Pose2d(546.87,145.5,new Rotation2d(0))));
+
+
+    //m_driverController.povUp().onTrue( new TurnToAngle(m_driveTrain, 60));
 
     //m_driverController.b().onTrue(Commands.defer(m_driveTrain.driveSupplier(), Set.of(m_driveTrain)));
      
