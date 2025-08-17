@@ -603,7 +603,8 @@ Class AbsoluteFieldDrive{
     -swerve:DriveTrain
     -vX:DoubleSupplier
     -vY:DoubleSupplier
-    -heading:DoubleSupplier
+    -hX:DoubleSupplier
+    -hY:DoubleSupplier
     -relativeToField:BooleanSupplier
     ..methods..
     +execute():void
