@@ -61,18 +61,23 @@ public class AbsoluteFieldDrive extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    //Collects the heading from the heading stick
     Translation2d targetHeading = new Translation2d(hX.getAsDouble(),hY.getAsDouble());
+    //Tests if the heading is too small to be meaningful
     if (targetHeading.getNorm() < 0.3) {
+      //If it is too small, get the current heading and pass that along as the desired heading
       targetHeading = new Translation2d(1, swerve.getHeading());
     }
     //This method uses the various inputs to return the target velocities.
     ChassisSpeeds desiredSpeeds = swerve.getTargetSpeeds(vX.getAsDouble(), vY.getAsDouble(),
                                                       targetHeading.getAngle());
-    // Essential removes the heading focuses on movement vector.
+    // Essential removes the heading focuses on movement vector. Creates a translation 
+    // without a Rotation2d component. Somehow targetHeading is included.
     Translation2d translation = SwerveController.getTranslation2d(desiredSpeeds);
     //Gets the previous location and heading
     Translation2d fieldVelocity=SwerveController.getTranslation2d(swerve.getFieldVelocity());
-    //Calculates the desired change in velocity vector - heading is not included.
+    //Calculates the desired change in velocity vector - heading is not included. Creates an 
+    // error, but this is primarily to check is the robot is being moved at all. 
     Translation2d deltaV = translation.minus(fieldVelocity);
 
   if (deltaV.getNorm()!=0) { 

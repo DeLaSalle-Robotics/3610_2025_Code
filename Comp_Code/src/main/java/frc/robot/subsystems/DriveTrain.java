@@ -145,7 +145,7 @@ public class DriveTrain extends SubsystemBase {
   }
 
 /**
-   * Get the chassis speeds based on controller input of 1 joystick and one angle. Control the robot at an offset of
+   * Get the chassis speeds based on controller input of 1 joystick and heading angle. Control the robot at an offset of
    * 90deg. Cubes the joystick values to provide better control. 
    *
    * @param xInput X joystick input for the robot to move in the X direction.
@@ -155,8 +155,14 @@ public class DriveTrain extends SubsystemBase {
    */
   public ChassisSpeeds getTargetSpeeds(double xInput, double yInput, Rotation2d angle)
   {
+    //Here is the cubing of the translation
     Translation2d scaledInputs = SwerveMath.cubeTranslation(new Translation2d(xInput, yInput));
-
+    // The getTargetSpeeds method of the swerveController class takes the scaled movement x and y vectors
+    // and the desired heading. This method also takes the current heading and max speeds. Under the hood
+    // the first method converts that scaled inputs to velocities (i.e. value of 1 = MAX_SPEED). The
+    // second method calculates the heading rotational velocity using a PID controller built into the 
+    // swerveController and multiplied by the maxAngularVelocity from the config. This method returns a
+    // ChassisSpeeds object that contains desired velocities in the x, y, and heading vectors.
     return swerveDrive.swerveController.getTargetSpeeds(scaledInputs.getX(),
                                                         scaledInputs.getY(),
                                                         angle.getRadians(),
