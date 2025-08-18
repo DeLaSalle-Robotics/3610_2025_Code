@@ -36,6 +36,7 @@ import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -133,7 +134,7 @@ public class RobotContainer {
     SmartDashboard.putString("Robot State", "Have Coral");
   }
   
-
+  
   /**
    * Use this method to define your trigger->command mappings. Triggers can be created via the
    * {@link Trigger#Trigger(java.util.function.BooleanSupplier)} constructor with an arbitrary
@@ -143,7 +144,7 @@ public class RobotContainer {
    * PS4} controllers or {@link edu.wpi.first.wpilibj2.command.button.CommandJoystick Flight
    * joysticks}.
    */
-  private void configureBindings() {
+  public void configureBindings() {
     //Drivetrain Bindings
     if(Robot.isSimulation()) {
       
@@ -166,23 +167,27 @@ public class RobotContainer {
     }
     m_driverController.start().onTrue(Commands.runOnce(() -> m_driveTrain.zeroGyro()));
      
-    //Auto Driving Commands- not currently working
-     m_driverController.a().onTrue( m_driveTrain.driveToPose(new Pose2d(new Translation2d(1.588, 0.799), 
-     new Rotation2d(Units.degreesToRadians(60)))
-     ));
+    //Works on the blue side, but alliance is not present when this runs. Could move this to teleop_init instead of
+    // the Robot constructor. 
+     
 
     m_driverController.pov(45).onTrue(m_driveTrain.driveToPose(new Pose2d(new Translation2d(1.588, 0.799), 
     new Rotation2d(Units.degreesToRadians(60)))).withTimeout(3));
+    
+    var alliance = DriverStation.getAlliance();
+    if (alliance.isPresent() && alliance.get() == Alliance.Red) {
+      m_driverController.pov(180).onTrue(m_driveTrain.driveToPose(Constants.Target.R_Front_Red));
+      m_driverController.pov(180).and(m_driverController.b()).onTrue(m_driveTrain.driveToPose(Constants.Target.L_Front_Red));
+    }
+    else {
+      //Right side Coral Station 
+      m_driverController.a().onTrue( m_driveTrain.driveToPose(new Pose2d(new Translation2d(1.588, 0.799), 
+     new Rotation2d(Units.degreesToRadians(60)))
+     ));
 
-    m_driverController.pov(0).onTrue(m_driveTrain.driveToPose(Constants.Target.R_Front_Blue));
-    m_driverController.pov(0).and(m_driverController.b()).onTrue(m_driveTrain.driveToPose(Constants.Target.L_Front_Blue));
-
-        //.onFalse(m_driveTrain.driveToPose(new Pose2d(546.87,145.5,new Rotation2d(0))));
-
-
-    //m_driverController.povUp().onTrue( new TurnToAngle(m_driveTrain, 60));
-
-    //m_driverController.b().onTrue(Commands.defer(m_driveTrain.driveSupplier(), Set.of(m_driveTrain)));
+    m_driverController.pov(180).onTrue(m_driveTrain.driveToPose(Constants.Target.R_Front_Blue));
+    m_driverController.pov(180).and(m_driverController.b()).onTrue(m_driveTrain.driveToPose(Constants.Target.L_Front_Blue));
+    }
      
      
     //Elevator Bindings
