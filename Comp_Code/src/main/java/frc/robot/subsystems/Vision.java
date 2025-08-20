@@ -135,53 +135,7 @@ public class Vision extends SubsystemBase {
         openSimCameraViews();
         }
 
-       /*The following was removed to address memory issues with the Rio1
-        //Red AprilTag Targets
-        RtargetLookup.put(6,new Pose2d(541.75,123.67,new Rotation2d(300)));
-        RtargetLookup.put(7,new Pose2d(546.87,145.5,new Rotation2d(0)));
-        RtargetLookup.put(8,new Pose2d(519.23,180.33,new Rotation2d(60)));
-        RtargetLookup.put(9,new Pose2d(486.51,193.33,new Rotation2d(120)));
-        RtargetLookup.put(10,new Pose2d(481.39,171.5,new Rotation2d(180)));
-        RtargetLookup.put(11,new Pose2d(509.03,136.67,new Rotation2d(240)));
-        
-        //Blue AprilTag Targets
-        RtargetLookup.put(17,new Pose2d(171.65,136.67,new Rotation2d(240)));
-        RtargetLookup.put(18,new Pose2d(144.0,171.5,new Rotation2d(180)));
-        RtargetLookup.put(19,new Pose2d(149.13,193.33,new Rotation2d(120)));
-        RtargetLookup.put(20,new Pose2d(181.84,180.33,new Rotation2d(60)));
-        RtargetLookup.put(21,new Pose2d(209.49,145.5,new Rotation2d(0)));
-        RtargetLookup.put(22,new Pose2d(204.36,123.67,new Rotation2d(300)));
-        
        
-        //Red AprilTag Targets
-        LtargetLookup.put(6,new Pose2d(519.23,136.67,new Rotation2d(300)));
-        LtargetLookup.put(7,new Pose2d(546.87,171.5,new Rotation2d(0)));
-        LtargetLookup.put(8,new Pose2d(541.75,193.33,new Rotation2d(60)));
-        LtargetLookup.put(9,new Pose2d(509.03,180.33,new Rotation2d(120)));
-        LtargetLookup.put(10,new Pose2d(481.39,145.5,new Rotation2d(180)));
-        LtargetLookup.put(11,new Pose2d(486.51,123.67,new Rotation2d(240)));
-        
-        //Blue AprilTag Targets
-        LtargetLookup.put(17,new Pose2d(149.13,123.67,new Rotation2d(240)));
-        LtargetLookup.put(18,new Pose2d(144.0,145.5,new Rotation2d(180)));
-        LtargetLookup.put(19,new Pose2d(171.65,180.33,new Rotation2d(120)));
-        LtargetLookup.put(20,new Pose2d(204.36,193.33,new Rotation2d(60)));
-        LtargetLookup.put(21,new Pose2d(209.49,171.5,new Rotation2d(0)));
-        LtargetLookup.put(22,new Pose2d(181.84,136.67,new Rotation2d(300)));
-        
-        NetworkTableInstance inst = NetworkTableInstance.getDefault();
-        NetworkTable table = inst.getTable("datatable");
-        haveTarget = table.getBooleanTopic("haveTarget").publish();
-        xTarget = table.getDoubleTopic("xTar").publish();
-        yTarget = table.getDoubleTopic("yTar").publish();
-        thetaTarget = table.getDoubleTopic("thetaTar").publish();
-        haveTarget.set(false);
-        xTarget.set(0);
-        yTarget.set(0);
-        thetaTarget.set(0);
-
-        rightTarget = table.getBooleanTopic("rightTarget").subscribe(false);
-*/
   }
 
 
