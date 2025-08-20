@@ -5,35 +5,23 @@
 package frc.robot;
 
 import frc.robot.Constants.OperatorConstants;
-import frc.robot.commands.Autos;
 import frc.robot.commands.IntakeCommand;
-import frc.robot.commands.DriveTrain.AbsoluteDrive;
 import frc.robot.commands.DriveTrain.AbsoluteFieldDrive;
-import frc.robot.commands.DriveTrain.DriveToTarget;
-import frc.robot.commands.DriveTrain.TurnToAngle;
 import frc.robot.commands.Elevator.ElevatorCommand;
 import frc.robot.commands.Popper.*;
 import frc.robot.subsystems.*;
 import frc.robot.subsystems.ElevatorSubsystem.elevatorState;
 import frc.robot.subsystems.Popper.popperState;
-import frc.robot.commands.IntakeCommand;
 
 import java.io.File;
-import java.time.Period;
-import java.util.Set;
-import java.util.function.Supplier;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
-import com.pathplanner.lib.path.PathPlannerPath;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.networktables.DoubleSubscriber;
-import edu.wpi.first.networktables.NetworkTable;
-import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -41,13 +29,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.DeferredCommand;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.ProxyCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.auto.NamedCommands;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -56,37 +39,26 @@ import com.pathplanner.lib.auto.NamedCommands;
  * subsystems, commands, and trigger mappings) should be declared here.
  */
 public class RobotContainer {
-  // The robot's subsystems and commands are defined here...
+  // The robot's subsystems are defined here... and created when the RobotContainer is constructed
   private final IntakeSubsystem m_intakeSubsystem = new IntakeSubsystem();
   private final Popper m_popper = new Popper();
   private final ElevatorSubsystem m_elevatorSubsystem = new ElevatorSubsystem();
   private final DriveTrain m_driveTrain = new DriveTrain(new File(Filesystem.getDeployDirectory(),"swerve"));
   private final LedSubsystem m_leds = new LedSubsystem();
 
-   // Allows picking autonomous routines from SmartDashboard
+   // Defines a SendableChooser for SmartDashboard
   private final SendableChooser<Command> m_autoChooser;
-  /*
-  DoubleSubscriber xTarget;
-  DoubleSubscriber yTarget;
-  DoubleSubscriber thetaTarget;
-*/
-
-  // Replace with CommandPS4Controller or CommandJoystick if needed
+ 
+  // Defining the controllers
   private final CommandXboxController m_driverController =
       new CommandXboxController(OperatorConstants.kDriverControllerPort);
   private final CommandXboxController m_operatorController = 
       new CommandXboxController(OperatorConstants.kOperatorControllerPort);
-  Trigger aButton = m_driverController.a();
+  
 
-  /** The container for the robot. Contains subsystems, OI devices, and commands. */
+  /** The constructor for the RobotContainer. Creates subsystems, OI devices, and commands. */
   public RobotContainer() {
-    /*
-    NetworkTableInstance inst = NetworkTableInstance.getDefault();
-    NetworkTable table = inst.getTable("datatable");
-    xTarget = table.getDoubleTopic("xTar").subscribe(0);
-    yTarget = table.getDoubleTopic("yTar").subscribe(0);
-    thetaTarget = table.getDoubleTopic("thetaTar").subscribe(0);
-    */  
+    
       //Putting Subsystem Data on the Smartdashboard
     if (Constants.Verbose) {
       SmartDashboard.putData("Popper Data", m_popper);
@@ -154,6 +126,7 @@ public class RobotContainer {
                                                                 () -> -m_driverController.getRightY(), 
                                                                 m_driverController.x().negate()));
 
+      //Turns off an error about the joystick not being connected.
       DriverStation.silenceJoystickConnectionWarning(true);
       
     } else 
@@ -166,27 +139,41 @@ public class RobotContainer {
                                                                 () -> m_driverController.getRightTriggerAxis()<0.5));
     }
     m_driverController.start().onTrue(Commands.runOnce(() -> m_driveTrain.zeroGyro()));
-     
-    //Works on the blue side, but alliance is not present when this runs. Could move this to teleop_init instead of
-    // the Robot constructor. 
-     
+     //#TODO Add vision only pose setting - mostly for testing purposes (get Esitmated pose, resetPose with vision pose)
+     //#TODO See about Setting initial state using alliances?
 
-    m_driverController.pov(45).onTrue(m_driveTrain.driveToPose(new Pose2d(new Translation2d(1.588, 0.799), 
-    new Rotation2d(Units.degreesToRadians(60)))).withTimeout(3));
-    
+    //This method is called in the teleopInit, once the DriverStation object is created and has posted information. 
+     
+    //Auto driving methods and bindings
+    //#TODO- Finish placing targets and confirm orientations
+
     var alliance = DriverStation.getAlliance();
     if (alliance.isPresent() && alliance.get() == Alliance.Red) {
+      //The Red location sides
+      //Left side Coral Station 
+      m_driverController.b().onTrue( m_driveTrain.driveToPose(new Pose2d(new Translation2d(15.963, 0.799), 
+     new Rotation2d(Units.degreesToRadians(120)))).withTimeout(3));
+      //Left side Coral Station 
+      m_driverController.a().onTrue( m_driveTrain.driveToPose(new Pose2d(new Translation2d(15.963, 7.266), 
+      new Rotation2d(Units.degreesToRadians(225)))).withTimeout(3));
+    
+    //Reef settings
       m_driverController.pov(180).onTrue(m_driveTrain.driveToPose(Constants.Target.R_Front_Red));
-      m_driverController.pov(180).and(m_driverController.b()).onTrue(m_driveTrain.driveToPose(Constants.Target.L_Front_Red));
+      m_driverController.pov(180).and(m_driverController.leftTrigger()).onTrue(m_driveTrain.driveToPose(Constants.Target.L_Front_Red));
     }
     else {
+      //The blue location sides
       //Right side Coral Station 
-      m_driverController.a().onTrue( m_driveTrain.driveToPose(new Pose2d(new Translation2d(1.588, 0.799), 
-     new Rotation2d(Units.degreesToRadians(60)))
-     ));
+            m_driverController.a().onTrue( m_driveTrain.driveToPose(new Pose2d(new Translation2d(1.588, 0.799), 
+          new Rotation2d(Units.degreesToRadians(60)))).withTimeout(3));
+      //Left side Coral Station 
+            m_driverController.b().onTrue( m_driveTrain.driveToPose(new Pose2d(new Translation2d(1.588, 7.266), 
+            new Rotation2d(Units.degreesToRadians(60)))).withTimeout(3));
+    
+    //Reef settings 
 
     m_driverController.pov(180).onTrue(m_driveTrain.driveToPose(Constants.Target.R_Front_Blue));
-    m_driverController.pov(180).and(m_driverController.b()).onTrue(m_driveTrain.driveToPose(Constants.Target.L_Front_Blue));
+    m_driverController.pov(180).and(m_driverController.leftTrigger()).onTrue(m_driveTrain.driveToPose(Constants.Target.L_Front_Blue));
     }
      
      
@@ -194,24 +181,22 @@ public class RobotContainer {
     /*Default command updates position continuously until goal is met - Although it is not clear that the until means anything
       * given that the command restarts immediatly after.
     */
-   
-    
-    m_elevatorSubsystem.setDefaultCommand(Commands.run(()-> m_elevatorSubsystem.updatePosition(),m_elevatorSubsystem)
-    //.until(() -> Math.abs(m_elevatorSubsystem.getGoalPosition() - m_elevatorSubsystem.getPosition()) < Constants.Elevator.Position_Error)
-      );
-    
+      m_elevatorSubsystem.setDefaultCommand(Commands.run(()-> m_elevatorSubsystem.updatePosition(),m_elevatorSubsystem));
+      //Elevator State Setters
       m_operatorController.x().onTrue(Commands.runOnce(() -> m_elevatorSubsystem.setState(elevatorState.Load)));
       m_operatorController.a().onTrue(Commands.runOnce(() -> m_elevatorSubsystem.setState(elevatorState.L1)));
       m_operatorController.b().onTrue(Commands.runOnce(() -> m_elevatorSubsystem.setState(elevatorState.L2)));
       m_operatorController.y().onTrue(Commands.runOnce(() -> m_elevatorSubsystem.setState(elevatorState.L3)));  
 
+      //Allows manual control of elevator with pressing the right Trigger and the left Joystick
       m_operatorController.rightTrigger(0.9).whileTrue(new ElevatorCommand(m_elevatorSubsystem, () -> m_operatorController.getLeftY()));
     
       //Popper Binding
+      //#TODO Convert Popper to a State Machine ≈ to the elevator
     /*
      * Default Popper command is meant to continuously update the position of the popper arm
     */
-    m_popper.setDefaultCommand(new PopperCommand(m_popper));
+      m_popper.setDefaultCommand(new PopperCommand(m_popper));
         
     //Popper Movement
     m_operatorController.povLeft().onTrue(Commands.runOnce(()-> m_popper.setPopperState(popperState.L3)));
