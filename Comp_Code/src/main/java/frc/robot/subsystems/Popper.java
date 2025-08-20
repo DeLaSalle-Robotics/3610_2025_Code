@@ -10,33 +10,11 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-import com.revrobotics.AbsoluteEncoder;
-import com.revrobotics.sim.SparkAbsoluteEncoderSim;
-import com.revrobotics.spark.SparkAbsoluteEncoder;
-import com.revrobotics.spark.SparkBase.ControlType;
-import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkMax;
-import com.revrobotics.spark.SparkBase.PersistMode;
-import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
-import com.revrobotics.spark.config.SparkMaxConfig;
-import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
-import com.revrobotics.spark.config.SparkMaxConfig;
-
-import edu.wpi.first.math.VecBuilder;
-import edu.wpi.first.math.system.plant.DCMotor;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Encoder;
-import edu.wpi.first.wpilibj.simulation.EncoderSim;
-import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
 import edu.wpi.first.wpilibj.CounterBase.EncodingType;
-import edu.wpi.first.wpilibj.DutyCycleEncoder;
-import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
-import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
-import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj.util.Color;
-import edu.wpi.first.wpilibj.util.Color8Bit;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -51,26 +29,32 @@ public class Popper extends SubsystemBase {
   private final Encoder intakeArmEncoder = new Encoder(Constants.Popper.popperEncoderChannelA,Constants.Popper.popperEncoderChannelB, false, EncodingType.k4X);
   //private final DutyCycleEncoder intakeArmEncoder = new DutyCycleEncoder(2);
   public static final double armOffset = 83.0;
-  private double setPoint = 0.0;
   
   final MotionMagicVoltage m_motmag = new MotionMagicVoltage(0).withSlot(0);
   double initialPoint;
- public enum popperState{
+ 
+  public enum popperState{
   Start,
   L2,
   L2Plus,
   L3,
-  L3Plus
+  L3Plus,
+  L2_SPIN,
+  L2Plus_SPIN,
+  L3_SPIN,
+  L3Plus_SPIN
  }
 
- //Declaring the Subsystem \/
+ private popperState currentState;
+
+ //Constructing the Subsystem
  public Popper() {
-  Rotater.getConfigurator().apply(new TalonFXConfiguration());
-  Rotater.setNeutralMode(NeutralModeValue.Brake);
-      initialPoint = intakeArmEncoder.get();
-  //intakeArmEncoder.setDistancePerPulse(0.1758); //Degrees/Pulse
-   
-  var talonFXConfigs = new TalonFXConfiguration();
+    Rotater.getConfigurator().apply(new TalonFXConfiguration());
+    Rotater.setNeutralMode(NeutralModeValue.Brake);
+    initialPoint = intakeArmEncoder.get();
+    currentState = popperState.Start;
+    //Configuring the Popper Rotation Motor
+    var talonFXConfigs = new TalonFXConfiguration();
     var slot0Configs = talonFXConfigs.Slot0;
     slot0Configs.kG = 0;
     slot0Configs.kA = 0;
@@ -79,7 +63,12 @@ public class Popper extends SubsystemBase {
     slot0Configs.kP = 1.5;
     slot0Configs.kI = 0;
     slot0Configs.kD = 0;
-    
+    //Current Limits
+    var limitConfigs = talonFXConfigs.CurrentLimits;
+    limitConfigs.StatorCurrentLimit = 40;
+    limitConfigs.StatorCurrentLimitEnable = true;
+
+
     var motionMagicConfigs = talonFXConfigs.MotionMagic;
     motionMagicConfigs.MotionMagicCruiseVelocity = 40; // 80 rps cruise velocity
     motionMagicConfigs.MotionMagicAcceleration = 80; // 160 rps/s acceleration -> 0.5 to reach max speed
@@ -87,80 +76,103 @@ public class Popper extends SubsystemBase {
 
     Rotater.getConfigurator().apply(talonFXConfigs, 0.05);
     Rotater.setPosition(0);
-  intakeArmEncoder.setDistancePerPulse(0.1758); //Degrees/Pulse
+    intakeArmEncoder.setDistancePerPulse(0.1758); //Degrees/Pulse
  }
-private popperState currentState = popperState.Start;
 
 //Methods===================
-
-public void PopperMove(Double speed) {
-  if (Constants.Verbose) {SmartDashboard.putNumber("RockSpeed", speed);}
-  Rotater.set(speed);
-  /*
-  if (Math.abs(speed) > 0.01) {
-    double popperPosition = this.getPopperPosition();
-    if (popperPosition > Constants.Popper.maxAngle-50  && speed < 0){
-      Rotater.set(0);
-    } else if (popperPosition < Constants.Popper.minAngle+50 && speed > 0) {
-      Rotater.set(0);
-    } else {
-    }
-  } else {
-    Rotater.set(0);
-  }
-  */
+/**
+ * Provides a means of controlling the Popper rotation motor.
+ * Should use with extreme caution to move the arm to a reset
+ * position.
+ * @param speed
+ */
+public void popperMove(Double speed) {
+  //Creating a save speed to avoid damage while reseting arm position.
+  double safeSpeed = 0.5 * speed;
+  if (Constants.Verbose) {SmartDashboard.putNumber("RockSpeed", safeSpeed);}
+  
+  Rotater.set(safeSpeed);
+}
+/**
+ * Provides a means to reset the arm position. Used in conjuction with 
+ * popperMove method.
+ */
+public void popperReset() {
+  this.setPopperPosition(0);
 }
 
 public double getPopperPosition() {
-  /* This code uses the throughbore encoder, but that cannot be sent directly to the sparkMax
-  *   without a specific adapter from Rev (REV-11-1881-PK2). Consider if built-in encoder is 
-  *  not sufficiently sensitive to control the arm.
-  */
-  //return intakeArmEncoder.getDistance() - armOffset;
-  return Rotater.getRotorPosition().getValueAsDouble();
+   return Rotater.getRotorPosition().getValueAsDouble();
 }
 
+/**
+ * Moves the Popper rotator arm to desired state using MotionMagic™
+ * controller. 
+ * @param setPoint
+ */
 public void setPopperPosition(double setPoint){
   //m_controller.setReference(setPoint, ControlType.kMAXMotionPositionControl);
   Rotater.setControl(m_motmag.withPosition(setPoint));
 
 }
 
-public void zeroArm(){
-  Rotater.setPosition(0);
-}
-
+/**
+ * Takes a popperState and makes it the desired state.
+ * @param newState
+ */
 public void setPopperState(popperState newState){
   this.currentState = newState;
 }
 public void PopperSpinL3(){
   Spinner.set(-Constants.Popper.popperSpinnerSpeed);
 }
-public void PopperSpinL2(){
+public void popperSpin(){
   Spinner.set(-Constants.Popper.popperSpinnerSpeed);
 }
-public void PopperSpinStop(){
+public void popperSpinStop(){
   Spinner.set(0);
 }
 public void updatePosition(){
   switch (this.currentState) {
     case Start -> {
       this.setPopperPosition(Constants.Popper.Start_Position);
+      this.popperSpinStop();
     }
     case L2 -> {
       this.setPopperPosition(Constants.Popper.L2_Position);
+      this.popperSpinStop();
     }
     case L3 -> {
       this.setPopperPosition(Constants.Popper.L3_Position);
+      this.popperSpinStop();
     }
     case L2Plus -> {
       this.setPopperPosition(Constants.Popper.L2Plus_Position);
+      this.popperSpinStop();
     }
     case L3Plus -> {
       this.setPopperPosition(Constants.Popper.L3Plus_Position);
+      this.popperSpinStop();
+    }
+    case L2_SPIN -> {
+      this.setPopperPosition(Constants.Popper.L2_Position);
+      this.popperSpin();
+    }
+    case L3_SPIN -> {
+      this.setPopperPosition(Constants.Popper.L3_Position);
+      this.popperSpin();
+    }
+    case L2Plus_SPIN -> {
+      this.setPopperPosition(Constants.Popper.L2Plus_Position);
+      this.popperSpin();
+    }
+    case L3Plus_SPIN -> {
+      this.setPopperPosition(Constants.Popper.L3Plus_Position);
+      this.popperSpin();
     }
     default ->{
       this.setPopperPosition(Constants.Popper.Start_Position);
+      this.popperSpinStop();
     }
   }
 }
@@ -198,7 +210,7 @@ public double getGoalPosition(){
     // Subsystem::RunOnce implicitly requires `this` subsystem.
     return run(
         () -> {
-          PopperMove(speed.getAsDouble());
+          popperMove(speed.getAsDouble());
           if(spinSpeed.getAsDouble() >= 0.2){
             Spinner.set(0.2);  
           }
@@ -217,7 +229,7 @@ public double getGoalPosition(){
     
     return run(
         () -> {
-          PopperMove(speed.getAsDouble());
+          popperMove(speed.getAsDouble());
         });
   }
 

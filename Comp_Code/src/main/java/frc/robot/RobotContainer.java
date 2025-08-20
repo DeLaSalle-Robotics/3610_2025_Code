@@ -72,30 +72,55 @@ public class RobotContainer {
     configureBindings();
 
     // Register Named Commands
-    NamedCommands.registerCommand("L3 Raise", Commands.runOnce(() -> m_elevatorSubsystem.setState(elevatorState.L3)).
-                                              andThen(Commands.run(() -> m_elevatorSubsystem.updatePosition()).until(
-                                    () -> Math.abs(m_elevatorSubsystem.getGoalPosition() - m_elevatorSubsystem.getPosition()) < Constants.Elevator.Position_Error
+
+    //#TODO Need to define the algea removal Command sequence
+
+    NamedCommands.registerCommand(
+      "L3 Raise", Commands.runOnce(() -> m_elevatorSubsystem.setState(elevatorState.L3))
+          .andThen(Commands.run(() -> m_elevatorSubsystem.updatePosition())
+          .until(
+                  () -> Math.abs(m_elevatorSubsystem.getGoalPosition() - 
+                  m_elevatorSubsystem.getPosition()) < Constants.Elevator.Position_Error
                                   )));
-    NamedCommands.registerCommand("L2 Raise", Commands.runOnce(() -> m_elevatorSubsystem.setState(elevatorState.L2)).
-                                  andThen(Commands.run(() -> m_elevatorSubsystem.updatePosition()).until(
-                        () -> Math.abs(m_elevatorSubsystem.getGoalPosition() - m_elevatorSubsystem.getPosition()) < Constants.Elevator.Position_Error
+    NamedCommands.registerCommand(
+      "L2 Raise", Commands.runOnce(() -> m_elevatorSubsystem.setState(elevatorState.L2))
+          .andThen(Commands.run(() -> m_elevatorSubsystem.updatePosition())
+          .until(
+                  () -> Math.abs(m_elevatorSubsystem.getGoalPosition() - 
+                  m_elevatorSubsystem.getPosition()) < Constants.Elevator.Position_Error
                       )));
-    NamedCommands.registerCommand("L2 Algea Prep", Commands.runOnce(() -> m_popper.setPopperState(popperState.L2)).
-                                  andThen(Commands.run(() -> m_popper.updatePosition()).until(
-                                    () -> Math.abs(m_popper.getGoalPosition() - m_popper.getPopperPosition()) < Constants.Popper.Position_Error
+    NamedCommands.registerCommand(
+      "L2 Algea Prep", Commands.runOnce(() -> m_popper.setPopperState(popperState.L2Plus_SPIN))
+          .andThen(Commands.run(() -> m_popper.updatePosition())
+          .until(
+                  () -> Math.abs(m_popper.getGoalPosition() - 
+                  m_popper.getPopperPosition()) < Constants.Popper.Position_Error
                                   )));
     NamedCommands.registerCommand("Stow Popper", Commands.runOnce(() -> m_popper.setPopperState(popperState.Start)).
                                   andThen(Commands.run(() -> m_popper.updatePosition()).until(
                                     () -> Math.abs(m_popper.getGoalPosition() - m_popper.getPopperPosition()) < Constants.Popper.Position_Error
                                   )));
-    NamedCommands.registerCommand("L2 Algea", new PopperL2Command(m_popper));
-    NamedCommands.registerCommand("L3 Algea", new PopperL3Command(m_popper).andThen(Commands.run(() -> m_popper.updatePosition()).until(
-      () -> Math.abs(m_popper.getGoalPosition() - m_popper.getPopperPosition()) < Constants.Popper.Position_Error
+    NamedCommands.registerCommand(
+      "L2 Algea", Commands.runOnce(() -> m_popper.setPopperState(popperState.L2Plus_SPIN))
+      .andThen(Commands.run(() -> m_popper.updatePosition())
+      .until(
+              () -> Math.abs(m_popper.getGoalPosition() - 
+              m_popper.getPopperPosition()) < Constants.Popper.Position_Error
+                              )));
+    NamedCommands.registerCommand(
+      "L3 Algea", Commands.runOnce(() -> m_popper.setPopperState(popperState.L3Plus_SPIN))
+          .andThen(Commands.run(() -> m_popper.updatePosition())
+          .until(
+                  () -> Math.abs(m_popper.getGoalPosition() - 
+                  m_popper.getPopperPosition()) < Constants.Popper.Position_Error
                                   )));
-    NamedCommands.registerCommand("Load", Commands.runOnce(() -> m_elevatorSubsystem.setState(elevatorState.Load)).
-                                              andThen(Commands.run(() -> m_elevatorSubsystem.updatePosition()).until(
-                                    () -> Math.abs(m_elevatorSubsystem.getGoalPosition() - m_elevatorSubsystem.getPosition()) < Constants.Elevator.Position_Error
-                                  )));
+    NamedCommands.registerCommand(
+      "Load", Commands.runOnce(() -> m_elevatorSubsystem.setState(elevatorState.Load))
+          .alongWith(Commands.run(() -> m_elevatorSubsystem.updatePosition())
+          .until(
+                  () -> Math.abs(m_elevatorSubsystem.getGoalPosition() - 
+                  m_elevatorSubsystem.getPosition()) < Constants.Elevator.Position_Error
+                )));
     NamedCommands.registerCommand("autoIntake", new IntakeCommand(m_intakeSubsystem, m_leds,() -> -0.3, true));
     NamedCommands.registerCommand("autoScore", new IntakeCommand(m_intakeSubsystem, m_leds, () ->  -0.5, true));
 
@@ -139,8 +164,10 @@ public class RobotContainer {
                                                                 () -> m_driverController.getRightTriggerAxis()<0.5));
     }
     m_driverController.start().onTrue(Commands.runOnce(() -> m_driveTrain.zeroGyro()));
-     //#TODO Add vision only pose setting - mostly for testing purposes (get Esitmated pose, resetPose with vision pose)
-     //#TODO See about Setting initial state using alliances?
+    
+    //#TODO Add vision only pose setting - mostly for testing purposes (get Esitmated pose, resetPose with vision pose)
+     
+    //#TODO See about Setting initial state using alliances?
 
     //This method is called in the teleopInit, once the DriverStation object is created and has posted information. 
      
@@ -192,27 +219,49 @@ public class RobotContainer {
       m_operatorController.rightTrigger(0.9).whileTrue(new ElevatorCommand(m_elevatorSubsystem, () -> m_operatorController.getLeftY()));
     
       //Popper Binding
-      //#TODO Convert Popper to a State Machine ≈ to the elevator
+     
     /*
      * Default Popper command is meant to continuously update the position of the popper arm
     */
-      m_popper.setDefaultCommand(new PopperCommand(m_popper));
+      m_popper.setDefaultCommand(Commands.run(() -> m_popper.updatePosition(), m_popper));
         
     //Popper Movement
-    m_operatorController.povLeft().onTrue(Commands.runOnce(()-> m_popper.setPopperState(popperState.L3)));
-    m_operatorController.povDown().onTrue(Commands.runOnce(()-> m_popper.setPopperState(popperState.Start)));
-    m_operatorController.leftTrigger(0.9).whileTrue(m_popper.rock(() -> m_operatorController.getRightY()));
+    m_operatorController.povUp()
+                  .onTrue(Commands.runOnce(()-> m_popper.setPopperState(popperState.L3)));
+    m_operatorController.povUp()
+                  .and(m_operatorController.leftBumper())
+                  .onTrue(Commands.runOnce(()-> m_popper.setPopperState(popperState.L3_SPIN)));
+    m_operatorController.povUp()
+                  .and(m_operatorController.leftTrigger(0.5))
+                  .onTrue(Commands.runOnce(()-> m_popper.setPopperState(popperState.L3Plus)));
+    m_operatorController.povUp()
+                  .and(m_operatorController.leftBumper())
+                  .and(m_operatorController.leftTrigger(0.5))
+                  .onTrue(Commands.runOnce(()-> m_popper.setPopperState(popperState.L3Plus_SPIN)));
+    m_operatorController.povLeft()
+                  .onTrue(Commands.runOnce(()-> m_popper.setPopperState(popperState.L2)));
+    m_operatorController.povLeft()
+                  .and(m_operatorController.leftBumper())
+                  .onTrue(Commands.runOnce(()-> m_popper.setPopperState(popperState.L2_SPIN)));
+    m_operatorController.povLeft()
+                  .and(m_operatorController.leftTrigger(0.5))
+                  .onTrue(Commands.runOnce(()-> m_popper.setPopperState(popperState.L2Plus)));
+    m_operatorController.povLeft()
+                  .and(m_operatorController.leftBumper())
+                  .and(m_operatorController.leftTrigger(0.5))
+                  .onTrue(Commands.runOnce(()-> m_popper.setPopperState(popperState.L2Plus_SPIN)));
+         
+    m_operatorController.povDown()
+                  .onTrue(Commands.runOnce(()-> m_popper.setPopperState(popperState.Start)));
     
-    //Popper Commands
-    m_operatorController.povRight().whileTrue(new PopperL2Remove(m_popper)); //Note this command doesn't end on its
-    m_operatorController.povUp().onTrue(new PopperL3Remove(m_popper));
+    //Means of moving the Popper arm to desired position.
+    m_operatorController.back().whileTrue(m_popper.rock(() -> m_operatorController.getRightY()));
+    m_operatorController.start().onTrue(Commands.runOnce(() -> m_popper.popperReset()));
     
-    m_operatorController.back().onTrue(Commands.runOnce(() -> m_elevatorSubsystem.zeroEncoders()));
-    m_operatorController.start().onTrue(Commands.runOnce(() -> m_popper.zeroArm()));
+    //Intake Bindings- Note switch to driver controller.
     
-    
-    m_operatorController.leftBumper().whileTrue(new IntakeCommand(m_intakeSubsystem, m_leds,() -> -0.3,true));
-    m_operatorController.rightBumper().whileTrue(new IntakeCommand(m_intakeSubsystem, m_leds, () -> 0.8, true));
+    m_driverController.leftBumper().whileTrue(new IntakeCommand(m_intakeSubsystem, m_leds,() -> -0.3,true));
+    m_driverController.rightBumper().whileTrue(new IntakeCommand(m_intakeSubsystem, m_leds, () -> 0.8, true));
     
       System.out.println("End of configure Bindings");
       
