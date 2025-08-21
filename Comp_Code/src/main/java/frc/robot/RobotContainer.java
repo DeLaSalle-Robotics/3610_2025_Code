@@ -178,30 +178,52 @@ public class RobotContainer {
     if (alliance.isPresent() && alliance.get() == Alliance.Red) {
       //The Red location sides
       //Left side Coral Station 
-      m_driverController.b().onTrue( m_driveTrain.driveToPose(new Pose2d(new Translation2d(15.963, 0.799), 
-     new Rotation2d(Units.degreesToRadians(120)))).withTimeout(3));
-      //Left side Coral Station 
-      m_driverController.a().onTrue( m_driveTrain.driveToPose(new Pose2d(new Translation2d(15.963, 7.266), 
-      new Rotation2d(Units.degreesToRadians(225)))).withTimeout(3));
+      m_driverController
+                        .b()
+                        .onTrue(m_driveTrain.driveToPose(new Pose2d(new Translation2d(15.963, 0.799), 
+                                  new Rotation2d(Units.degreesToRadians(120))))
+                        .withTimeout(3));
+      //Right side Coral Station 
+      m_driverController
+                        .a()
+                        .onTrue(m_driveTrain.driveToPose(new Pose2d(new Translation2d(15.963, 7.266), 
+                                  new Rotation2d(Units.degreesToRadians(225))))
+                        .withTimeout(3));
     
     //Reef settings
-      m_driverController.pov(180).onTrue(m_driveTrain.driveToPose(Constants.Target.R_Front_Red));
-      m_driverController.pov(180).and(m_driverController.leftTrigger()).onTrue(m_driveTrain.driveToPose(Constants.Target.L_Front_Red));
+      m_driverController
+                        .pov(180)
+                        .onTrue(m_driveTrain.driveToPose(Constants.Target.R_Front_Red));
+      m_driverController
+                        .pov(180)
+                        .and(m_driverController.leftStick())
+                        .onTrue(m_driveTrain.driveToPose(Constants.Target.L_Front_Red));
     }
     else {
       //The blue location sides
       //Right side Coral Station 
-            m_driverController.a().onTrue( m_driveTrain.driveToPose(new Pose2d(new Translation2d(1.588, 0.799), 
-          new Rotation2d(Units.degreesToRadians(60)))).withTimeout(3));
+      m_driverController
+                        .a()
+                        .onTrue( m_driveTrain.driveToPose(new Pose2d(new Translation2d(1.588, 0.799), 
+                                  new Rotation2d(Units.degreesToRadians(60))))
+                        .withTimeout(3));
       //Left side Coral Station 
-            m_driverController.b().onTrue( m_driveTrain.driveToPose(new Pose2d(new Translation2d(1.588, 7.266), 
-            new Rotation2d(Units.degreesToRadians(60)))).withTimeout(3));
+      m_driverController
+                        .b()
+                        .onTrue( m_driveTrain.driveToPose(new Pose2d(new Translation2d(1.588, 7.266), 
+                                new Rotation2d(Units.degreesToRadians(60))))
+                        .withTimeout(3));
     
     //Reef settings 
 
-    m_driverController.pov(180).onTrue(m_driveTrain.driveToPose(Constants.Target.R_Front_Blue));
-    m_driverController.pov(180).and(m_driverController.leftTrigger()).onTrue(m_driveTrain.driveToPose(Constants.Target.L_Front_Blue));
-    }
+      m_driverController
+                        .pov(180)
+                        .onTrue(m_driveTrain.driveToPose(Constants.Target.R_Front_Blue));
+      m_driverController
+                        .pov(180)
+                        .and(m_driverController.leftStick())
+                        .onTrue(m_driveTrain.driveToPose(Constants.Target.L_Front_Blue));
+      }
      
      
     //Elevator Bindings
@@ -263,7 +285,10 @@ public class RobotContainer {
     m_driverController.leftBumper().whileTrue(new IntakeCommand(m_intakeSubsystem, m_leds,() -> -0.3,true));
     m_driverController.rightBumper().whileTrue(new IntakeCommand(m_intakeSubsystem, m_leds, () -> 0.8, true));
     
-      System.out.println("End of configure Bindings");
+    //For setting the pose based on vision
+    m_driverController.start().onTrue(Commands.runOnce(() -> m_driveTrain.getVisionPose()));
+     
+    System.out.println("End of configure Bindings");
       
       }
                                                           

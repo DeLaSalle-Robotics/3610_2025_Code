@@ -37,6 +37,7 @@ import com.pathplanner.lib.pathfinding.Pathfinding;
 
 import java.io.File;
 import java.util.List;
+import java.util.concurrent.BlockingDeque;
 import java.util.function.Supplier;
 
 import edu.wpi.first.math.geometry.Translation2d;
@@ -77,6 +78,7 @@ public class DriveTrain extends SubsystemBase {
   BooleanSubscriber haveTarget;
 
   BooleanPublisher rightTarget;
+  
   boolean rTarget = false;
 
   public DriveTrain(File directory) {
@@ -312,6 +314,16 @@ public class DriveTrain extends SubsystemBase {
     PathfindingCommand.warmupCommand().schedule();
   }
 
+  /**Should collect the pose from the vision system and reset pose */
+  public void getVisionPose() {
+    Pose2d visionPose = vision.getPoseEstimation();
+    if (visionPose.getY() > 75) {
+      visionPose = this.getPose();
+    } 
+    this.resetPose(visionPose);
+  }
+
+
   /**
    * Resets odometry to the given pose. Gyro angle and module positions do not need to be reset when calling this
    * method.  However, if either gyro angle or module position is reset, this must be called in order for odometry to
@@ -485,16 +497,4 @@ public class DriveTrain extends SubsystemBase {
     
   }
 
-  public void toggleTarget() {
-    if (rTarget) {
-      rightTarget.set(false);
-    } else {
-      rightTarget.set(true);
-    }
-  }
-
- /*  public Supplier<Command> driveSupplier(){
-    return () -> new DriveToTarget(this);
-  }
-    */
 }

@@ -43,6 +43,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
@@ -194,6 +195,29 @@ public class Vision extends SubsystemBase {
       }
     }
 
+  }
+
+/**
+   * Get vision only pose estimation with all of the given poses.
+   * Called as part of a Pose Correction Command.
+   * 
+   */
+  public Pose2d getPoseEstimation()
+  {  Pose2d pose = new Pose2d(new Translation2d(100,100), new Rotation2d(0));
+    //Cycle through each Camera during each cycle
+    for (Cameras camera : Cameras.values())
+    {
+      //Get a PoseEstimation from the selected Camera - Collected from all tags available
+      Optional<EstimatedRobotPose> poseEst = getEstimatedGlobalPose(camera);
+      if (poseEst.isPresent())
+      {
+        pose = poseEst.get().estimatedPose.toPose2d();
+        break; //If a pose is found, break out of the Camera cycle and return the Pose2d Object.
+        //SmartDashboard.putData(field2d.setRobotPose(pose.estimatedPose.toPose2d()));
+        
+      }
+    }
+    return pose;
   }
 
   /**
