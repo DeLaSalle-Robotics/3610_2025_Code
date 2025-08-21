@@ -5,10 +5,7 @@
 package frc.robot.subsystems;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-//import java.util.HashMap;
 import java.util.List;
-//import java.util.Map;
 import java.util.Optional;
 import java.util.function.Supplier;
 import java.awt.Desktop;
@@ -34,7 +31,6 @@ import org.photonvision.PhotonUtils;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.cameraserver.CameraServer;
-import edu.wpi.first.cscore.CvSource;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -48,16 +44,10 @@ import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.networktables.BooleanPublisher;
-import edu.wpi.first.networktables.BooleanSubscriber;
-import edu.wpi.first.networktables.DoublePublisher;
-import edu.wpi.first.networktables.NetworkTable;
-import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.NetworkTablesJNI;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Robot;
@@ -73,7 +63,7 @@ public class Vision extends SubsystemBase {
    */
   public              VisionSystemSim     visionSim;
   
-
+  public Field2d field2d;
   final private boolean visionTroubleShoot = false;
   // This array was designed to aid in defining apriltags useful for targeting.
   //private List<Number> scoringTargets = Arrays.asList(6, 7, 8, 9, 10, 11, 22, 17, 18, 19, 20, 21);
@@ -85,21 +75,6 @@ public class Vision extends SubsystemBase {
   /**
    * Field from {@link swervelib.SwerveDrive#field}
    */
-  private Field2d field2d;
-
-  /*
-  public enum LevelTarget {
-    Level1, Level2, Level3
-  }
-  BooleanSubscriber rightTarget; 
-  BooleanPublisher haveTarget;
-  DoublePublisher xTarget;
-  DoublePublisher yTarget;
-  DoublePublisher thetaTarget;
-
-  //Map<Integer, Pose2d> RtargetLookup = new HashMap<Integer, Pose2d>();
-  //Map<Integer, Pose2d> LtargetLookup = new HashMap<Integer, Pose2d>();
-  */
   
   /**
      * Constructor for the Vision class.

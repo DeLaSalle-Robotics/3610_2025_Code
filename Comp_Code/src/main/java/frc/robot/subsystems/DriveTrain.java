@@ -4,15 +4,10 @@
 
 package frc.robot.subsystems;
 import frc.robot.Constants;
-import frc.robot.commands.DriveTrain.DriveToTarget;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.DeferredCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
-import edu.wpi.first.apriltag.AprilTagFieldLayout;
-import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 
@@ -24,32 +19,17 @@ import swervelib.parser.SwerveDriveConfiguration;
 import swervelib.parser.SwerveParser;
 
 import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.commands.FollowPathCommand;
 import com.pathplanner.lib.commands.PathfindingCommand;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
-import com.pathplanner.lib.path.GoalEndState;
 import com.pathplanner.lib.path.PathConstraints;
-import com.pathplanner.lib.path.PathPlannerPath;
-import com.pathplanner.lib.path.Waypoint;
-import com.pathplanner.lib.pathfinding.Pathfinding;
 
 import java.io.File;
-import java.util.List;
-import java.util.concurrent.BlockingDeque;
-import java.util.function.Supplier;
 
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.networktables.BooleanPublisher;
-import edu.wpi.first.networktables.BooleanSubscriber;
-import edu.wpi.first.networktables.DoubleSubscriber;
-import edu.wpi.first.networktables.NetworkTable;
-import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.smartdashboard.Field2d;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import static edu.wpi.first.units.Units.Meter;
 
@@ -59,10 +39,6 @@ public class DriveTrain extends SubsystemBase {
    * Swerve drive object.
    */
   private final SwerveDrive         swerveDrive;
-   /**
-   * AprilTag field layout.
-   */
-  private final AprilTagFieldLayout aprilTagFieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeWelded);
   /**
    * Enable vision odometry updates while driving.
    */
@@ -72,15 +48,7 @@ public class DriveTrain extends SubsystemBase {
    * PhotonVision class to keep an accurate odometry.
    */
   private Vision vision;
-  DoubleSubscriber xTarget;
-  DoubleSubscriber yTarget;
-  DoubleSubscriber thetaTarget;
-  BooleanSubscriber haveTarget;
-
-  BooleanPublisher rightTarget;
   
-  boolean rTarget = false;
-
   public DriveTrain(File directory) {
 
     // Configure the Telemetry before creating the SwerveDrive to avoid unnecessary objects being created.
@@ -112,17 +80,6 @@ public class DriveTrain extends SubsystemBase {
     }
     setupPathPlanner();
 
-    /*
-    NetworkTableInstance inst = NetworkTableInstance.getDefault();
-    NetworkTable table = inst.getTable("datatable");
-    haveTarget = table.getBooleanTopic("haveTarget").subscribe(false);
-    xTarget = table.getDoubleTopic("xTar").subscribe(0);
-    yTarget = table.getDoubleTopic("yTar").subscribe(0);
-    thetaTarget = table.getDoubleTopic("thetaTar").subscribe(0);
-    rightTarget = table.getBooleanTopic("rightTarget").publish();
-
-    rightTarget.set(rTarget);
-    */
   }
 
   /**
@@ -346,44 +303,7 @@ public class DriveTrain extends SubsystemBase {
     return swerveDrive.getRobotVelocity();
   }
 
-  public Command DriveTo60(Pose2d pose2d){
-    return new frc.robot.commands.DriveTrain.DriveToPoint(this, 
-                new Pose2d(pose2d.getX(),pose2d.getY(),new Rotation2d(Units.degreesToRadians(60))));
-  }
-  public Command DriveToAngle(double degree){
-    SmartDashboard.putNumber("Desired Angle", degree);
-    return new frc.robot.commands.DriveTrain.DriveToPoint(this, new Pose2d(getPose().getX(),getPose().getY(),new Rotation2d(Units.degreesToRadians(degree))));
-  }
-
-  public Command DriveToPoint(Pose2d finalPose) {
-    SmartDashboard.putNumber("Desired Angle", finalPose.getRotation().getDegrees());    
-    try {
-        RobotConfig config = RobotConfig.fromGUISettings();
-        PathConstraints constraints = new PathConstraints(3.0, 3.0, 2 * Math.PI, 4 * Math.PI);
-        return new PathfindingCommand(finalPose, 
-                                  constraints,
-                                  0.0,
-                                  this::getPose,
-                                  this::getRobotVelocity,
-                                  (speedsRobotRelative, moduleFeedForwards) -> {
-                                        swerveDrive.drive(
-                                        speedsRobotRelative,
-                                        swerveDrive.kinematics.toSwerveModuleStates(speedsRobotRelative),
-                                        moduleFeedForwards.linearForces()
-                                      );
-                                  },
-                                  new PPHolonomicDriveController(
-                                    new PIDConstants(5.0, 0.0, 0.0 ),
-                                    new PIDConstants(5.0,0.0,0.0)
-                                    ),
-                                    config,
-                                    this
-                                ).withTimeout(3);
-    } catch (Exception e) {
-      e.printStackTrace();
-      return Commands.none();
-    }
-  }
+  
 /**
    * Use PathPlanner Path finding to go to a point on the field.
    *
@@ -403,34 +323,6 @@ public class DriveTrain extends SubsystemBase {
         constraints,
         edu.wpi.first.units.Units.MetersPerSecond.of(0) // Goal end velocity in meters/sec
                                      ).andThen(() -> this.resetPose(pose)).andThen(Commands.print("Testing the command")));
-  }
-/**
-   * Use PathPlanner Path finding to go to target on field.
-   *
-   * @param pose Target {@link Pose2d} to go to.
-   * @return PathFinding command
-   * 
-   * https://github.com/PerkValleyRobotics/2025RobotCode/blob/limelight/src%2Fmain%2Fjava%2Ffrc%2Frobot%2Fcommands%2FDriveToNearestReefSideCommand.java
-   */
-  public Supplier<Command> driveToTarget() {
-    Pose2d tarPose;
-    double xTar = xTarget.get();
-    double yTar = yTarget.get();
-    double thetaTar = thetaTarget.get();
-    boolean targetPresent = haveTarget.get();
-    if (targetPresent) {
-      tarPose = new Pose2d(xTar, yTar, new Rotation2d(thetaTar));
-    } else {tarPose = swerveDrive.getPose();
-    }
-    PathConstraints constraints = new PathConstraints(
-      swerveDrive.getMaximumChassisVelocity(), 4.0,
-      swerveDrive.getMaximumChassisAngularVelocity(), Units.degreesToRadians(720));
-
-  // Since AutoBuilder is configured, we can use it to build pathfinding commands
-  return () -> AutoBuilder.pathfindToPose(
-      tarPose,
-      constraints,
-      edu.wpi.first.units.Units.MetersPerSecond.of(0));
   }
 
 
