@@ -183,6 +183,8 @@ public class Vision extends SubsystemBase {
         rightTarget = table.getBooleanTopic("rightTarget").subscribe(false);
 */
   }
+
+
   /**
    * Calculates a target pose relative to an AprilTag on the field.
    *
@@ -222,7 +224,7 @@ public class Vision extends SubsystemBase {
        */
       visionSim.update(swerveDrive.getSimulationDriveTrainPose().get());
     }
-    //Cycle through each Camera during each click
+    //Cycle through each Camera during each cycle
     for (Cameras camera : Cameras.values())
     {
       //Get a PoseEstimation from the selected Camera - Collected from all tags available

@@ -12,12 +12,13 @@ import com.pathplanner.lib.util.FlippingUtil;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.DriveTrain;
 
 public class TurnToAngle extends Command{
     private final DriveTrain swerve;
-    private Pose2d finalPose;
+    private double targetAngle;
     private double error;
     /**
      * Used to drive a swerve robot in full field-centric mode.  vX and vY supply translation inputs, where x is
@@ -33,9 +34,9 @@ public class TurnToAngle extends Command{
      *                station glass.
      * @param heading DoubleSupplier that supplies the robot's heading angle.
      */
-    public TurnToAngle(DriveTrain swerve, Pose2d finalPose) {
+    public TurnToAngle(DriveTrain swerve, double targetAngle) {
         this.swerve = swerve;
-        this.finalPose = finalPose;
+        this.targetAngle = targetAngle;
         
     }
 
@@ -49,8 +50,7 @@ public class TurnToAngle extends Command{
     public void execute() {
         // TODO Auto-generated method stub
         double currentAngle = swerve.getPose().getRotation().getRadians();
-        double targetAngle = finalPose.getRotation().getRadians();
-        double error = targetAngle - currentAngle;
+        double error = Units.degreesToRadians(targetAngle) - currentAngle;
         double rotationAmp = 0.2 * error;
         swerve.drive(new Translation2d(0,0), rotationAmp, true, false);
     }
