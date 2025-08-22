@@ -43,7 +43,7 @@ public class PopperL3Remove extends Command {
     public void execute() {
         if (Constants.Verbose) {SmartDashboard.putNumber("PoperTargetPostiton", m_popper.getGoalPosition());
         SmartDashboard.putString("L3 Popper Remove","Running");}
-        m_popper.PopperSpinL2();
+        m_popper.PopperSpinL3();
         m_popper.updatePosition();
         
     }
@@ -59,6 +59,6 @@ public class PopperL3Remove extends Command {
     // Returns true when the command should end.
     @Override
     public boolean isFinished() {
-        return (Math.abs(m_popper.getPopperPosition() - m_popper.getGoalPosition()) < Constants.Popper.Position_Error);
+        return false;
     }
 }

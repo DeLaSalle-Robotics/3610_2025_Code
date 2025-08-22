@@ -134,7 +134,7 @@ public void setPopperState(popperState newState){
   this.currentState = newState;
 }
 public void PopperSpinL3(){
-  Spinner.set(-Constants.Popper.popperSpinnerSpeed);
+  Spinner.set(Constants.Popper.popperSpinnerSpeed);
 }
 public void PopperSpinL2(){
   Spinner.set(-Constants.Popper.popperSpinnerSpeed);

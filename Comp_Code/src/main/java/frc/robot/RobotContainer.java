@@ -198,7 +198,7 @@ public class RobotContainer {
     
     //Popper Commands
     m_operatorController.povRight().whileTrue(new PopperL2Remove(m_popper)); //Note this command doesn't end on its
-    m_operatorController.povUp().onTrue(new PopperL3Remove(m_popper));
+    m_operatorController.povUp().whileTrue(new PopperL3Remove(m_popper));
     
     m_operatorController.back().onTrue(Commands.runOnce(() -> m_elevatorSubsystem.zeroEncoders()));
     m_operatorController.start().onTrue(Commands.runOnce(() -> m_popper.zeroArm()));
