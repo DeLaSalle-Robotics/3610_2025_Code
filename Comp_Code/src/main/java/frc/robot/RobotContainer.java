@@ -279,7 +279,7 @@ public class RobotContainer {
     m_operatorController.start().onTrue(Commands.runOnce(() -> m_popper.popperReset()));
     
     //Intake Bindings- Note switch to driver controller.
-    m_intakeSubsystem.setDefaultCommand(Commands.runOnce(() -> m_intakeSubsystem.stopIntake()));
+    m_intakeSubsystem.setDefaultCommand(Commands.runOnce(() -> m_intakeSubsystem.stopIntake(), m_intakeSubsystem));
 
     m_driverController.leftBumper()
                 .whileTrue(new IntakeCommand(
