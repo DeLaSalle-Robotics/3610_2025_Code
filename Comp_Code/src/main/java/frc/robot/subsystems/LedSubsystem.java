@@ -27,7 +27,9 @@ public class LedSubsystem extends SubsystemBase {
     private final AddressableLED led;
     private final AddressableLEDSim ledSim;
     private final AddressableLEDBuffer ledBuffer;
-
+    private int streak1LED = 0;
+    private int streak2LED = 0;
+    private int numLoops = 0;
     private LedState currentState;
     private double ledRainbowOffset = 0;
 
@@ -82,6 +84,35 @@ public class LedSubsystem extends SubsystemBase {
         ledRainbowOffset = (ledRainbowOffset + Constants.Led.rainbowShiftSpeed) % 256.0;
     }
 
+    void ledCenterVibe() {
+        int streakWidth = 20;
+        int streak1End = streak1LED + streakWidth + ledBuffer.getLength()/2;
+        int streak2End = streak2LED + streakWidth + ledBuffer.getLength()/2;
+        
+        for(int i = 0; i < Constants.Led.numLeds; i++) {
+            ledBuffer.setRGB(i, 0, 0, 0);
+        }
+        
+        for (int i = 0; i< streakWidth; i++) {
+            streak1End = streak1LED + i;
+            streak1End %= ledBuffer.getLength();
+            ledBuffer.setRGB(streak1End, 255, 215, 0);
+            //Streak Number 2 Backwards
+            streak2End = ledBuffer.getLength() + streak2LED + i;
+            streak2End %= ledBuffer.getLength();
+            if (streak2End < 0) {streak2End = ledBuffer.getLength()+ streak2End;}
+            ledBuffer.setRGB(streak2End, 0, 170, 255);
+        }
+        if (numLoops%5 == 0){
+            streak1LED += 1;
+            streak2LED -= 1;
+            //System.out.println("Streak2End:" + streak2End);
+        }
+        led.setData(ledBuffer);
+        numLoops += 1;
+
+    }
+
     public void updateLeds(LedState state) {
         switch(state) {
             case Pride -> {
@@ -94,7 +125,7 @@ public class LedSubsystem extends SubsystemBase {
                 this.setAllLeds(Color.kYellow);
             }
             case Idle -> {
-                rainbow();
+                ledCenterVibe();
             }
             default -> {
                 setAllLeds(Color.kBlack);
