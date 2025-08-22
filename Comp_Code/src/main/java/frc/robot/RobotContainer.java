@@ -121,8 +121,9 @@ public class RobotContainer {
                   () -> Math.abs(m_elevatorSubsystem.getGoalPosition() - 
                   m_elevatorSubsystem.getPosition()) < Constants.Elevator.Position_Error
                 )));
-    NamedCommands.registerCommand("autoIntake", new IntakeCommand(m_intakeSubsystem, m_leds,() -> -0.3, true));
-    NamedCommands.registerCommand("autoScore", new IntakeCommand(m_intakeSubsystem, m_leds, () ->  -0.5, true));
+    NamedCommands.registerCommand(
+      "autoIntake", new IntakeCommand(m_intakeSubsystem, m_leds, () -> 0.8));
+    NamedCommands.registerCommand("autoScore", new IntakeCommand(m_intakeSubsystem, m_leds,  () -> 0.8));
 
     // Build an auto chooser
     m_autoChooser = AutoBuilder.buildAutoChooser();
@@ -165,10 +166,7 @@ public class RobotContainer {
     }
     m_driverController.start().onTrue(Commands.runOnce(() -> m_driveTrain.zeroGyro()));
     
-    //#TODO Add vision only pose setting - mostly for testing purposes (get Esitmated pose, resetPose with vision pose)
-     
-    //#TODO See about Setting initial state using alliances?
-
+   
     //This method is called in the teleopInit, once the DriverStation object is created and has posted information. 
      
     //Auto driving methods and bindings
@@ -281,10 +279,24 @@ public class RobotContainer {
     m_operatorController.start().onTrue(Commands.runOnce(() -> m_popper.popperReset()));
     
     //Intake Bindings- Note switch to driver controller.
-    
-    m_driverController.leftBumper().whileTrue(new IntakeCommand(m_intakeSubsystem, m_leds,() -> -0.3,true));
-    m_driverController.rightBumper().whileTrue(new IntakeCommand(m_intakeSubsystem, m_leds, () -> 0.8, true));
-    
+    m_intakeSubsystem.setDefaultCommand(Commands.runOnce(() -> m_intakeSubsystem.stopIntake()));
+
+    m_driverController.leftBumper()
+                .whileTrue(new IntakeCommand(
+                            m_intakeSubsystem,
+                            m_leds,
+                            () -> 0.8))
+                .onFalse(Commands.runOnce(
+                          () -> m_intakeSubsystem.stopIntake()));
+    m_operatorController.leftBumper()
+                .whileTrue(new IntakeCommand(
+                            m_intakeSubsystem,
+                            m_leds,
+                            () -> m_operatorController.getRightY()))
+                .onFalse(Commands.runOnce(
+                          () -> m_intakeSubsystem.stopIntake()));
+   
+   
     //For setting the pose based on vision
     m_driverController.start().onTrue(Commands.runOnce(() -> m_driveTrain.getVisionPose()));
      

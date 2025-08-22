@@ -6,6 +6,8 @@ package frc.robot.subsystems;
 
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.config.SparkMaxConfig;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -15,13 +17,28 @@ import frc.robot.Constants;
 public class IntakeSubsystem extends SubsystemBase {
     private final SparkMax intakeMotor;
     private final DigitalInput sensor;
+    private SparkMaxConfig motorConfig;
+    
+    public enum intakeState{
+        Empty,
+        Loading,
+        HasCoral
+    }
 
-    private boolean hasCoral = false;
+    private intakeState currenState = intakeState.Empty;
 
     /** Creates a new ExampleSubsystem. */
     public IntakeSubsystem() {
         intakeMotor = new SparkMax(Constants.Intake.motorId, MotorType.kBrushless);
         sensor = new DigitalInput(Constants.Intake.sensorId);
+
+        motorConfig = new SparkMaxConfig();
+        motorConfig
+            .idleMode(IdleMode.kBrake)
+            .smartCurrentLimit(20);
+        
+
+        intakeMotor.configure(motorConfig, null, null);
     }
 
     public void stopIntake() {
@@ -32,18 +49,24 @@ public class IntakeSubsystem extends SubsystemBase {
         intakeMotor.set(speed);
     }
 
+    public intakeState getIntatkeState(){
+        return currenState;
+    }
+
     public boolean detectCoral() {
         boolean has = sensor.get();
-        if (has != hasCoral) {
-            hasCoral = has;
+        if (has) {
+            currenState = intakeState.HasCoral;
             if (Constants.Verbose) {SmartDashboard.putBoolean("Has Coral", has);}
+        } else {
+            currenState = intakeState.Empty;
         }
-        return hasCoral;
+        return has;
     }
 
     @Override
     public void periodic() {
-        // This method will be called once per scheduler run
+        this.detectCoral();
     }
 
     @Override

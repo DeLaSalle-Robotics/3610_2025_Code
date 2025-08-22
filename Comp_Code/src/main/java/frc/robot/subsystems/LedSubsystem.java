@@ -90,6 +90,9 @@ public class LedSubsystem extends SubsystemBase {
             case HasCoral -> {
                 this.setAllLeds(Color.kGreen);
             }
+            case RunningIntake -> {
+                this.setAllLeds(Color.kYellow);
+            }
             case Idle -> {
                 rainbow();
             }

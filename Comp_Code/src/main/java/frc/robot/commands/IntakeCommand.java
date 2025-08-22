@@ -6,6 +6,7 @@ package frc.robot.commands;
 
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.LedSubsystem;
+import frc.robot.subsystems.IntakeSubsystem.intakeState;
 import frc.robot.subsystems.LedSubsystem.LedState;
 
 import java.util.function.DoubleSupplier;
@@ -17,19 +18,24 @@ public class IntakeCommand extends Command {
     @SuppressWarnings({ "PMD.UnusedPrivateField", "PMD.SingularField" })
     private final IntakeSubsystem intake;
     private final LedSubsystem led;
-    private boolean stopOnSensor;
-    private DoubleSupplier speed;
-    private boolean startState;
+    private DoubleSupplier moveback;
+    private double speed;
+    private boolean intakeSensorStatus;
+    private intakeState startState;
     /**
      * Creates a new ExampleCommand.
      *
      * @param subsystem The subsystem used by this command.
      */
-    public IntakeCommand(IntakeSubsystem subsystem, LedSubsystem m_ledSubSystem,DoubleSupplier speed, boolean stopOnSensor) {
+    public IntakeCommand(IntakeSubsystem subsystem, 
+                        LedSubsystem m_ledSubSystem, 
+                        DoubleSupplier moveback) {
         this.intake = subsystem;
         this.led = m_ledSubSystem;
-        this.speed = speed;
-        this.stopOnSensor = stopOnSensor;
+        this.speed = 0;
+        this.moveback = moveback;
+        this.intakeSensorStatus = false;
+        this.startState = intakeState.Empty;
         // Use addRequirements() here to declare subsystem dependencies.
         addRequirements(subsystem);
     }
@@ -37,31 +43,40 @@ public class IntakeCommand extends Command {
     // Called when the command is initially scheduled.
     @Override
     public void initialize() {
-        startState = intake.detectCoral();
+        this.intakeSensorStatus = intake.detectCoral();
+        this.startState = intakeState.Loading;
+        this.led.setState(LedState.RunningIntake);
+        if (moveback.getAsDouble() < -0.5){
+            speed = -0.3;
+        } else if (moveback.getAsDouble() > 0.5) {
+            speed = 0.8;
+        } else {
+            speed = 0.0;
+        }
     }
 
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
-        intake.startIntake(speed.getAsDouble());
+        intake.startIntake(speed);
     }
 
-    // Called once the command ends or is interrupted.
+    // Called once when the command isFinished is true.
     @Override
     public void end(boolean interrupted) {
         intake.stopIntake();
-        LedState ledState = led.getState();
-        led.setState(ledState.Idle);
-        if (ledState == LedState.HasCoral){
-            
+        if (intake.getIntatkeState() == intakeState.HasCoral){
+            led.setState(LedState.HasCoral);
         } else {
-            led.setState(ledState.HasCoral);
+            led.setState(LedState.Idle);
         }
     }
 
-    // Returns true when the command should end.
+    // Returns true when the sensor status changes.
+    // Goal is to prevent premature coral ejection.
     @Override
     public boolean isFinished() {
-        return (intake.detectCoral() != startState && stopOnSensor);
+            
+        return (intake.detectCoral() != this.intakeSensorStatus);
     }
 }
