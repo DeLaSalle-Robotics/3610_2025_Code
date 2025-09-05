@@ -146,8 +146,8 @@ public class RobotContainer {
     //Drivetrain Bindings
     if(Robot.isSimulation()) {
       
-      m_driveTrain.setDefaultCommand(new AbsoluteFieldDrive(m_driveTrain, () -> -m_driverController.getLeftX(), 
-                                                                () -> -m_driverController.getLeftY(),
+      m_driveTrain.setDefaultCommand(new AbsoluteFieldDrive(m_driveTrain, () -> -m_driverController.getLeftY(), 
+                                                                () -> -m_driverController.getLeftX(),
                                                                 () -> -m_driverController.getRightX(),
                                                                 () -> -m_driverController.getRightY(), 
                                                                 m_driverController.x().negate()));
