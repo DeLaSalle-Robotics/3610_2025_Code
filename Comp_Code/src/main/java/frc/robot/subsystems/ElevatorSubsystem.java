@@ -72,7 +72,9 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     elevatorMotor.getConfigurator().apply(talonFXConfigs, 0.05);
 
-
+    if(getSensor()){
+      zeroEncoders();
+    }
     //goingUp = table.getBooleanTopic("goingUp").subscribe(false);
   }
 

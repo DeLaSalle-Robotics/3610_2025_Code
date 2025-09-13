@@ -160,8 +160,8 @@ public class RobotContainer {
       
       m_driveTrain.setDefaultCommand(new AbsoluteFieldDrive(m_driveTrain, () -> -m_driverController.getLeftY(),
                                                                 () -> -m_driverController.getLeftX(), 
-                                                                () -> -m_driverController.getRightX(),
                                                                 () -> -m_driverController.getRightY(),
+                                                                () -> -m_driverController.getRightX(),
                                                                 () -> m_driverController.getRightTriggerAxis()<0.5));
     }
     m_driverController.start().onTrue(Commands.runOnce(() -> m_driveTrain.zeroGyro()));
@@ -177,13 +177,13 @@ public class RobotContainer {
       //The Red location sides
       //Left side Coral Station 
       m_driverController
-                        .b()
+                        .x()
                         .onTrue(m_driveTrain.driveToPose(new Pose2d(new Translation2d(15.963, 0.799), 
                                   new Rotation2d(Units.degreesToRadians(120))))
                         .withTimeout(3));
       //Right side Coral Station 
       m_driverController
-                        .a()
+                        .b()
                         .onTrue(m_driveTrain.driveToPose(new Pose2d(new Translation2d(15.963, 7.266), 
                                   new Rotation2d(Units.degreesToRadians(225))))
                         .withTimeout(3));
@@ -201,13 +201,13 @@ public class RobotContainer {
       //The blue location sides
       //Right side Coral Station 
       m_driverController
-                        .a()
+                        .b()
                         .onTrue( m_driveTrain.driveToPose(new Pose2d(new Translation2d(1.588, 0.799), 
                                   new Rotation2d(Units.degreesToRadians(60))))
                         .withTimeout(3));
       //Left side Coral Station 
       m_driverController
-                        .b()
+                        .x()
                         .onTrue( m_driveTrain.driveToPose(new Pose2d(new Translation2d(1.588, 7.266), 
                                 new Rotation2d(Units.degreesToRadians(60))))
                         .withTimeout(3));
@@ -285,7 +285,7 @@ public class RobotContainer {
                 .whileTrue(new IntakeCommand(
                             m_intakeSubsystem,
                             m_leds,
-                            () -> 0.8))
+                            () -> -0.8))
                 .onFalse(Commands.runOnce(
                           () -> m_intakeSubsystem.stopIntake()));
     m_operatorController.leftBumper()
@@ -298,7 +298,7 @@ public class RobotContainer {
    
    
     //For setting the pose based on vision
-    m_driverController.start().onTrue(Commands.runOnce(() -> m_driveTrain.getVisionPose()));
+    m_driverController.back().onTrue(Commands.runOnce(() -> m_driveTrain.getVisionPose()));
      
     System.out.println("End of configure Bindings");
       
