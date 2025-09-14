@@ -29,7 +29,7 @@ public final class Constants {
   public static boolean Verbose = true;
 
   public static class Swerve {
-    public static final double MAX_SPEED = 15;
+    public static final double MAX_SPEED = 5;
     public static final double LOOP_TIME = 0.13;
     public static final double ROBOT_MASS = 45.5;
     public static final Matter CHASSIS = new Matter(new Translation3d(0, 0, Units.inchesToMeters(8)), ROBOT_MASS);
@@ -75,8 +75,8 @@ public final class Constants {
     public static final int popperEncoderChannelA = 2;
     public static final int popperEncoderChannelB = 3;
     public static final double popperSpinnerSpeed = 0.2;
-    public static final double minAngle = 0;//EncoderValue Not actuly an Angle
-    public static final double maxAngle = 730;//EncoderValue Not actuly an Angle
+    public static final double minAngle = 0;//EncoderValue Not actually an Angle
+    public static final double maxAngle = 730;//EncoderValue Not actually an Angle
     public static final double PopperStep = -0.1;
     public static final double maxPosition = -13;
     public static final double minPosition = -10;
