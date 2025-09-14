@@ -122,8 +122,8 @@ public class RobotContainer {
                   m_elevatorSubsystem.getPosition()) < Constants.Elevator.Position_Error
                 )));
     NamedCommands.registerCommand(
-      "autoIntake", new IntakeCommand(m_intakeSubsystem, m_leds, () -> 0.8));
-    NamedCommands.registerCommand("autoScore", new IntakeCommand(m_intakeSubsystem, m_leds,  () -> 0.8));
+      "autoIntake", new IntakeCommand(m_intakeSubsystem, m_leds, () -> -0.8));
+    NamedCommands.registerCommand("autoScore", new IntakeCommand(m_intakeSubsystem, m_leds,  () -> -0.8));
 
     // Build an auto chooser
     m_autoChooser = AutoBuilder.buildAutoChooser();
@@ -226,7 +226,7 @@ public class RobotContainer {
      
     //Elevator Bindings
     /*Default command updates position continuously until goal is met - Although it is not clear that the until means anything
-      * given that the command restarts immediatly after.
+      given that the command restarts immediatly after.
     */
       m_elevatorSubsystem.setDefaultCommand(Commands.run(()-> m_elevatorSubsystem.updatePosition(),m_elevatorSubsystem));
       //Elevator State Setters
@@ -288,6 +288,10 @@ public class RobotContainer {
                             () -> -0.8))
                 .onFalse(Commands.runOnce(
                           () -> m_intakeSubsystem.stopIntake()));
+    /*
+    The goal here is to provide an efficient way to move the coral back and forth
+    without accidently ejecting the coral out the back by stopping once the sensor state changes.
+    */
     m_operatorController.leftBumper()
                 .whileTrue(new IntakeCommand(
                             m_intakeSubsystem,

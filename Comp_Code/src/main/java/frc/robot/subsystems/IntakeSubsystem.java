@@ -25,7 +25,7 @@ public class IntakeSubsystem extends SubsystemBase {
         HasCoral
     }
 
-    private intakeState currenState = intakeState.Empty;
+    private intakeState currentState = intakeState.Empty;
 
     /** Creates a new ExampleSubsystem. */
     public IntakeSubsystem() {
@@ -50,16 +50,16 @@ public class IntakeSubsystem extends SubsystemBase {
     }
 
     public intakeState getIntatkeState(){
-        return currenState;
+        return currentState;
     }
 
     public boolean detectCoral() {
         boolean has = sensor.get();
         if (has) {
-            currenState = intakeState.HasCoral;
+            currentState = intakeState.HasCoral;
             if (Constants.Verbose) {SmartDashboard.putBoolean("Has Coral", has);}
         } else {
-            currenState = intakeState.Empty;
+            currentState = intakeState.Empty;
         }
         return has;
     }

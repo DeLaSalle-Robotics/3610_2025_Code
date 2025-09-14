@@ -44,12 +44,16 @@ public class IntakeCommand extends Command {
     @Override
     public void initialize() {
         this.intakeSensorStatus = intake.detectCoral();
-        this.startState = intakeState.Loading;
+        if (this.intakeSensorStatus) {
+            this.startState = intakeState.HasCoral;
+        } else {
+            this.startState = intakeState.Loading;
+        }
         this.led.setState(LedState.RunningIntake);
         if (moveback.getAsDouble() < -0.5){
-            speed = -0.3;
+            speed = 0.3;
         } else if (moveback.getAsDouble() > 0.5) {
-            speed = 0.8;
+            speed = -0.8;
         } else {
             speed = 0.0;
         }
