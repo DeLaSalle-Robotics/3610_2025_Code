@@ -27,6 +27,7 @@ import swervelib.math.Matter;
 public final class Constants {
 
   public static boolean Verbose = true;
+  public static boolean NotDemo = false;
 
   public static class Swerve {
     public static final double MAX_SPEED = 5;

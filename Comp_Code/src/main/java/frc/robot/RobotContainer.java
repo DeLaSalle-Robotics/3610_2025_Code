@@ -170,59 +170,61 @@ public class RobotContainer {
     //This method is called in the teleopInit, once the DriverStation object is created and has posted information. 
      
     //Auto driving methods and bindings
-    //#TODO- Finish placing targets and confirm orientations
+    // These bindings should not happen for demo conditions.
+    if (Constants.NotDemo) {
+      //#TODO- Finish placing targets and confirm orientations
 
-    var alliance = DriverStation.getAlliance();
-    if (alliance.isPresent() && alliance.get() == Alliance.Red) {
-      //The Red location sides
-      //Left side Coral Station 
-      m_driverController
-                        .x()
-                        .onTrue(m_driveTrain.driveToPose(new Pose2d(new Translation2d(15.963, 0.799), 
-                                  new Rotation2d(Units.degreesToRadians(120))))
-                        .withTimeout(3));
-      //Right side Coral Station 
-      m_driverController
-                        .b()
-                        .onTrue(m_driveTrain.driveToPose(new Pose2d(new Translation2d(15.963, 7.266), 
-                                  new Rotation2d(Units.degreesToRadians(225))))
-                        .withTimeout(3));
-    
-    //Reef settings
-      m_driverController
-                        .pov(180)
-                        .onTrue(m_driveTrain.driveToPose(Constants.Target.R_Front_Red));
-      m_driverController
-                        .pov(180)
-                        .and(m_driverController.leftStick())
-                        .onTrue(m_driveTrain.driveToPose(Constants.Target.L_Front_Red));
-    }
-    else {
-      //The blue location sides
-      //Right side Coral Station 
-      m_driverController
-                        .b()
-                        .onTrue( m_driveTrain.driveToPose(new Pose2d(new Translation2d(1.588, 0.799), 
-                                  new Rotation2d(Units.degreesToRadians(60))))
-                        .withTimeout(3));
-      //Left side Coral Station 
-      m_driverController
-                        .x()
-                        .onTrue( m_driveTrain.driveToPose(new Pose2d(new Translation2d(1.588, 7.266), 
-                                new Rotation2d(Units.degreesToRadians(60))))
-                        .withTimeout(3));
-    
-    //Reef settings 
-
-      m_driverController
-                        .pov(180)
-                        .onTrue(m_driveTrain.driveToPose(Constants.Target.R_Front_Blue));
-      m_driverController
-                        .pov(180)
-                        .and(m_driverController.leftStick())
-                        .onTrue(m_driveTrain.driveToPose(Constants.Target.L_Front_Blue));
+      var alliance = DriverStation.getAlliance();
+      if (alliance.isPresent() && alliance.get() == Alliance.Red) {
+        //The Red location sides
+        //Left side Coral Station 
+        m_driverController
+                          .x()
+                          .onTrue(m_driveTrain.driveToPose(new Pose2d(new Translation2d(15.963, 0.799), 
+                                    new Rotation2d(Units.degreesToRadians(120))))
+                          .withTimeout(3));
+        //Right side Coral Station 
+        m_driverController
+                          .b()
+                          .onTrue(m_driveTrain.driveToPose(new Pose2d(new Translation2d(15.963, 7.266), 
+                                    new Rotation2d(Units.degreesToRadians(225))))
+                          .withTimeout(3));
+      
+      //Reef settings
+        m_driverController
+                          .pov(180)
+                          .onTrue(m_driveTrain.driveToPose(Constants.Target.R_Front_Red));
+        m_driverController
+                          .pov(180)
+                          .and(m_driverController.leftStick())
+                          .onTrue(m_driveTrain.driveToPose(Constants.Target.L_Front_Red));
       }
-     
+      else {
+        //The blue location sides
+        //Right side Coral Station 
+        m_driverController
+                          .b()
+                          .onTrue( m_driveTrain.driveToPose(new Pose2d(new Translation2d(1.588, 0.799), 
+                                    new Rotation2d(Units.degreesToRadians(60))))
+                          .withTimeout(3));
+        //Left side Coral Station 
+        m_driverController
+                          .x()
+                          .onTrue( m_driveTrain.driveToPose(new Pose2d(new Translation2d(1.588, 7.266), 
+                                  new Rotation2d(Units.degreesToRadians(60))))
+                          .withTimeout(3));
+      
+      //Reef settings 
+
+        m_driverController
+                          .pov(180)
+                          .onTrue(m_driveTrain.driveToPose(Constants.Target.R_Front_Blue));
+        m_driverController
+                          .pov(180)
+                          .and(m_driverController.leftStick())
+                          .onTrue(m_driveTrain.driveToPose(Constants.Target.L_Front_Blue));
+        }
+    }
      
     //Elevator Bindings
     /*Default command updates position continuously until goal is met - Although it is not clear that the until means anything
