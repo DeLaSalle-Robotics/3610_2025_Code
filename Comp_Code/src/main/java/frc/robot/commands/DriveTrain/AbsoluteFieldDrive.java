@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -64,7 +65,9 @@ public class AbsoluteFieldDrive extends Command {
     //Tests if the heading is too small to be meaningful
     if (targetHeading.getNorm() < 0.3) {
       //If it is too small, get the current heading and pass that along as the desired heading
-      targetHeading = new Translation2d(1, swerve.getHeading());
+      Rotation2d currentAngle = swerve.getHeading();
+      //Using that angle set targetheading with a Norm of 1
+      targetHeading = new Translation2d(currentAngle.getCos(),currentAngle.getSin());
     }
     //This method uses the various inputs to return the target velocities.
     ChassisSpeeds desiredSpeeds = swerve.getTargetSpeeds(vX.getAsDouble(), vY.getAsDouble(),
