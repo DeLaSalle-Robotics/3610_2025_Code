@@ -238,7 +238,8 @@ public class RobotContainer {
       m_operatorController.y().onTrue(Commands.runOnce(() -> m_elevatorSubsystem.setState(elevatorState.L3)));  
 
       //Allows manual control of elevator with pressing the right Trigger and the left Joystick
-      m_operatorController.rightTrigger(0.9).whileTrue(new ElevatorCommand(m_elevatorSubsystem, () -> m_operatorController.getLeftY()));
+      m_operatorController.rightTrigger(0.9)
+                          .whileTrue(new ElevatorCommand(m_elevatorSubsystem, () -> m_operatorController.getLeftY()));
     
       //Popper Binding
      
@@ -276,8 +277,15 @@ public class RobotContainer {
     m_operatorController.povDown()
                   .onTrue(Commands.runOnce(()-> m_popper.setPopperState(popperState.Start)));
     
+    m_operatorController.povRight()
+                        .whileTrue(m_popper.rock(() -> m_operatorController.getRightY()));
+    
+    m_operatorController.povRight()
+                        .and(m_operatorController.leftTrigger(0.5))
+                        .whileTrue(m_popper.rockAndRoll(() -> m_operatorController.getRightY(),() -> 0.2));
+                        
     //Means of moving the Popper arm to desired position.
-    m_operatorController.back().whileTrue(m_popper.rock(() -> m_operatorController.getRightY()));
+    m_operatorController.back().onTrue(Commands.runOnce(() -> m_elevatorSubsystem.zeroEncoders()));
     m_operatorController.start().onTrue(Commands.runOnce(() -> m_popper.popperReset()));
     
     //Intake Bindings- Note switch to driver controller.
@@ -294,11 +302,11 @@ public class RobotContainer {
     The goal here is to provide an efficient way to move the coral back and forth
     without accidently ejecting the coral out the back by stopping once the sensor state changes.
     */
-    m_operatorController.leftBumper()
+    m_operatorController.rightBumper()
                 .whileTrue(new IntakeCommand(
                             m_intakeSubsystem,
                             m_leds,
-                            () -> m_operatorController.getRightY()))
+                            () -> m_operatorController.getLeftY()))
                 .onFalse(Commands.runOnce(
                           () -> m_intakeSubsystem.stopIntake()));
    

@@ -211,11 +211,8 @@ public double getGoalPosition(){
     return run(
         () -> {
           popperMove(speed.getAsDouble());
-          if(spinSpeed.getAsDouble() >= 0.2){
-            Spinner.set(0.2);  
-          }
-          else{Spinner.set(spinSpeed.getAsDouble());}
-        });
+          popperSpin();}
+       );
   }
   
 /**
