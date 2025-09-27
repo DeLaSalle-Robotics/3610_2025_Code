@@ -20,10 +20,10 @@ public class IntakeCommand extends Command {
     private final LedSubsystem led;
     private DoubleSupplier moveback;
     private double speed;
-    private boolean intakeSensorStatus;
-    private boolean backSensorStatus;
     private intakeState startState;
-    private boolean isForward = true;
+    private boolean backSensorChanged = false;
+    private boolean frontSensorStartState;
+    private boolean backSensorStartState;
     /**
      * Creates a new ExampleCommand.
      *
@@ -36,9 +36,6 @@ public class IntakeCommand extends Command {
         this.intake = subsystem;
         this.led = m_ledSubSystem;
         this.speed = 0;
-        this.moveback = moveback;
-        this.intakeSensorStatus = false;
-        this.backSensorStatus = false;
         this.startState = intakeState.Empty;
         // Use addRequirements() here to declare subsystem dependencies.
         addRequirements(subsystem);
@@ -47,13 +44,8 @@ public class IntakeCommand extends Command {
     // Called when the command is initially scheduled.
     @Override
     public void initialize() {
-        this.intakeSensorStatus = intake.detectCoral();
-        this.backSensorStatus = intake.backDetectCoral();
-        if (this.intakeSensorStatus && this.backSensorStatus) {
-            this.startState = intakeState.HasCoral;
-        } else {
-            this.startState = intakeState.Loading;
-        }
+        this.backSensorStartState = intake.backDetectCoral();
+        this.frontSensorStartState = intake.frontDetectCoral();
         this.led.setState(LedState.RunningIntake);
 
 
@@ -63,6 +55,14 @@ public class IntakeCommand extends Command {
     @Override
     public void execute() {
         intake.startIntake(speed);
+
+
+        if (intake.backDetectCoral() != backSensorStartState){
+            backSensorChanged = true;
+        }
+        if(!backSensorChanged && intake.frontDetectCoral() != frontSensorStartState){
+            intake.setIntakeState(intakeState.LoadingBrokenBackSensor);
+        }
     }
 
     // Called once when the command isFinished is true.
@@ -76,18 +76,9 @@ public class IntakeCommand extends Command {
         }
     }
 
-    // Returns true when the sensor status changes.
-    // Goal is to prevent premature coral ejection.
     @Override
     public boolean isFinished() {
             
-
-        if(moveback.getAsDouble() > 0.5){
-            return (intake.detectCoral() != this.intakeSensorStatus);
-        }
-        else if (moveback.getAsDouble() < -0.5){
-            return (intake.backDetectCoral() != this.backSensorStatus);
-        }
         return false;
     }
 }
