@@ -44,7 +44,8 @@ public final class Constants {
   public static class Intake {
     public static final int motorId = 16;
     public static final int sensorId = 1;
-  }
+    public static final int backSensorId = 4;
+    }
 
   public static class  Elevator {
     public static final int elevatorMotorId = 18;
@@ -152,6 +153,4 @@ public final class Constants {
     
 
   }
-
 }
-    

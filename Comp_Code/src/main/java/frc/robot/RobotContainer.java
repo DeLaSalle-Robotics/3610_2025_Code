@@ -5,9 +5,9 @@
 package frc.robot;
 
 import frc.robot.Constants.OperatorConstants;
-import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.DriveTrain.AbsoluteFieldDrive;
 import frc.robot.commands.Elevator.ElevatorCommand;
+import frc.robot.commands.Intake.IntakeCommand;
 import frc.robot.commands.Popper.*;
 import frc.robot.subsystems.*;
 import frc.robot.subsystems.ElevatorSubsystem.elevatorState;
@@ -295,7 +295,7 @@ public class RobotContainer {
                 .whileTrue(new IntakeCommand(
                             m_intakeSubsystem,
                             m_leds,
-                            () -> -0.8))
+                            () -> 0.8))
                 .onFalse(Commands.runOnce(
                           () -> m_intakeSubsystem.stopIntake()));
     /*
@@ -303,7 +303,7 @@ public class RobotContainer {
     without accidently ejecting the coral out the back by stopping once the sensor state changes.
     */
     m_operatorController.rightBumper()
-                .whileTrue(new IntakeCommand(
+                .onTrue(new IntakeCommand(
                             m_intakeSubsystem,
                             m_leds,
                             () -> m_operatorController.getLeftY()))

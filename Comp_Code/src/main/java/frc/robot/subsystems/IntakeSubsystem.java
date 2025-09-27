@@ -17,12 +17,15 @@ import frc.robot.Constants;
 public class IntakeSubsystem extends SubsystemBase {
     private final SparkMax intakeMotor;
     private final DigitalInput sensor;
+    private final DigitalInput backSensor;
     private SparkMaxConfig motorConfig;
+    private boolean backSensorBroken = false;
     
     public enum intakeState{
         Empty,
         Loading,
-        HasCoral
+        HasCoral,
+        LoadingBrokenBackSensor
     }
 
     private intakeState currentState = intakeState.Empty;
@@ -31,7 +34,7 @@ public class IntakeSubsystem extends SubsystemBase {
     public IntakeSubsystem() {
         intakeMotor = new SparkMax(Constants.Intake.motorId, MotorType.kBrushless);
         sensor = new DigitalInput(Constants.Intake.sensorId);
-
+        backSensor = new DigitalInput(Constants.Intake.backSensorId);
         motorConfig = new SparkMaxConfig();
         motorConfig
             .idleMode(IdleMode.kBrake)
@@ -46,6 +49,14 @@ public class IntakeSubsystem extends SubsystemBase {
     }
 
     public void startIntake(double speed) {
+
+        if(backSensorBroken){
+            this.currentState = intakeState.LoadingBrokenBackSensor;
+        }
+        else{
+            this.currentState = intakeState.Loading;
+        }
+        
         intakeMotor.set(speed);
     }
 
@@ -53,20 +64,39 @@ public class IntakeSubsystem extends SubsystemBase {
         return currentState;
     }
 
-    public boolean detectCoral() {
-        boolean has = sensor.get();
-        if (has) {
-            currentState = intakeState.HasCoral;
-            if (Constants.Verbose) {SmartDashboard.putBoolean("Has Coral", has);}
-        } else {
-            currentState = intakeState.Empty;
+    public void setIntakeState(intakeState state){
+        this.currentState = state;
+    }
+
+
+
+    public void periodicSetIntakeState() {
+        
+        if(sensor.get() && backDetectCoral()){
+            this.currentState = intakeState.HasCoral;
         }
-        return has;
+        else if (!sensor.get() && !backDetectCoral()){
+            this.currentState = intakeState.Empty;
+        }
+
+        if(this.currentState == intakeState.LoadingBrokenBackSensor){
+            backSensorBroken = true;
+        }
+    }
+
+    public boolean frontDetectCoral(){
+        return sensor.get();
+    }
+
+    public boolean backDetectCoral() {    
+        return !backSensor.get();
     }
 
     @Override
     public void periodic() {
-        this.detectCoral();
+        if(this.currentState == intakeState.Loading){
+            
+        }
     }
 
     @Override
