@@ -18,7 +18,7 @@ public class LedSubsystem extends SubsystemBase {
         Idle,
         RunningIntake,
         HasCoral,
-        PreparingToShoot,
+        LoadingBrokenBackSensor,
         ReadyToShoot,
         Pride,
     }
@@ -123,6 +123,9 @@ public class LedSubsystem extends SubsystemBase {
             }
             case RunningIntake -> {
                 this.setAllLeds(Color.kYellow);
+            }
+            case LoadingBrokenBackSensor -> {
+                this.setAllLeds(Color.kRed);
             }
             case Idle -> {
                 ledCenterVibe();

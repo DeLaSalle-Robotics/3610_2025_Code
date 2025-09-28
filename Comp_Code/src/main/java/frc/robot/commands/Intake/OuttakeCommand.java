@@ -4,6 +4,7 @@
 
 package frc.robot.commands.Intake;
 
+import frc.robot.Constants;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.LedSubsystem;
 import frc.robot.subsystems.IntakeSubsystem.intakeState;
@@ -31,7 +32,7 @@ public class OuttakeCommand extends Command {
                             
         this.intake = subsystem;
         this.led = m_ledSubSystem;
-        this.speed = 0.8;
+        this.speed = Constants.Intake.speed;
         this.startState = intakeState.Empty;
         // Use addRequirements() here to declare subsystem dependencies.
         addRequirements(subsystem);

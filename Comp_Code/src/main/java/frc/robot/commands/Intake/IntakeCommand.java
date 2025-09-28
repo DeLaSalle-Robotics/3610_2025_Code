@@ -4,6 +4,7 @@
 
 package frc.robot.commands.Intake;
 
+import frc.robot.Constants;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.LedSubsystem;
 import frc.robot.subsystems.IntakeSubsystem.intakeState;
@@ -30,12 +31,11 @@ public class IntakeCommand extends Command {
      * @param subsystem The subsystem used by this command.
      */
     public IntakeCommand(IntakeSubsystem subsystem, 
-                        LedSubsystem m_ledSubSystem, 
-                        DoubleSupplier moveback) {
+                        LedSubsystem m_ledSubSystem) {
                             
         this.intake = subsystem;
         this.led = m_ledSubSystem;
-        this.speed = 0;
+        this.speed = Constants.Intake.speed;
         this.startState = intakeState.Empty;
         // Use addRequirements() here to declare subsystem dependencies.
         addRequirements(subsystem);
@@ -54,15 +54,21 @@ public class IntakeCommand extends Command {
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
+        //Starts the intake moving forward
         intake.startIntake(speed);
 
-
+        // Watching the change in the back sensor. Should change once a coral enters the intake.
         if (intake.backDetectCoral() != backSensorStartState){
             backSensorChanged = true;
         }
+        // If the back sensor has NOT changed and the front sensor does -> back sensor is broken.
         if(!backSensorChanged && intake.frontDetectCoral() != frontSensorStartState){
             intake.setIntakeState(intakeState.LoadingBrokenBackSensor);
+            this.led.setState(LedState.LoadingBrokenBackSensor);
         }
+
+        
+
     }
 
     // Called once when the command isFinished is true.
@@ -79,6 +85,6 @@ public class IntakeCommand extends Command {
     @Override
     public boolean isFinished() {
             
-        return false;
+        return (intake.frontDetectCoral() && intake.backDetectCoral());
     }
 }

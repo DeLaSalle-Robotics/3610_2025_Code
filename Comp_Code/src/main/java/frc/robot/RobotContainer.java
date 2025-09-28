@@ -7,7 +7,10 @@ package frc.robot;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.DriveTrain.AbsoluteFieldDrive;
 import frc.robot.commands.Elevator.ElevatorCommand;
+import frc.robot.commands.Intake.AdjustCoral;
+import frc.robot.commands.Intake.HelpIntakeCommand;
 import frc.robot.commands.Intake.IntakeCommand;
+import frc.robot.commands.Intake.OuttakeCommand;
 import frc.robot.commands.Popper.*;
 import frc.robot.subsystems.*;
 import frc.robot.subsystems.ElevatorSubsystem.elevatorState;
@@ -122,8 +125,8 @@ public class RobotContainer {
                   m_elevatorSubsystem.getPosition()) < Constants.Elevator.Position_Error
                 )));
     NamedCommands.registerCommand(
-      "autoIntake", new IntakeCommand(m_intakeSubsystem, m_leds, () -> -0.8));
-    NamedCommands.registerCommand("autoScore", new IntakeCommand(m_intakeSubsystem, m_leds,  () -> -0.8));
+      "autoIntake", new IntakeCommand(m_intakeSubsystem, m_leds).andThen(new AdjustCoral(m_intakeSubsystem)));
+    NamedCommands.registerCommand("autoScore", new OuttakeCommand(m_intakeSubsystem, m_leds));
 
     // Build an auto chooser
     m_autoChooser = AutoBuilder.buildAutoChooser();
@@ -292,18 +295,22 @@ public class RobotContainer {
     m_intakeSubsystem.setDefaultCommand(Commands.runOnce(() -> m_intakeSubsystem.stopIntake(), m_intakeSubsystem));
 
     m_driverController.leftBumper()
-                .whileTrue(new IntakeCommand(
+                .whileTrue(new OuttakeCommand(
                             m_intakeSubsystem,
-                            m_leds,
-                            () -> 0.8))
+                            m_leds))
                 .onFalse(Commands.runOnce(
                           () -> m_intakeSubsystem.stopIntake()));
+    m_driverController.rightBumper()
+                .whileTrue(new IntakeCommand(m_intakeSubsystem, m_leds)
+                          .andThen(new AdjustCoral(m_intakeSubsystem)))
+                .onFalse(Commands.runOnce(
+                          ()-> m_intakeSubsystem.stopIntake()));
     /*
     The goal here is to provide an efficient way to move the coral back and forth
     without accidently ejecting the coral out the back by stopping once the sensor state changes.
     */
     m_operatorController.rightBumper()
-                .onTrue(new IntakeCommand(
+                .onTrue(new HelpIntakeCommand(
                             m_intakeSubsystem,
                             m_leds,
                             () -> m_operatorController.getLeftY()))

@@ -27,7 +27,7 @@ import swervelib.math.Matter;
 public final class Constants {
 
   public static boolean Verbose = true;
-  public static boolean NotDemo = false;
+  public static boolean NotDemo = true;
 
   public static class Swerve {
     public static final double MAX_SPEED = 5;
@@ -45,6 +45,7 @@ public final class Constants {
     public static final int motorId = 16;
     public static final int sensorId = 1;
     public static final int backSensorId = 4;
+    public static final double speed = 0.8;
     }
 
   public static class  Elevator {

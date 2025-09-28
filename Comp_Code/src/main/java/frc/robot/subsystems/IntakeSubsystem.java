@@ -69,19 +69,33 @@ public class IntakeSubsystem extends SubsystemBase {
     }
 
 
-
+    /**
+     * This method examines the intake sensors to determine the coral state.
+     *  It is run every cycle.
+     */
     public void periodicSetIntakeState() {
-        
-        if(sensor.get() && backDetectCoral()){
-            this.currentState = intakeState.HasCoral;
-        }
-        else if (!sensor.get() && !backDetectCoral()){
-            this.currentState = intakeState.Empty;
+        //Test if back sensor is broken before setting other states
+        if(this.currentState == intakeState.LoadingBrokenBackSensor){
+            this.backSensorBroken = true;
         }
 
-        if(this.currentState == intakeState.LoadingBrokenBackSensor){
-            backSensorBroken = true;
+        if (this.backSensorBroken){
+            //If the back sensor is misbehaving, state determination ignores it.
+            if(frontDetectCoral()){
+                this.currentState = intakeState.HasCoral;
+            }
+            else if (!frontDetectCoral()){
+                this.currentState = intakeState.Empty;
+            }
+        } else{
+            if(frontDetectCoral() && backDetectCoral()){
+                this.currentState = intakeState.HasCoral;
+            }
+            else if (!frontDetectCoral() && !backDetectCoral()){
+                this.currentState = intakeState.Empty;
+            }
         }
+        
     }
 
     public boolean frontDetectCoral(){
@@ -92,11 +106,15 @@ public class IntakeSubsystem extends SubsystemBase {
         return !backSensor.get();
     }
 
+    public boolean backSensorTrust(){
+        return !this.backSensorBroken;
+    }
+
+    
+
     @Override
     public void periodic() {
-        if(this.currentState == intakeState.Loading){
-            
-        }
+        periodicSetIntakeState();
     }
 
     @Override
