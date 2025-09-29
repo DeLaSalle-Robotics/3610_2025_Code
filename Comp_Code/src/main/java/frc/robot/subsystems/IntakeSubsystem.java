@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.Robot;
 
 public class IntakeSubsystem extends SubsystemBase {
     private final SparkMax intakeMotor;
@@ -24,6 +25,8 @@ public class IntakeSubsystem extends SubsystemBase {
     public enum intakeState{
         Empty,
         Loading,
+        LoadingEntry,
+        LoadingForward,
         HasCoral,
         LoadingBrokenBackSensor
     }
@@ -42,6 +45,12 @@ public class IntakeSubsystem extends SubsystemBase {
         
 
         intakeMotor.configure(motorConfig, null, null);
+    }
+
+    public void close(){
+        intakeMotor.close();
+        sensor.close();
+        backSensor.close();
     }
 
     public void stopIntake() {
@@ -94,23 +103,64 @@ public class IntakeSubsystem extends SubsystemBase {
             else if (!frontDetectCoral() && !backDetectCoral()){
                 this.currentState = intakeState.Empty;
             }
+            else if (frontDetectCoral() && !backDetectCoral()){
+                this.currentState = intakeState.LoadingForward;
+            }
+            else if (!frontDetectCoral() && backDetectCoral()){
+                this.currentState = intakeState.LoadingEntry;
+            }
         }
         
     }
 
     public boolean frontDetectCoral(){
-        return sensor.get();
+        if (Robot.isReal()){
+            return sensor.get();
+        } else {
+            return SmartDashboard.getBoolean("Front Sensor Sim", false);
+        }
     }
 
     public boolean backDetectCoral() {    
-        return !backSensor.get();
+        if (Robot.isReal()) {
+            return !backSensor.get();
+        } else {
+            return SmartDashboard.getBoolean("Back Sensor Sim", false);
+        }
     }
 
     public boolean backSensorTrust(){
         return !this.backSensorBroken;
     }
-
     
+    /**This method takes a boolean value and sets this value to the value of the front intake sensor. */
+    public void setSimFrontSensor(boolean value){
+        if(value){
+            SmartDashboard.putBoolean("Front Sensor Sim", true);
+        } else {
+            SmartDashboard.putBoolean("Front Sensor Sim", false);
+        }
+        System.out.println("Set Front Sensor Sim");
+    
+    }
+    /**This method takes a boolean value and sets this value to the value of the front intake sensor. */
+    public void setSimBackSensor(boolean value){
+        if(value){
+            SmartDashboard.putBoolean("Back Sensor Sim", true);
+        } else {
+            SmartDashboard.putBoolean("Back Sensor Sim", false);
+        }
+        System.out.println("Set Back Sensor Sim");
+           
+    }
+
+    public void setSimSensors(boolean front, boolean back) {
+        this.setSimBackSensor(back);
+        this.setSimFrontSensor(front);
+        System.out.println("Set Sim Sensors");
+    }
+    
+
 
     @Override
     public void periodic() {
@@ -119,6 +169,6 @@ public class IntakeSubsystem extends SubsystemBase {
 
     @Override
     public void simulationPeriodic() {
-        // This method will be called once per scheduler run during simulation
+        // This method will be called once per scheduler run during simulation        
     }
 }
