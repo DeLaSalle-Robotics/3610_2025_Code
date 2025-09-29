@@ -127,8 +127,20 @@ public void PopperSpinL3(){
   Spinner.set(-Constants.Popper.popperSpinnerSpeed);
 }
 public void popperSpin(){
-  Spinner.set(-Constants.Popper.popperSpinnerSpeed);
-}
+  if (this.currentState == popperState.L3_SPIN || this.currentState == popperState.L3Plus_SPIN)
+    {
+      Spinner.set(Constants.Popper.popperSpinnerSpeed);
+    } else if (this.currentState == popperState.L2_SPIN || this.currentState == popperState.L2Plus_SPIN){
+      Spinner.set(-Constants.Popper.popperSpinnerSpeed);
+    } else {
+      if (this.getPopperPosition() < Constants.Popper.L2Plus_Position){
+        Spinner.set(Constants.Popper.popperSpinnerSpeed);
+      } else {
+        Spinner.set(-Constants.Popper.popperSpinnerSpeed);
+      }
+    }
+  }
+
 public void popperSpinStop(){
   Spinner.set(0);
 }
