@@ -20,13 +20,14 @@ import edu.wpi.first.networktables.BooleanSubscriber;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
 
 public class ElevatorSubsystem extends SubsystemBase {
   private final TalonFX elevatorMotor = new TalonFX(Constants.Elevator.elevatorMotorId);;
   private final DigitalInput limitSwitch = new DigitalInput(Constants.Elevator.sensorId);
-  
+  private final PowerDistribution powerDistHub = new PowerDistribution();
   /*
   BooleanSubscriber goingUp;
   NetworkTableInstance inst = NetworkTableInstance.getDefault();
@@ -38,7 +39,8 @@ public class ElevatorSubsystem extends SubsystemBase {
     L1,
     L2,
     L3,
-    Load
+    Load,
+    Stuck
   }
     private elevatorState currentState;
     final MotionMagicVoltage m_motmag = new MotionMagicVoltage(0).withSlot(0);
@@ -99,6 +101,10 @@ public class ElevatorSubsystem extends SubsystemBase {
     return elevatorMotor.getRotorPosition().getValueAsDouble();
   }
 
+  public double getElevatorCurrent(){
+    return powerDistHub.getCurrent(Constants.Elevator.pdhChannel);
+  }
+
   public void setPosition(double spot){
     elevatorMotor.setControl(m_motmag.withPosition(spot));
   }
@@ -123,6 +129,9 @@ public class ElevatorSubsystem extends SubsystemBase {
       }
       case L3 -> {
         this.setPosition(Constants.Elevator.L3_Position);
+      }
+      case Stuck -> {
+        this.setPosition(this.getPosition());
       }
       default ->{
         this.setPosition(Constants.Elevator.Load_Position);
@@ -176,7 +185,17 @@ public class ElevatorSubsystem extends SubsystemBase {
     if (Constants.Verbose) {
       SmartDashboard.putNumber("Elevator Encoder", this.getPosition());
       SmartDashboard.putNumber("Elevator Voltage", elevatorMotor.getMotorVoltage().getValueAsDouble());
+      SmartDashboard.putNumber("Elevator Motor Current", this.getElevatorCurrent());
     } 
+
+    //If motor current is too great - Need to check to see what this number should be
+    if (this.getElevatorCurrent() > 20) {
+      //Stop the motor
+      elevatorMotor.set(0);
+      //Redefine the set point
+      this.setState(elevatorState.Stuck);
+      
+    }
     //this.updatePosition();
   }
 
