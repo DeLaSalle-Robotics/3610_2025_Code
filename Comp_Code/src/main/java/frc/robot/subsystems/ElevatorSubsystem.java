@@ -188,6 +188,7 @@ public class ElevatorSubsystem extends SubsystemBase {
       SmartDashboard.putNumber("Elevator Motor Current", this.getElevatorCurrent());
     } 
 
+    /*NEEDS TESTING BEFORE IMPLIMENTATION
     //If motor current is too great - Need to check to see what this number should be
     if (this.getElevatorCurrent() > 20) {
       //Stop the motor
@@ -196,6 +197,7 @@ public class ElevatorSubsystem extends SubsystemBase {
       this.setState(elevatorState.Stuck);
       
     }
+    */
     //this.updatePosition();
   }
 

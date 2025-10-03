@@ -51,6 +51,7 @@ public final class Constants {
   public static class  Elevator {
     public static final int elevatorMotorId = 18;
     public static final int sensorId = 0;
+    public static final int pdhChannel = 6; //Need to check
 
     public static final double holdValue = 0.04;
     public static final double threshold = 50;
