@@ -45,6 +45,24 @@
           "data": {
             "pathName": "Source to I"
           }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "L2 Raise"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "autoScore"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Load"
+          }
         }
       ]
     }

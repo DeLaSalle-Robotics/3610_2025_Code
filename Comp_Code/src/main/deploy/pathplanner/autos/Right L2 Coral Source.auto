@@ -31,7 +31,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "F to Source Post L2 Score"
+            "pathName": "F to Source"
           }
         },
         {
@@ -43,7 +43,25 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Source to F"
+            "pathName": "Source to E"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "L2 Raise"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "autoScore"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Load"
           }
         }
       ]
