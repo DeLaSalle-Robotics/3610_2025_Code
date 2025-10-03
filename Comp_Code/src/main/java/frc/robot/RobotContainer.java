@@ -14,6 +14,8 @@ import frc.robot.commands.Intake.OuttakeCommand;
 import frc.robot.commands.Popper.*;
 import frc.robot.subsystems.*;
 import frc.robot.subsystems.ElevatorSubsystem.elevatorState;
+import frc.robot.subsystems.IntakeSubsystem.intakeState;
+import frc.robot.subsystems.LedSubsystem.LedState;
 import frc.robot.subsystems.Popper.popperState;
 
 import java.io.File;
@@ -80,50 +82,50 @@ public class RobotContainer {
 
     NamedCommands.registerCommand(
       "L3 Raise", Commands.runOnce(() -> m_elevatorSubsystem.setState(elevatorState.L3))
-          .andThen(Commands.run(() -> m_elevatorSubsystem.updatePosition())
-          .until(
-                  () -> Math.abs(m_elevatorSubsystem.getGoalPosition() - 
-                  m_elevatorSubsystem.getPosition()) < Constants.Elevator.Position_Error
-                                  )));
+                              .andThen(Commands.run(() -> m_elevatorSubsystem.updatePosition())
+                              .until(
+                                      () -> Math.abs(m_elevatorSubsystem.getGoalPosition() - 
+                                      m_elevatorSubsystem.getPosition()) < Constants.Elevator.Position_Error
+                                                      )));
     NamedCommands.registerCommand(
       "L2 Raise", Commands.runOnce(() -> m_elevatorSubsystem.setState(elevatorState.L2))
-          .andThen(Commands.run(() -> m_elevatorSubsystem.updatePosition())
-          .until(
-                  () -> Math.abs(m_elevatorSubsystem.getGoalPosition() - 
-                  m_elevatorSubsystem.getPosition()) < Constants.Elevator.Position_Error
-                      )));
+                              .andThen(Commands.run(() -> m_elevatorSubsystem.updatePosition())
+                              .until(
+                                      () -> Math.abs(m_elevatorSubsystem.getGoalPosition() - 
+                                      m_elevatorSubsystem.getPosition()) < Constants.Elevator.Position_Error
+                                          )));
     NamedCommands.registerCommand(
       "L2 Algea Prep", Commands.runOnce(() -> m_popper.setPopperState(popperState.L2Plus_SPIN))
-          .andThen(Commands.run(() -> m_popper.updatePosition())
-          .until(
-                  () -> Math.abs(m_popper.getGoalPosition() - 
-                  m_popper.getPopperPosition()) < Constants.Popper.Position_Error
-                                  )));
+                                    .andThen(Commands.run(() -> m_popper.updatePosition())
+                                    .until(
+                                            () -> Math.abs(m_popper.getGoalPosition() - 
+                                            m_popper.getPopperPosition()) < Constants.Popper.Position_Error
+                                                            )));
     NamedCommands.registerCommand("Stow Popper", Commands.runOnce(() -> m_popper.setPopperState(popperState.Start)).
                                   andThen(Commands.run(() -> m_popper.updatePosition()).until(
                                     () -> Math.abs(m_popper.getGoalPosition() - m_popper.getPopperPosition()) < Constants.Popper.Position_Error
                                   )));
     NamedCommands.registerCommand(
       "L2 Algea", Commands.runOnce(() -> m_popper.setPopperState(popperState.L2Plus_SPIN))
-      .andThen(Commands.run(() -> m_popper.updatePosition())
-      .until(
-              () -> Math.abs(m_popper.getGoalPosition() - 
-              m_popper.getPopperPosition()) < Constants.Popper.Position_Error
-                              )));
+                              .andThen(Commands.run(() -> m_popper.updatePosition())
+                              .until(
+                                      () -> Math.abs(m_popper.getGoalPosition() - 
+                                      m_popper.getPopperPosition()) < Constants.Popper.Position_Error
+                                                      )));
     NamedCommands.registerCommand(
       "L3 Algea", Commands.runOnce(() -> m_popper.setPopperState(popperState.L3Plus_SPIN))
-          .andThen(Commands.run(() -> m_popper.updatePosition())
-          .until(
-                  () -> Math.abs(m_popper.getGoalPosition() - 
-                  m_popper.getPopperPosition()) < Constants.Popper.Position_Error
-                                  )));
+                              .andThen(Commands.run(() -> m_popper.updatePosition())
+                              .until(
+                                      () -> Math.abs(m_popper.getGoalPosition() - 
+                                      m_popper.getPopperPosition()) < Constants.Popper.Position_Error
+                                                      )));
     NamedCommands.registerCommand(
       "Load", Commands.runOnce(() -> m_elevatorSubsystem.setState(elevatorState.Load))
-          .alongWith(Commands.run(() -> m_elevatorSubsystem.updatePosition())
-          .until(
-                  () -> Math.abs(m_elevatorSubsystem.getGoalPosition() - 
-                  m_elevatorSubsystem.getPosition()) < Constants.Elevator.Position_Error
-                )));
+                          .alongWith(Commands.run(() -> m_elevatorSubsystem.updatePosition())
+                          .until(
+                                  () -> Math.abs(m_elevatorSubsystem.getGoalPosition() - 
+                                  m_elevatorSubsystem.getPosition()) < Constants.Elevator.Position_Error
+                                )));
     NamedCommands.registerCommand(
       "autoIntake", new IntakeCommand(m_intakeSubsystem, m_leds).andThen(new AdjustCoral(m_intakeSubsystem)));
     NamedCommands.registerCommand("autoScore", new OuttakeCommand(m_intakeSubsystem, m_leds));
@@ -337,5 +339,11 @@ public class RobotContainer {
       //return m_ShooterSubsystem.autoShooter(m_IntakeSubsystem);
     }
   
-    
+    public boolean readyToGo(){
+      return m_intakeSubsystem.getIntatkeState() == intakeState.HasCoral && m_elevatorSubsystem.getSensor();
+    }
+
+    public void goodToGo(){
+      m_leds.setState(LedState.HasCoral);
+    }
 }
