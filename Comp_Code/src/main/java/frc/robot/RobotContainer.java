@@ -214,7 +214,7 @@ public class RobotContainer {
         m_driverController
                           .x()
                           .onTrue( m_driveTrain.driveToPose(new Pose2d(new Translation2d(1.588, 7.266), 
-                                  new Rotation2d(Units.degreesToRadians(60))))
+                                  new Rotation2d(Units.degreesToRadians(300))))
                           .withTimeout(3));
       
       //Reef settings 
