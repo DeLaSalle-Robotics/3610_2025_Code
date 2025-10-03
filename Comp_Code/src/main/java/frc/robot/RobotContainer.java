@@ -201,7 +201,7 @@ public class RobotContainer {
                           .onTrue(m_driveTrain.driveToPose(Constants.Target.R_Front_Red));
         m_driverController
                           .pov(180)
-                          .and(m_driverController.leftStick())
+                          .and(m_driverController.a())
                           .onTrue(m_driveTrain.driveToPose(Constants.Target.L_Front_Red));
       }
       else {
@@ -226,7 +226,7 @@ public class RobotContainer {
                           .onTrue(m_driveTrain.driveToPose(Constants.Target.R_Front_Blue));
         m_driverController
                           .pov(180)
-                          .and(m_driverController.leftStick())
+                          .and(m_driverController.a())
                           .onTrue(m_driveTrain.driveToPose(Constants.Target.L_Front_Blue));
         }
     }
@@ -254,39 +254,47 @@ public class RobotContainer {
       m_popper.setDefaultCommand(Commands.run(() -> m_popper.updatePosition(), m_popper));
         
     //Popper Movement
+    //L3 Position
     m_operatorController.povUp()
                   .onTrue(Commands.runOnce(()-> m_popper.setPopperState(popperState.L3)));
-    m_operatorController.povUp()
+    //L3 Position + Spin
+                  m_operatorController.povUp()
                   .and(m_operatorController.leftBumper())
                   .onTrue(Commands.runOnce(()-> m_popper.setPopperState(popperState.L3_SPIN)));
-    m_operatorController.povUp()
+    //L3+ Position
+                  m_operatorController.povUp()
                   .and(m_operatorController.leftTrigger(0.5))
                   .onTrue(Commands.runOnce(()-> m_popper.setPopperState(popperState.L3Plus)));
+    //L3+ Position + Spin
     m_operatorController.povUp()
                   .and(m_operatorController.leftBumper())
                   .and(m_operatorController.leftTrigger(0.5))
                   .onTrue(Commands.runOnce(()-> m_popper.setPopperState(popperState.L3Plus_SPIN)));
+    //L2 Position
     m_operatorController.povLeft()
                   .onTrue(Commands.runOnce(()-> m_popper.setPopperState(popperState.L2)));
+    //L2 Position + Spin
     m_operatorController.povLeft()
                   .and(m_operatorController.leftBumper())
                   .onTrue(Commands.runOnce(()-> m_popper.setPopperState(popperState.L2_SPIN)));
+    //L2+ Position
     m_operatorController.povLeft()
                   .and(m_operatorController.leftTrigger(0.5))
                   .onTrue(Commands.runOnce(()-> m_popper.setPopperState(popperState.L2Plus)));
+    //L2+ Position + Spin
     m_operatorController.povLeft()
                   .and(m_operatorController.leftBumper())
                   .and(m_operatorController.leftTrigger(0.5))
                   .onTrue(Commands.runOnce(()-> m_popper.setPopperState(popperState.L2Plus_SPIN)));
-         
+    //Popper Down     
     m_operatorController.povDown()
                   .onTrue(Commands.runOnce(()-> m_popper.setPopperState(popperState.Start)));
-    
+    //Popper Manual Control
     m_operatorController.povRight()
                         .whileTrue(m_popper.rock(() -> m_operatorController.getRightY()));
-    
+    //Popper Manual Control + Spin
     m_operatorController.povRight()
-                        .and(m_operatorController.leftTrigger(0.5))
+                        .and(m_operatorController.leftBumper())
                         .whileTrue(m_popper.rockAndRoll(() -> m_operatorController.getRightY(),() -> 0.2));
                         
     //Means of moving the Popper arm to desired position.
