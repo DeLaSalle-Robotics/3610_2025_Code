@@ -26,11 +26,7 @@ public class AdjustCoral extends Command {
             if (intake.frontDetectCoral() && !intake.backDetectCoral()){
                 intake.startIntake(-speed/2);
             }
-            // When both sensors detect coral stop moving. Intake subsystem will also detect and change state.
-            if (intake.frontDetectCoral() && intake.backDetectCoral()){
-                intake.stopIntake();
-            }
-
+            
         } else {intake.stopIntake();}
     }
 

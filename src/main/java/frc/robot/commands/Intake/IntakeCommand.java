@@ -84,7 +84,12 @@ public class IntakeCommand extends Command {
 
     @Override
     public boolean isFinished() {
-            
-        return (intake.frontDetectCoral() && intake.backDetectCoral());
+        if(intake.getIntatkeState() == intakeState.LoadingBrokenBackSensor){
+            return (intake.frontDetectCoral());
+        }
+        else{
+            return intake.frontDetectCoral() && !intake.backDetectCoral();
+        }
+        
     }
 }

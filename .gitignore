@@ -32,7 +32,6 @@
 
 # Executables
 *.exe
-*.out
 *.app
 
 ### Java ###
@@ -163,7 +162,6 @@ bin/
 *.ipr
 *.iws
 .idea/
-out/
 
 # Fleet
 .fleet
@@ -182,3 +180,6 @@ ctre_sim/
 # clangd
 /.cache
 compile_commands.json
+
+# Eclipse generated file for annotation processors
+.factorypath
