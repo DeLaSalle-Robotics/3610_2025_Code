@@ -223,11 +223,11 @@ public class RobotContainer {
 
         m_driverController
                           .pov(180)
-                          .onTrue(m_driveTrain.driveToPose(Constants.Target.R_Front_Blue));
+                          .onTrue(m_driveTrain.driveToPose(Constants.Target.L_Front_Red));
         m_driverController
                           .pov(180)
                           .and(m_driverController.a())
-                          .onTrue(m_driveTrain.driveToPose(Constants.Target.L_Front_Blue));
+                          .onTrue(m_driveTrain.driveToPose(Constants.Target.R_Front_Red));
         }
     }
      

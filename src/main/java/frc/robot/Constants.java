@@ -45,7 +45,7 @@ public final class Constants {
     public static final int motorId = 16;
     public static final int sensorId = 1;
     public static final int backSensorId = 4;
-    public static final double speed = 0.8;
+    public static final double speed = 0.5;
     }
 
   public static class  Elevator {
