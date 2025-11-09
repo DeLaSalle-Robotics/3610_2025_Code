@@ -86,8 +86,7 @@ public class Vision extends SubsystemBase {
     {
       this.currentPose = currentPose;
       this.field2d = field;
-      if (Robot.isSimulation())
-        {
+      if (Robot.isSimulation()) {
         visionSim = new VisionSystemSim("Vision");
         visionSim.addAprilTags(fieldLayout);
         if (visionTroubleShoot){
