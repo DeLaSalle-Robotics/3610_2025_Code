@@ -1,0 +1,31 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Right to Close F L2 Score"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "F to Source Post L2 Score"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Source to F"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": "Right Autos",
+  "choreoAuto": false
+}

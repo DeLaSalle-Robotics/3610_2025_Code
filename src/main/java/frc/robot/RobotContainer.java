@@ -1,175 +1,357 @@
-//Stole YAGSL Robot Container 
 // Copyright (c) FIRST and other WPILib contributors.
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
 package frc.robot;
 
+import frc.robot.Constants.OperatorConstants;
+import frc.robot.commands.DriveTrain.AbsoluteFieldDrive;
+import frc.robot.commands.Elevator.ElevatorCommand;
+import frc.robot.commands.Intake.AdjustCoral;
+import frc.robot.commands.Intake.HelpIntakeCommand;
+import frc.robot.commands.Intake.IntakeCommand;
+import frc.robot.commands.Intake.OuttakeCommand;
+import frc.robot.commands.Popper.*;
+import frc.robot.subsystems.*;
+import frc.robot.subsystems.ElevatorSubsystem.elevatorState;
+import frc.robot.subsystems.IntakeSubsystem.intakeState;
+import frc.robot.subsystems.LedSubsystem.LedState;
+import frc.robot.subsystems.Popper.popperState;
+
+import java.io.File;
+
+import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
-import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.Constants.OperatorConstants;
-import frc.robot.subsystems.SwerveSubsystem;
-import java.io.File;
-import swervelib.SwerveInputStream;
 
 /**
- * This class is where the bulk of the robot should be declared. Since Command-based is a "declarative" paradigm, very
- * little robot logic should actually be handled in the {@link Robot} periodic methods (other than the scheduler calls).
- * Instead, the structure of the robot (including subsystems, commands, and trigger mappings) should be declared here.
+ * This class is where the bulk of the robot should be declared. Since Command-based is a
+ * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
+ * periodic methods (other than the scheduler calls). Instead, the structure of the robot (including
+ * subsystems, commands, and trigger mappings) should be declared here.
  */
-public class RobotContainer
-{
+public class RobotContainer {
+  // The robot's subsystems are defined here... and created when the RobotContainer is constructed
+  private final IntakeSubsystem m_intakeSubsystem = new IntakeSubsystem();
+  private final Popper m_popper = new Popper();
+  private final ElevatorSubsystem m_elevatorSubsystem = new ElevatorSubsystem();
+  private final DriveTrain m_driveTrain = new DriveTrain(new File(Filesystem.getDeployDirectory(),"swerve"));
+  private final LedSubsystem m_leds = new LedSubsystem();
 
-  // Replace with CommandPS4Controller or CommandJoystick if needed
-  final         CommandXboxController driverXbox = new CommandXboxController(0);
-  // The robot's subsystems and commands are defined here...
-  private final SwerveSubsystem       drivebase  = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(),
-                                                                                "swerve"));
+   // Defines a SendableChooser for SmartDashboard
+  private final SendableChooser<Command> m_autoChooser;
+ 
+  // Defining the controllers
+  private final CommandXboxController m_driverController =
+      new CommandXboxController(OperatorConstants.kDriverControllerPort);
+  private final CommandXboxController m_operatorController = 
+      new CommandXboxController(OperatorConstants.kOperatorControllerPort);
+  
 
-  /**
-   * Converts driver input into a field-relative ChassisSpeeds that is controlled by angular velocity.
-   */
-  SwerveInputStream driveAngularVelocity = SwerveInputStream.of(drivebase.getSwerveDrive(),
-                                                                () -> driverXbox.getLeftY() * -1,
-                                                                () -> driverXbox.getLeftX() * -1)
-                                                            .withControllerRotationAxis(driverXbox::getRightX)
-                                                            .deadband(OperatorConstants.DEADBAND)
-                                                            .scaleTranslation(0.8)
-                                                            .allianceRelativeControl(true);
+  /** The constructor for the RobotContainer. Creates subsystems, OI devices, and commands. */
+  public RobotContainer() {
+    
+      //Putting Subsystem Data on the Smartdashboard
+    if (Constants.Verbose) {
+      SmartDashboard.putData("Popper Data", m_popper);
+      SmartDashboard.putData("Elevator Data", m_elevatorSubsystem);
+      SmartDashboard.putData("Intake Data", m_intakeSubsystem);
+      SmartDashboard.putData("DriveTrain Data", m_driveTrain);
+    }
 
-  /**
-   * Clone's the angular velocity input stream and converts it to a fieldRelative input stream.
-   */
-  SwerveInputStream driveDirectAngle = driveAngularVelocity.copy().withControllerHeadingAxis(driverXbox::getRightX,
-                                                                                             driverXbox::getRightY)
-                                                           .headingWhile(true);
-
-  /**
-   * Clone's the angular velocity input stream and converts it to a robotRelative input stream.
-   */
-  SwerveInputStream driveRobotOriented = driveAngularVelocity.copy().robotRelative(true)
-                                                             .allianceRelativeControl(false);
-
-  SwerveInputStream driveAngularVelocityKeyboard = SwerveInputStream.of(drivebase.getSwerveDrive(),
-                                                                        () -> -driverXbox.getLeftY(),
-                                                                        () -> -driverXbox.getLeftX())
-                                                                    .withControllerRotationAxis(() -> driverXbox.getRawAxis(
-                                                                        2))
-                                                                    .deadband(OperatorConstants.DEADBAND)
-                                                                    .scaleTranslation(0.8)
-                                                                    .allianceRelativeControl(true);
-  // Derive the heading axis with math!
-  SwerveInputStream driveDirectAngleKeyboard     = driveAngularVelocityKeyboard.copy()
-                                                                               .withControllerHeadingAxis(() ->
-                                                                                                              Math.sin(
-                                                                                                                  driverXbox.getRawAxis(
-                                                                                                                      2) *
-                                                                                                                  Math.PI) *
-                                                                                                              (Math.PI *
-                                                                                                               2),
-                                                                                                          () ->
-                                                                                                              Math.cos(
-                                                                                                                  driverXbox.getRawAxis(
-                                                                                                                      2) *
-                                                                                                                  Math.PI) *
-                                                                                                              (Math.PI *
-                                                                                                               2))
-                                                                               .headingWhile(true);
-
-  /**
-   * The container for the robot. Contains subsystems, OI devices, and commands.
-   */
-  public RobotContainer()
-  {
+  
     // Configure the trigger bindings
     configureBindings();
-    DriverStation.silenceJoystickConnectionWarning(true);
-    NamedCommands.registerCommand("test", Commands.print("I EXIST"));
-  }
 
+    // Register Named Commands
+
+    //#TODO Need to define the algea removal Command sequence
+
+    NamedCommands.registerCommand(
+      "L3 Raise", Commands.runOnce(() -> m_elevatorSubsystem.setState(elevatorState.L3))
+                              .andThen(Commands.run(() -> m_elevatorSubsystem.updatePosition())
+                              .until(
+                                      () -> Math.abs(m_elevatorSubsystem.getGoalPosition() - 
+                                      m_elevatorSubsystem.getPosition()) < Constants.Elevator.Position_Error
+                                                      )));
+    NamedCommands.registerCommand(
+      "L2 Raise", Commands.runOnce(() -> m_elevatorSubsystem.setState(elevatorState.L2))
+                              .andThen(Commands.run(() -> m_elevatorSubsystem.updatePosition())
+                              .until(
+                                      () -> Math.abs(m_elevatorSubsystem.getGoalPosition() - 
+                                      m_elevatorSubsystem.getPosition()) < Constants.Elevator.Position_Error
+                                          )));
+    NamedCommands.registerCommand(
+      "L2 Algea Prep", Commands.runOnce(() -> m_popper.setPopperState(popperState.L2Plus_SPIN))
+                                    .andThen(Commands.run(() -> m_popper.updatePosition())
+                                    .until(
+                                            () -> Math.abs(m_popper.getGoalPosition() - 
+                                            m_popper.getPopperPosition()) < Constants.Popper.Position_Error
+                                                            )));
+    NamedCommands.registerCommand("Stow Popper", Commands.runOnce(() -> m_popper.setPopperState(popperState.Start)).
+                                  andThen(Commands.run(() -> m_popper.updatePosition()).until(
+                                    () -> Math.abs(m_popper.getGoalPosition() - m_popper.getPopperPosition()) < Constants.Popper.Position_Error
+                                  )));
+    NamedCommands.registerCommand(
+      "L2 Algea", Commands.runOnce(() -> m_popper.setPopperState(popperState.L2Plus_SPIN))
+                              .andThen(Commands.run(() -> m_popper.updatePosition())
+                              .until(
+                                      () -> Math.abs(m_popper.getGoalPosition() - 
+                                      m_popper.getPopperPosition()) < Constants.Popper.Position_Error
+                                                      )));
+    NamedCommands.registerCommand(
+      "L3 Algea", Commands.runOnce(() -> m_popper.setPopperState(popperState.L3Plus_SPIN))
+                              .andThen(Commands.run(() -> m_popper.updatePosition())
+                              .until(
+                                      () -> Math.abs(m_popper.getGoalPosition() - 
+                                      m_popper.getPopperPosition()) < Constants.Popper.Position_Error
+                                                      )));
+    NamedCommands.registerCommand(
+      "Load", Commands.runOnce(() -> m_elevatorSubsystem.setState(elevatorState.Load))
+                          .alongWith(Commands.run(() -> m_elevatorSubsystem.updatePosition())
+                          .until(
+                                  () -> Math.abs(m_elevatorSubsystem.getGoalPosition() - 
+                                  m_elevatorSubsystem.getPosition()) < Constants.Elevator.Position_Error
+                                )));
+    NamedCommands.registerCommand(
+      "autoIntake", new IntakeCommand(m_intakeSubsystem, m_leds).andThen(new AdjustCoral(m_intakeSubsystem)));
+    NamedCommands.registerCommand("autoScore", new OuttakeCommand(m_intakeSubsystem, m_leds));
+
+    // Build an auto chooser
+    m_autoChooser = AutoBuilder.buildAutoChooser();
+    SmartDashboard.putData("Auto Chooser", m_autoChooser);
+
+    SmartDashboard.putString("Robot State", "Have Coral");
+  }
+  
+  
   /**
    * Use this method to define your trigger->command mappings. Triggers can be created via the
-   * {@link Trigger#Trigger(java.util.function.BooleanSupplier)} constructor with an arbitrary predicate, or via the
-   * named factories in {@link edu.wpi.first.wpilibj2.command.button.CommandGenericHID}'s subclasses for
-   * {@link CommandXboxController Xbox}/{@link edu.wpi.first.wpilibj2.command.button.CommandPS4Controller PS4}
-   * controllers or {@link edu.wpi.first.wpilibj2.command.button.CommandJoystick Flight joysticks}.
+   * {@link Trigger#Trigger(java.util.function.BooleanSupplier)} constructor with an arbitrary
+   * predicate, or via the named factories in {@link
+   * edu.wpi.first.wpilibj2.command.button.CommandGenericHID}'s subclasses for {@link
+   * CommandXboxController Xbox}/{@link edu.wpi.first.wpilibj2.command.button.CommandPS4Controller
+   * PS4} controllers or {@link edu.wpi.first.wpilibj2.command.button.CommandJoystick Flight
+   * joysticks}.
    */
-  private void configureBindings()
-  {
-
-    Command driveFieldOrientedDirectAngle      = drivebase.driveFieldOriented(driveDirectAngle);
-    Command driveFieldOrientedAnglularVelocity = drivebase.driveFieldOriented(driveAngularVelocity);
-    Command driveRobotOrientedAngularVelocity  = drivebase.driveFieldOriented(driveRobotOriented);
-    Command driveSetpointGen = drivebase.driveWithSetpointGeneratorFieldRelative(
-        driveDirectAngle);
-    Command driveFieldOrientedDirectAngleKeyboard      = drivebase.driveFieldOriented(driveDirectAngleKeyboard);
-    Command driveFieldOrientedAnglularVelocityKeyboard = drivebase.driveFieldOriented(driveAngularVelocityKeyboard);
-    Command driveSetpointGenKeyboard = drivebase.driveWithSetpointGeneratorFieldRelative(
-        driveDirectAngleKeyboard);
-
-    if (RobotBase.isSimulation())
-    {
-      drivebase.setDefaultCommand(driveFieldOrientedDirectAngleKeyboard);
-    } else
-    {
-      drivebase.setDefaultCommand(driveFieldOrientedAnglularVelocity);
-    }
-
-    if (Robot.isSimulation())
-    {
-      driverXbox.start().onTrue(Commands.runOnce(() -> drivebase.resetOdometry(new Pose2d(3, 3, new Rotation2d()))));
-      driverXbox.button(1).whileTrue(drivebase.sysIdDriveMotorCommand());
-
-    }
-    if (DriverStation.isTest())
-    {
-      drivebase.setDefaultCommand(driveFieldOrientedAnglularVelocity); // Overrides drive command above!
-
-      driverXbox.x().whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
-      driverXbox.y().whileTrue(drivebase.driveToDistanceCommand(1.0, 0.2));
-      driverXbox.start().onTrue((Commands.runOnce(drivebase::zeroGyro)));
-      driverXbox.back().whileTrue(drivebase.centerModulesCommand());
-      driverXbox.leftBumper().onTrue(Commands.none());
-      driverXbox.rightBumper().onTrue(Commands.none());
+  public void configureBindings() {
+    //Drivetrain Bindings
+    if(Robot.isSimulation()) {
       
-    } else
+      m_driveTrain.setDefaultCommand(new AbsoluteFieldDrive(m_driveTrain, () -> -m_driverController.getLeftY(), 
+                                                                () -> -m_driverController.getLeftX(),
+                                                                () -> -m_driverController.getRightX(),
+                                                                () -> -m_driverController.getRightY(), 
+                                                                m_driverController.x().negate()));
+
+      //Turns off an error about the joystick not being connected.
+      DriverStation.silenceJoystickConnectionWarning(true);
+      
+    } else 
     {
-      driverXbox.a().onTrue((Commands.runOnce(drivebase::zeroGyro)));
-      driverXbox.x().onTrue(Commands.runOnce(drivebase::addFakeVisionReading));
-      driverXbox.b().whileTrue(
-          drivebase.driveToPose(
-              new Pose2d(new Translation2d(4, 4), Rotation2d.fromDegrees(0)))
-                              );
-      driverXbox.start().whileTrue(Commands.none());
-      driverXbox.back().whileTrue(Commands.none());
-      driverXbox.leftBumper().whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
-      driverXbox.rightBumper().onTrue(Commands.none());
+      
+      m_driveTrain.setDefaultCommand(new AbsoluteFieldDrive(m_driveTrain, () -> -m_driverController.getLeftY(),
+                                                                () -> -m_driverController.getLeftX(), 
+                                                                () -> -m_driverController.getRightY(),
+                                                                () -> -m_driverController.getRightX(),
+                                                                () -> m_driverController.getRightTriggerAxis()<0.5));
     }
+    m_driverController.start().onTrue(Commands.runOnce(() -> m_driveTrain.zeroGyro()));
+    
+   
+    //This method is called in the teleopInit, once the DriverStation object is created and has posted information. 
+     
+    //Auto driving methods and bindings
+    // These bindings should not happen for demo conditions.
+    if (Constants.NotDemo) {
+      //#TODO- Finish placing targets and confirm orientations
 
-  }
+      var alliance = DriverStation.getAlliance();
+      if (alliance.isPresent() && alliance.get() == Alliance.Red) {
+        //The Red location sides
+        //Left side Coral Station 
+        m_driverController
+                          .x()
+                          .onTrue(m_driveTrain.driveToPose(new Pose2d(new Translation2d(15.963, 0.799), 
+                                    new Rotation2d(Units.degreesToRadians(120))))
+                          .withTimeout(3));
+        //Right side Coral Station 
+        m_driverController
+                          .b()
+                          .onTrue(m_driveTrain.driveToPose(new Pose2d(new Translation2d(15.963, 7.266), 
+                                    new Rotation2d(Units.degreesToRadians(225))))
+                          .withTimeout(3));
+      
+      //Reef settings
+        m_driverController
+                          .pov(180)
+                          .onTrue(m_driveTrain.driveToPose(Constants.Target.R_Front_Red));
+        m_driverController
+                          .pov(180)
+                          .and(m_driverController.a())
+                          .onTrue(m_driveTrain.driveToPose(Constants.Target.L_Front_Red));
+      }
+      else {
+        //The blue location sides
+        //Right side Coral Station 
+        m_driverController
+                          .b()
+                          .onTrue( m_driveTrain.driveToPose(new Pose2d(new Translation2d(1.588, 0.799), 
+                                    new Rotation2d(Units.degreesToRadians(60))))
+                          .withTimeout(3));
+        //Left side Coral Station 
+        m_driverController
+                          .x()
+                          .onTrue( m_driveTrain.driveToPose(new Pose2d(new Translation2d(1.588, 7.266), 
+                                  new Rotation2d(Units.degreesToRadians(300))))
+                          .withTimeout(3));
+      
+      //Reef settings 
 
+        m_driverController
+                          .pov(180)
+                          .onTrue(m_driveTrain.driveToPose(Constants.Target.R_Front_Blue));
+        m_driverController
+                          .pov(180)
+                          .and(m_driverController.a())
+                          .onTrue(m_driveTrain.driveToPose(Constants.Target.L_Front_Blue));
+        }
+    }
+     
+    //Elevator Bindings
+    /*Default command updates position continuously until goal is met - Although it is not clear that the until means anything
+      given that the command restarts immediatly after.
+    */
+      m_elevatorSubsystem.setDefaultCommand(Commands.run(()-> m_elevatorSubsystem.updatePosition(),m_elevatorSubsystem));
+      //Elevator State Setters
+      m_operatorController.x().onTrue(Commands.runOnce(() -> m_elevatorSubsystem.setState(elevatorState.Load)));
+      m_operatorController.a().onTrue(Commands.runOnce(() -> m_elevatorSubsystem.setState(elevatorState.L1)));
+      m_operatorController.b().onTrue(Commands.runOnce(() -> m_elevatorSubsystem.setState(elevatorState.L2)));
+      m_operatorController.y().onTrue(Commands.runOnce(() -> m_elevatorSubsystem.setState(elevatorState.L3)));  
+
+      //Allows manual control of elevator with pressing the right Trigger and the left Joystick
+      m_operatorController.rightTrigger(0.9)
+                          .whileTrue(new ElevatorCommand(m_elevatorSubsystem, () -> m_operatorController.getLeftY()));
+    
+      //Popper Binding
+     
+    /*
+     * Default Popper command is meant to continuously update the position of the popper arm
+    */
+      m_popper.setDefaultCommand(Commands.run(() -> m_popper.updatePosition(), m_popper));
+        
+    //Popper Movement
+    //L3 Position
+    m_operatorController.povUp()
+                  .onTrue(Commands.runOnce(()-> m_popper.setPopperState(popperState.L3)));
+    //L3 Position + Spin
+                  m_operatorController.povUp()
+                  .and(m_operatorController.leftBumper())
+                  .onTrue(Commands.runOnce(()-> m_popper.setPopperState(popperState.L3_SPIN)));
+    //L3+ Position
+                  m_operatorController.povUp()
+                  .and(m_operatorController.leftTrigger(0.5))
+                  .onTrue(Commands.runOnce(()-> m_popper.setPopperState(popperState.L3Plus)));
+    //L3+ Position + Spin
+    m_operatorController.povUp()
+                  .and(m_operatorController.leftBumper())
+                  .and(m_operatorController.leftTrigger(0.5))
+                  .onTrue(Commands.runOnce(()-> m_popper.setPopperState(popperState.L3Plus_SPIN)));
+    //L2 Position
+    m_operatorController.povLeft()
+                  .onTrue(Commands.runOnce(()-> m_popper.setPopperState(popperState.L2)));
+    //L2 Position + Spin
+    m_operatorController.povLeft()
+                  .and(m_operatorController.leftBumper())
+                  .onTrue(Commands.runOnce(()-> m_popper.setPopperState(popperState.L2_SPIN)));
+    //L2+ Position
+    m_operatorController.povLeft()
+                  .and(m_operatorController.leftTrigger(0.5))
+                  .onTrue(Commands.runOnce(()-> m_popper.setPopperState(popperState.L2Plus)));
+    //L2+ Position + Spin
+    m_operatorController.povLeft()
+                  .and(m_operatorController.leftBumper())
+                  .and(m_operatorController.leftTrigger(0.5))
+                  .onTrue(Commands.runOnce(()-> m_popper.setPopperState(popperState.L2Plus_SPIN)));
+    //Popper Down     
+    m_operatorController.povDown()
+                  .onTrue(Commands.runOnce(()-> m_popper.setPopperState(popperState.Start)));
+    //Popper Manual Control
+    m_operatorController.povRight()
+                        .whileTrue(m_popper.rock(() -> m_operatorController.getRightY()));
+    //Popper Manual Control + Spin
+    m_operatorController.povRight()
+                        .and(m_operatorController.leftBumper())
+                        .whileTrue(m_popper.rockAndRoll(() -> m_operatorController.getRightY(),() -> 0.2));
+                        
+    //Means of moving the Popper arm to desired position.
+    m_operatorController.back().onTrue(Commands.runOnce(() -> m_elevatorSubsystem.zeroEncoders()));
+    m_operatorController.start().onTrue(Commands.runOnce(() -> m_popper.popperReset()));
+    
+    //Intake Bindings- Note switch to driver controller.
+    m_intakeSubsystem.setDefaultCommand(Commands.runOnce(() -> m_intakeSubsystem.stopIntake(), m_intakeSubsystem));
+
+    m_driverController.leftBumper()
+                .whileTrue(new OuttakeCommand(
+                            m_intakeSubsystem,
+                            m_leds))
+                .onFalse(Commands.runOnce(
+                          () -> m_intakeSubsystem.stopIntake()));
+    m_driverController.rightBumper()
+                .whileTrue(new IntakeCommand(m_intakeSubsystem, m_leds)
+                          .andThen(new AdjustCoral(m_intakeSubsystem)))
+                .onFalse(Commands.runOnce(
+                          ()-> m_intakeSubsystem.stopIntake()));
+    /*
+    The goal here is to provide an efficient way to move the coral back and forth
+    without accidently ejecting the coral out the back by stopping once the sensor state changes.
+    */
+    m_operatorController.rightBumper()
+                .onTrue(new HelpIntakeCommand(
+                            m_intakeSubsystem,
+                            m_leds,
+                            () -> m_operatorController.getLeftY()))
+                .onFalse(Commands.runOnce(
+                          () -> m_intakeSubsystem.stopIntake()));
+   
+   
+    //For setting the pose based on vision
+    m_driverController.back().onTrue(Commands.runOnce(() -> m_driveTrain.getVisionPose()));
+     
+    System.out.println("End of configure Bindings");
+      
+      }
+                                                          
+ 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
    *
    * @return the command to run in autonomous
    */
-  public Command getAutonomousCommand()
-  {
+  public Command getAutonomousCommand() {
     // An example command will be run in autonomous
-    return drivebase.getAutonomousCommand("New Auto");
-  }
+    return m_autoChooser.getSelected();
+      //return m_ShooterSubsystem.autoShooter(m_IntakeSubsystem);
+    }
+  
+    public boolean readyToGo(){
+      return m_intakeSubsystem.getIntatkeState() == intakeState.HasCoral && m_elevatorSubsystem.getSensor();
+    }
 
-  public void setMotorBrake(boolean brake)
-  {
-    drivebase.setMotorBrake(brake);
-  }
+    public void goodToGo(){
+      m_leds.setState(LedState.HasCoral);
+    }
 }
