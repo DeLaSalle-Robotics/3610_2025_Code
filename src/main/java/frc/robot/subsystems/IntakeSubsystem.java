@@ -66,7 +66,7 @@ public class IntakeSubsystem extends SubsystemBase {
             this.currentState = intakeState.Loading;
         }
         
-        intakeMotor.set(speed);
+        intakeMotor.set(-speed);
     }
 
     public intakeState getIntatkeState(){
@@ -165,6 +165,9 @@ public class IntakeSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
         periodicSetIntakeState();
+        SmartDashboard.putBoolean("Intake Back Sensor", backDetectCoral());
+        SmartDashboard.putBoolean("Broken Back Sensor", backSensorBroken);
+        SmartDashboard.putString("Intake State",getIntatkeState().toString());
     }
 
     @Override
