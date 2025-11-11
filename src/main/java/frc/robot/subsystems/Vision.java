@@ -48,6 +48,7 @@ import edu.wpi.first.networktables.NetworkTablesJNI;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Robot;
@@ -122,7 +123,7 @@ public class Vision extends SubsystemBase {
    *                    itself correctly.
    * @return The target pose of the AprilTag.
    */
-  public static Pose2d getAprilTagPose(int aprilTag, Transform2d robotOffset)
+  public Pose2d getAprilTagPose(int aprilTag, Transform2d robotOffset)
   {
     Optional<Pose3d> aprilTagPose3d = fieldLayout.getTagPose(aprilTag);
     if (aprilTagPose3d.isPresent())
@@ -176,8 +177,8 @@ public class Vision extends SubsystemBase {
    * Called as part of a Pose Correction Command.
    * 
    */
-  public Pose2d getPoseEstimation()
-  {  Pose2d pose = new Pose2d(new Translation2d(100,100), new Rotation2d(0));
+  public Optional<Pose2d> getPoseEstimation()
+  {  Optional<Pose2d> pose = Optional.empty();
     //Cycle through each Camera during each cycle
     for (Cameras camera : Cameras.values())
     {
@@ -185,12 +186,19 @@ public class Vision extends SubsystemBase {
       Optional<EstimatedRobotPose> poseEst = getEstimatedGlobalPose(camera);
       if (poseEst.isPresent())
       {
-        pose = poseEst.get().estimatedPose.toPose2d();
-        break; //If a pose is found, break out of the Camera cycle and return the Pose2d Object.
-        //SmartDashboard.putData(field2d.setRobotPose(pose.estimatedPose.toPose2d()));
+        pose = Optional.of(poseEst.get().estimatedPose.toPose2d());
+        SmartDashboard.putNumber("AprilTag_Pose", camera.lastBestTarget);
+        System.out.println(camera.lastBestTarget);
+        break;
         
+      }else{
+        pose = null;
       }
+      
+      
+          
     }
+    
     return pose;
   }
 
@@ -350,6 +358,10 @@ public class Vision extends SubsystemBase {
      * Results list to be updated periodically and cached to avoid unnecessary queries.
      */
     public        List<PhotonPipelineResult>   resultsList       = new ArrayList<>();
+    /*
+     * Attribute to define the last best target from this camera.
+     */
+    public        int                           lastBestTarget = 0;
     /**
      * Last read from the camera timestamp to prevent lag due to slow data fetches.
      */
@@ -486,11 +498,13 @@ public class Vision extends SubsystemBase {
         lastReadTimestamp = currentTimestamp;
         //System.err.print("Result info: ");
         //System.err.println(resultsList.size());
+        
         resultsList.sort((PhotonPipelineResult a, PhotonPipelineResult b) -> {
           return a.getTimestampSeconds() >= b.getTimestampSeconds() ? 1 : -1;
         });
         if (!resultsList.isEmpty())
         {
+          
           updateEstimatedGlobalPose();
         }
       }
@@ -511,6 +525,9 @@ public class Vision extends SubsystemBase {
       for (var change : resultsList)
       {
         visionEst = poseEstimator.update(change);
+        if (change.hasTargets()) {
+        SmartDashboard.putNumber("AprilTag_Camera", change.getBestTarget().fiducialId);
+        }
         updateEstimationStdDevs(visionEst, change.getTargets());
       }
       estimatedRobotPose = visionEst;
@@ -642,7 +659,7 @@ public class Vision extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
     //getTargetPose();
-        
+    
   }
 
   @Override

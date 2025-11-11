@@ -273,7 +273,11 @@ public class DriveTrain extends SubsystemBase {
 
   /**Should collect the pose from the vision system and reset pose */
   public void getVisionPose() {
-    Pose2d visionPose = vision.getPoseEstimation();
+    Pose2d visionPose;
+    try {visionPose = vision.getPoseEstimation().get();}
+    catch (Exception e) {
+      System.out.println("No vision pose available, using telmetry");
+      visionPose = this.getPose();}
     if (visionPose.getY() > 75) {
       visionPose = this.getPose();
     } 

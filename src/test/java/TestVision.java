@@ -45,16 +45,38 @@ public class TestVision {
     @Test
     void getPose18x() {
         Pose2d testPose = m_vision.getAprilTagPose(18, cam_trans);
-        System.out.println(testPose.getX());
+        //System.out.println(testPose.getX());
         assertTrue(testPose.getX() < 10);
     }
 
     @Test
     void getPose18y() {
         Pose2d testPose = m_vision.getAprilTagPose(18, cam_trans);
-        System.out.println(testPose.getY());
+        //System.out.println(testPose.getY());
         assertTrue(testPose.getY() < 10);
     }
 
+    @Test
+    void testPoseEstimateY(){
+        try {
+            Pose2d testPose = m_vision.getPoseEstimation().get();
+            System.out.println(testPose.getY());
+            assertTrue((testPose.getY() > 2.9) && (testPose.getY() < 3.1));
+        } catch (Exception e) {
+            System.out.print(e);
+        }
+        
+    }
+
+    @Test
+    void testPoseEstimateX(){
+        try {
+            Pose2d testPose = m_vision.getPoseEstimation().get();
+            System.out.println(testPose.getX());
+            assertTrue((testPose.getX() > 0.9) && (testPose.getX() < 1.1));
+        } catch (Exception e) {
+            System.out.print(e);
+        }
+    }
 }
 
