@@ -169,7 +169,7 @@ public class RobotContainer {
                                                                 () -> -m_driverController.getRightX(),
                                                                 () -> m_driverController.getRightTriggerAxis()<0.5));
     }
-    m_driverController.start().onTrue(Commands.runOnce(() -> m_driveTrain.zeroGyro()));
+    m_driverController.start().onTrue(Commands.runOnce(() -> m_driveTrain.zeroGyroWithAlliance()));
     
    
     //This method is called in the teleopInit, once the DriverStation object is created and has posted information. 
