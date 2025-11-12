@@ -19,12 +19,13 @@ import java.io.File;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import frc.robot.subsystems.Vision;
+import frc.robot.subsystems.DriveTrain;
 import swervelib.SwerveDrive;
 import swervelib.parser.SwerveParser;
 
 public class TestVision {
     Vision m_vision;
-    SwerveDrive         swerveDrive;
+    DriveTrain      m_driveTrain;
     Transform2d   cam_trans;
     Pose2d roboPose;
     Field2d field2d;
@@ -41,23 +42,26 @@ public class TestVision {
         m_vision = new Vision(() -> roboPose, field2d);
         cam_trans = new Transform2d(0,0, new Rotation2d(0));
     }
-
+    
     @Test
     void getPose18x() {
+        System.out.print("Tag PoseX:");
         Pose2d testPose = m_vision.getAprilTagPose(18, cam_trans);
-        //System.out.println(testPose.getX());
+        System.out.println(testPose.getX());
         assertTrue(testPose.getX() < 10);
     }
 
     @Test
     void getPose18y() {
+        System.out.print("Tag PoseY:");
         Pose2d testPose = m_vision.getAprilTagPose(18, cam_trans);
-        //System.out.println(testPose.getY());
+        System.out.println(testPose.getY());
         assertTrue(testPose.getY() < 10);
     }
 
     @Test
     void testPoseEstimateY(){
+        System.out.print("PoseEstimateY:");
         try {
             Pose2d testPose = m_vision.getPoseEstimation().get();
             System.out.println(testPose.getY());
@@ -70,6 +74,7 @@ public class TestVision {
 
     @Test
     void testPoseEstimateX(){
+        System.out.print("PoseEstimateX:");
         try {
             Pose2d testPose = m_vision.getPoseEstimation().get();
             System.out.println(testPose.getX());
@@ -77,6 +82,32 @@ public class TestVision {
         } catch (Exception e) {
             System.out.print(e);
         }
+    }
+
+    //@Test
+    void testDrivePoseX(){
+        m_driveTrain = new DriveTrain(new File("src/main/deploy/swerve"));
+        System.out.print("Drive PoseX:");
+        
+        Pose2d testPose = m_driveTrain.getPose();
+        System.out.println(testPose.getX());
+        m_driveTrain.close();
+        assertTrue((testPose.getX() > 0.9) && (testPose.getX() < 1.1));
+    }
+
+    @Test
+    void testSetPoseX(){
+        m_driveTrain = new DriveTrain(new File("src/main/deploy/swerve"));
+        Pose2d testPose = m_vision.getAprilTagPose(18, cam_trans);
+        m_driveTrain.resetPose(testPose);
+        Pose2d newPose = m_driveTrain.getPose();
+        System.out.print("New Pose X:");
+        System.out.println(newPose.getX());
+        System.out.print("New Pose Y:");
+        System.out.println(newPose.getY());
+        assertTrue((testPose.getX() > 3.5) && (testPose.getX() < 3.7));
+        
+        
     }
 }
 

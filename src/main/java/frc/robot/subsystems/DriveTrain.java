@@ -376,6 +376,10 @@ public class DriveTrain extends SubsystemBase {
     swerveDrive.setMotorIdleMode(brake);
   }
 
+  public void close(){
+    swerveDrive.close();
+  }
+
   @Override
   public void periodic() {
     // When vision is enabled we must manually update odometry in SwerveDrive
