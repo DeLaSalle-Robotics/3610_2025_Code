@@ -9,9 +9,6 @@ import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.LedSubsystem;
 import frc.robot.subsystems.IntakeSubsystem.intakeState;
 import frc.robot.subsystems.LedSubsystem.LedState;
-
-import java.util.function.DoubleSupplier;
-
 import edu.wpi.first.wpilibj2.command.Command;
 
 /** An example command that uses an example subsystem. */
@@ -19,9 +16,7 @@ public class IntakeCommand extends Command {
     @SuppressWarnings({ "PMD.UnusedPrivateField", "PMD.SingularField" })
     private final IntakeSubsystem intake;
     private final LedSubsystem led;
-    private DoubleSupplier moveback;
     private double speed;
-    private intakeState startState;
     private boolean backSensorChanged = false;
     private boolean frontSensorStartState;
     private boolean backSensorStartState;
@@ -36,7 +31,7 @@ public class IntakeCommand extends Command {
         this.intake = subsystem;
         this.led = m_ledSubSystem;
         this.speed = Constants.Intake.speed;
-        this.startState = intakeState.Empty;
+        
         // Use addRequirements() here to declare subsystem dependencies.
         addRequirements(subsystem);
     }

@@ -11,7 +11,6 @@ import frc.robot.commands.Intake.AdjustCoral;
 import frc.robot.commands.Intake.HelpIntakeCommand;
 import frc.robot.commands.Intake.IntakeCommand;
 import frc.robot.commands.Intake.OuttakeCommand;
-import frc.robot.commands.Popper.*;
 import frc.robot.subsystems.*;
 import frc.robot.subsystems.ElevatorSubsystem.elevatorState;
 import frc.robot.subsystems.IntakeSubsystem.intakeState;

@@ -5,11 +5,7 @@
 package frc.robot.commands.Elevator;
 
 import frc.robot.subsystems.ElevatorSubsystem;
-import frc.robot.subsystems.IntakeSubsystem;
-
-import java.util.DoubleSummaryStatistics;
 import java.util.function.DoubleSupplier;
-
 import edu.wpi.first.networktables.BooleanPublisher;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;

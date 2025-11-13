@@ -18,7 +18,6 @@ public class OuttakeCommand extends Command {
     private final IntakeSubsystem intake;
     private final LedSubsystem led;
     private double speed;
-    private intakeState startState;
     private boolean backSensorChanged = false;
     private boolean frontSensorStartState;
     private boolean backSensorStartState;
@@ -33,7 +32,6 @@ public class OuttakeCommand extends Command {
         this.intake = subsystem;
         this.led = m_ledSubSystem;
         this.speed = Constants.Intake.speed;
-        this.startState = intakeState.Empty;
         // Use addRequirements() here to declare subsystem dependencies.
         addRequirements(subsystem);
     }
