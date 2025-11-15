@@ -274,7 +274,7 @@ public class DriveTrain extends SubsystemBase {
   /**Should collect the pose from the vision system and reset pose */
   public void getVisionPose() {
     Pose2d visionPose;
-    try {visionPose = vision.getPoseEstimation().get();}
+    try {visionPose = vision.currentVisionPose;}
     catch (Exception e) {
       System.out.println("No vision pose available, using telmetry");
       visionPose = this.getPose();}
@@ -318,8 +318,8 @@ public class DriveTrain extends SubsystemBase {
   {
     // Create the constraints to use while pathfinding
     PathConstraints constraints = new PathConstraints(
-        swerveDrive.getMaximumChassisVelocity(), 4.0,
-        swerveDrive.getMaximumChassisAngularVelocity(), Units.degreesToRadians(720));
+        swerveDrive.getMaximumChassisVelocity(), 1.0,/*4.0*/
+        swerveDrive.getMaximumChassisAngularVelocity(), Units.degreesToRadians(360)/*720*/);
 
     // Since AutoBuilder is configured, we can use it to build pathfinding commands
     return defer( () -> AutoBuilder.pathfindToPose(

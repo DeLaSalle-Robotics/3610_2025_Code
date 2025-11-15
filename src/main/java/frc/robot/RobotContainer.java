@@ -22,6 +22,7 @@ import java.io.File;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 
+import edu.wpi.first.math.filter.Debouncer.DebounceType;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -197,11 +198,11 @@ public class RobotContainer {
       //Reef settings
         m_driverController
                           .pov(180)
-                          .onTrue(m_driveTrain.driveToPose(Constants.Target.R_Front_Red));
+                          .onTrue(m_driveTrain.driveToPose(Constants.Target.R_7));
         m_driverController
                           .pov(180)
                           .and(m_driverController.a())
-                          .onTrue(m_driveTrain.driveToPose(Constants.Target.L_Front_Red));
+                          .onTrue(m_driveTrain.driveToPose(Constants.Target.L_7));
       }
       else {
         //The blue location sides
@@ -218,15 +219,57 @@ public class RobotContainer {
                                   new Rotation2d(Units.degreesToRadians(300))))
                           .withTimeout(3));
       
+        m_driverController.y().onTrue(m_driveTrain.driveToPose(m_driveTrain.getPose()));
+
       //Reef settings 
 
         m_driverController
+                          .pov(0)
+                          .onTrue(m_driveTrain.driveToPose(Constants.Target.R_21));
+        m_driverController
+                          .pov(0)
+                          .and(m_driverController.a())
+                          .onTrue(m_driveTrain.driveToPose(Constants.Target.L_21));
+
+        m_driverController
+                          .pov(45)
+                          .onTrue(m_driveTrain.driveToPose(Constants.Target.R_22));
+        m_driverController
+                          .pov(45)
+                          .and(m_driverController.a())
+                          .onTrue(m_driveTrain.driveToPose(Constants.Target.L_22));
+
+        m_driverController
+                          .pov(135)
+                          .onTrue(m_driveTrain.driveToPose(Constants.Target.R_17));
+        m_driverController
+                          .pov(135)
+                          .and(m_driverController.a())
+                          .onTrue(m_driveTrain.driveToPose(Constants.Target.L_17));
+
+        m_driverController
                           .pov(180)
-                          .onTrue(m_driveTrain.driveToPose(Constants.Target.R_Front_Blue));
+                          .onTrue(m_driveTrain.driveToPose(Constants.Target.R_18));
         m_driverController
                           .pov(180)
                           .and(m_driverController.a())
-                          .onTrue(m_driveTrain.driveToPose(Constants.Target.L_Front_Blue));
+                          .onTrue(m_driveTrain.driveToPose(Constants.Target.L_18));
+
+        m_driverController
+                          .pov(225)
+                          .onTrue(m_driveTrain.driveToPose(Constants.Target.R_19));
+        m_driverController
+                          .pov(225)
+                          .and(m_driverController.a())
+                          .onTrue(m_driveTrain.driveToPose(Constants.Target.L_19));
+        
+        m_driverController
+                          .pov(315)
+                          .onTrue(m_driveTrain.driveToPose(Constants.Target.R_20));
+        m_driverController
+                          .pov(315)
+                          .and(m_driverController.a())
+                          .onTrue(m_driveTrain.driveToPose(Constants.Target.L_20));
         }
     }
      

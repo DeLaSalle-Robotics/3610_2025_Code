@@ -9,7 +9,6 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.DriverStation;
 import swervelib.math.Matter;
 
 /**
@@ -104,54 +103,54 @@ public final class Constants {
   }
 
   public static class Target {
-      public static final Pose2d R_Front_Red = new Pose2d(new Translation2d(14.441, 4.214),
-                                                        new Rotation2d(0));
-      public static final Pose2d R_LeftFront_Red =  new Pose2d(new Translation2d(13.851, 3.132),
-                                                            new Rotation2d(Units.degreesToRadians(300)));
-      public static final Pose2d R_LeftBack_Red = new Pose2d(new Translation2d(12.525, 2.830),
-                                                          new Rotation2d(Units.degreesToRadians(240)));
-      public static final Pose2d R_Back_Red = new Pose2d(new Translation2d(11.735, 3.863),
-                                                      new Rotation2d(Units.degreesToRadians(180)));
-      public static final Pose2d R_RightBack_Red = new Pose2d(new Translation2d(12.385, 5.008),
-                                                            new Rotation2d(Units.degreesToRadians(120)));
-      public static final Pose2d R_RightFront_Red = new Pose2d(new Translation2d(13.492, 5.188),
+      public static final Pose2d L_8 = new Pose2d(new Translation2d(13.926, 5.029),
                                                             new Rotation2d(Units.degreesToRadians(60)));
-      public static final Pose2d L_Front_Red = new Pose2d(new Translation2d(14.442, 3.925),
-                                                        new Rotation2d(0));
-      public static final Pose2d L_LeftFront_Red = new Pose2d(new Translation2d(13.496, 2.908),
-                                                            new Rotation2d(Units.degreesToRadians(300)));
-      public static final Pose2d L_LeftBack_Red = new Pose2d(new Translation2d(12.165, 3.032),
-                                                          new Rotation2d(Units.degreesToRadians(240)));
-      public static final Pose2d L_Back_Red = new Pose2d(new Translation2d(11.735, 4.221),
-                                                      new Rotation2d(Units.degreesToRadians(180)));
-      public static final Pose2d L_RightBack_Red = new Pose2d(new Translation2d(12.552, 5.171),
-                                                            new Rotation2d(Units.degreesToRadians(120)));
-      public static final Pose2d L_RightFront_Red = new Pose2d(new Translation2d(13.926, 5.029),
+      public static final Pose2d R_8 = new Pose2d(new Translation2d(13.492, 5.188),
                                                             new Rotation2d(Units.degreesToRadians(60)));
-      public static final Pose2d R_Front_Blue = new Pose2d(new Translation2d(2.888,3.788),
-                                                        new Rotation2d(Units.degreesToRadians(0)));
-      public static final Pose2d R_LeftFront_Blue =  new Pose2d(new Translation2d(3.582, 5.223),
-                                                        new Rotation2d(Units.degreesToRadians(120)));
-      public static final Pose2d R_LeftBack_Blue = new Pose2d(new Translation2d(5.055, 5.331),
-                                                        new Rotation2d(Units.degreesToRadians(60)));
-      public static final Pose2d R_Back_Blue = new Pose2d(new Translation2d(5.868, 4.248),
+      public static final Pose2d R_7 = new Pose2d(new Translation2d(14.441, 4.214),
                                                         new Rotation2d(0));
-      public static final Pose2d R_RightBack_Blue = new Pose2d(new Translation2d(5.346, 2.990),
-                                                        new Rotation2d(Units.degreesToRadians(300)));
-      public static final Pose2d R_RightFront_Blue = new Pose2d(new Translation2d(3.951, 2.821),
-                                                        new Rotation2d(Units.degreesToRadians(240)));
-      public static final Pose2d L_Front_Blue = new Pose2d(new Translation2d(2.888, 4.151),
-                                                        new Rotation2d(Units.degreesToRadians(0)));
-      public static final Pose2d L_LeftFront_Blue = new Pose2d(new Translation2d(3.951, 5.538),
-                                                        new Rotation2d(Units.degreesToRadians(120)));
-      public static final Pose2d L_LeftBack_Blue = new Pose2d(new Translation2d(5.335, 5.154),
-                                                        new Rotation2d(Units.degreesToRadians(60)));
-      public static final Pose2d L_Back_Blue = new Pose2d(new Translation2d(5.868, 3.886),
+      public static final Pose2d L_7 = new Pose2d(new Translation2d(14.442, 3.925),
                                                         new Rotation2d(0));
-      public static final Pose2d L_RightBack_Blue = new Pose2d(new Translation2d(5.068, 2.821),
-                                                        new Rotation2d(Units.degreesToRadians(300)));
-      public static final Pose2d L_RightFront_Blue = new Pose2d(new Translation2d(3.582, 2.990),
-                                                        new Rotation2d(Units.degreesToRadians(240)));
+      public static final Pose2d R_6 =  new Pose2d(new Translation2d(13.851, 3.132),
+                                                            new Rotation2d(Units.degreesToRadians(300)));
+      public static final Pose2d L_6 = new Pose2d(new Translation2d(13.496, 2.908),
+                                                            new Rotation2d(Units.degreesToRadians(300)));
+      public static final Pose2d R_11 = new Pose2d(new Translation2d(12.525, 2.830),
+                                                          new Rotation2d(Units.degreesToRadians(240)));
+      public static final Pose2d L_11 = new Pose2d(new Translation2d(12.165, 3.032),
+                                                          new Rotation2d(Units.degreesToRadians(240)));
+      public static final Pose2d R_10 = new Pose2d(new Translation2d(11.735, 3.863),
+                                                      new Rotation2d(Units.degreesToRadians(180)));
+      public static final Pose2d L_10 = new Pose2d(new Translation2d(11.735, 4.221),
+                                                      new Rotation2d(Units.degreesToRadians(180)));
+      public static final Pose2d R_9 = new Pose2d(new Translation2d(12.385, 5.008),
+                                                      new Rotation2d(Units.degreesToRadians(120)));
+      public static final Pose2d L_9 = new Pose2d(new Translation2d(12.552, 5.171),
+                                                      new Rotation2d(Units.degreesToRadians(120)));
+      public static final Pose2d R_18 = new Pose2d(new Translation2d(3.15,3.65),
+                                                        new Rotation2d(Units.degreesToRadians(0)));
+      public static final Pose2d L_18 = new Pose2d(new Translation2d(3.17, 3.97),
+                                                        new Rotation2d(Units.degreesToRadians(0)));
+      public static final Pose2d R_19 =  new Pose2d(new Translation2d(3.53, 4.92),
+                                                        new Rotation2d(Units.degreesToRadians(-60)));
+      public static final Pose2d L_19 = new Pose2d(new Translation2d(3.78, 5.14),
+                                                        new Rotation2d(Units.degreesToRadians(-60)));
+      public static final Pose2d R_20 = new Pose2d(new Translation2d(4.78, 5.34),
+                                                        new Rotation2d(Units.degreesToRadians(-120)));
+      public static final Pose2d L_20 = new Pose2d(new Translation2d(5.16, 5.25),
+                                                        new Rotation2d(Units.degreesToRadians(-120)));
+      public static final Pose2d R_21 = new Pose2d(new Translation2d(5.85, 4.42),
+                                                        new Rotation2d(Units.degreesToRadians(180)));
+      public static final Pose2d L_21 = new Pose2d(new Translation2d(5.82, 4.07),
+                                                        new Rotation2d(Units.degreesToRadians(180)));
+      public static final Pose2d R_22 = new Pose2d(new Translation2d(5.5, 3.11),
+                                                        new Rotation2d(Units.degreesToRadians(120)));
+      public static final Pose2d L_22 = new Pose2d(new Translation2d(5.21, 2.87),
+                                                        new Rotation2d(Units.degreesToRadians(120)));
+      public static final Pose2d R_17 = new Pose2d(new Translation2d(4.19, 2.73),
+                                                        new Rotation2d(Units.degreesToRadians(60)));
+      public static final Pose2d L_17 = new Pose2d(new Translation2d(3.84,2.81),
+                                                        new Rotation2d(Units.degreesToRadians(60)));
     
 
   }

@@ -33,12 +33,14 @@ import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
+import static edu.wpi.first.units.Units.Meter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
@@ -76,6 +78,8 @@ public class Vision extends SubsystemBase {
    * Field from {@link swervelib.SwerveDrive#field}
    */
   
+  public Pose2d currentVisionPose = new Pose2d(new Translation2d(Meter.of(1),Meter.of(1)),Rotation2d.fromDegrees(0));
+
   /**
      * Constructor for the Vision class.
      *
@@ -187,7 +191,8 @@ public class Vision extends SubsystemBase {
       {
         pose = Optional.of(poseEst.get().estimatedPose.toPose2d());
         SmartDashboard.putNumber("AprilTag_Pose", camera.lastBestTarget);
-        System.out.println(camera.lastBestTarget);
+        //System.out.println(camera.lastBestTarget);
+        this.currentVisionPose = pose.get();
         break;
         
       }else{
@@ -226,6 +231,13 @@ public class Vision extends SubsystemBase {
             debugField.getObject("VisionEstimation").setPoses();
           });
     } 
+    if (poseEst.isPresent()){
+      //System.out.println(poseEst.get().estimatedPose.getX());
+      //System.out.println(poseEst.get().timestampSeconds);
+    }
+    else if (poseEst.isEmpty()){
+      //System.out.println("No new pose");
+    }
     return poseEst;
   }
   /**
@@ -475,6 +487,7 @@ public class Vision extends SubsystemBase {
     public Optional<EstimatedRobotPose> getEstimatedGlobalPose()
     {
       updateUnreadResults();
+      //System.out.println("Estimated Global Poses Estimated");
       return estimatedRobotPose;
     }
 
@@ -490,11 +503,12 @@ public class Vision extends SubsystemBase {
       {
         mostRecentTimestamp = Math.max(mostRecentTimestamp, result.getTimestampSeconds());
       }
-      if ((resultsList.isEmpty() || (currentTimestamp - mostRecentTimestamp >= debounceTime)) &&
+      if ((!resultsList.isEmpty() || (currentTimestamp - mostRecentTimestamp >= debounceTime)) &&
           (currentTimestamp - lastReadTimestamp) >= debounceTime)
       {
         resultsList = Robot.isReal() ? camera.getAllUnreadResults() : cameraSim.getCamera().getAllUnreadResults();
         lastReadTimestamp = currentTimestamp;
+        //System.out.println("Updated unread results");
         //System.err.print("Result info: ");
         //System.err.println(resultsList.size());
         
@@ -503,7 +517,7 @@ public class Vision extends SubsystemBase {
         });
         if (!resultsList.isEmpty())
         {
-          
+          //System.out.println("unread results !empty");
           updateEstimatedGlobalPose();
         }
       }
@@ -525,6 +539,7 @@ public class Vision extends SubsystemBase {
       {
         visionEst = poseEstimator.update(change);
         if (change.hasTargets()) {
+        //System.out.println("We call the thing");
         SmartDashboard.putNumber("AprilTag_Camera", change.getBestTarget().fiducialId);
         }
         updateEstimationStdDevs(visionEst, change.getTargets());
