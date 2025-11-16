@@ -127,6 +127,8 @@ public final class Constants {
                                                       new Rotation2d(Units.degreesToRadians(120)));
       public static final Pose2d L_9 = new Pose2d(new Translation2d(12.552, 5.171),
                                                       new Rotation2d(Units.degreesToRadians(120)));
+      
+      //Blue Alliance Sides
       public static final Pose2d R_18 = new Pose2d(new Translation2d(3.15,3.65),
                                                         new Rotation2d(Units.degreesToRadians(0)));
       public static final Pose2d L_18 = new Pose2d(new Translation2d(3.17, 3.97),

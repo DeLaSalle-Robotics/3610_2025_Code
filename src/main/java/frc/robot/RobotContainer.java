@@ -21,8 +21,9 @@ import java.io.File;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
+import com.pathplanner.lib.util.FlippingUtil;
+import com.pathplanner.lib.util.FlippingUtil.FieldSymmetry;
 
-import edu.wpi.first.math.filter.Debouncer.DebounceType;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -71,8 +72,11 @@ public class RobotContainer {
       SmartDashboard.putData("Intake Data", m_intakeSubsystem);
       SmartDashboard.putData("DriveTrain Data", m_driveTrain);
     }
-
   
+    FlippingUtil.fieldSizeX = 17.55;
+    FlippingUtil.fieldSizeY = 8.05;
+    FlippingUtil.symmetryType = FieldSymmetry.kMirrored;
+
     // Configure the trigger bindings
     configureBindings();
 
@@ -185,91 +189,137 @@ public class RobotContainer {
         //Left side Coral Station 
         m_driverController
                           .x()
-                          .onTrue(m_driveTrain.driveToPose(new Pose2d(new Translation2d(15.963, 0.799), 
-                                    new Rotation2d(Units.degreesToRadians(120))))
-                          .withTimeout(3));
+                          .whileTrue(m_driveTrain.driveToPose(new Pose2d(new Translation2d(15.963, 0.799), 
+                                    new Rotation2d(Units.degreesToRadians(120)))));
         //Right side Coral Station 
         m_driverController
                           .b()
-                          .onTrue(m_driveTrain.driveToPose(new Pose2d(new Translation2d(15.963, 7.266), 
-                                    new Rotation2d(Units.degreesToRadians(225))))
-                          .withTimeout(3));
+                          .whileTrue(m_driveTrain.driveToPose(new Pose2d(new Translation2d(15.963, 7.266), 
+                                    new Rotation2d(Units.degreesToRadians(225)))));
       
-      //Reef settings
+        //Reef settings
         m_driverController
-                          .pov(180)
-                          .onTrue(m_driveTrain.driveToPose(Constants.Target.R_7));
+              .pov(0)
+              .whileTrue(m_driveTrain.driveToPose(FlippingUtil.flipFieldPose(Constants.Target.R_21)));
+              //.whileTrue(m_driveTrain.driveToPose(Constants.Target.R_10));
         m_driverController
-                          .pov(180)
-                          .and(m_driverController.a())
-                          .onTrue(m_driveTrain.driveToPose(Constants.Target.L_7));
-      }
+              .pov(0)
+              .and(m_driverController.a())
+              .whileTrue(m_driveTrain.driveToPose(FlippingUtil.flipFieldPose(Constants.Target.L_21)));
+              //.whileTrue(m_driveTrain.driveToPose(Constants.Target.L_10));
+
+        m_driverController
+              .pov(45)
+              .whileTrue(m_driveTrain.driveToPose(FlippingUtil.flipFieldPose(Constants.Target.R_22)));
+              //.whileTrue(m_driveTrain.driveToPose(Constants.Target.R_9));
+        m_driverController
+              .pov(45)
+              .and(m_driverController.a())
+              .whileTrue(m_driveTrain.driveToPose(FlippingUtil.flipFieldPose(Constants.Target.L_22)));
+              //.whileTrue(m_driveTrain.driveToPose(Constants.Target.L_9));
+
+        m_driverController
+              .pov(135)
+              .whileTrue(m_driveTrain.driveToPose(FlippingUtil.flipFieldPose(Constants.Target.R_17)));
+              //.whileTrue(m_driveTrain.driveToPose(Constants.Target.R_8));
+        m_driverController
+              .pov(135)
+              .and(m_driverController.a())
+              .whileTrue(m_driveTrain.driveToPose(FlippingUtil.flipFieldPose(Constants.Target.L_17)));
+              //.whileTrue(m_driveTrain.driveToPose(Constants.Target.L_8));
+
+        m_driverController
+              .pov(180)
+              .whileTrue(m_driveTrain.driveToPose(FlippingUtil.flipFieldPose(Constants.Target.R_18)));
+              //.whileTrue(m_driveTrain.driveToPose(Constants.Target.R_7));
+        m_driverController
+              .pov(180)
+              .and(m_driverController.a())
+              .whileTrue(m_driveTrain.driveToPose(FlippingUtil.flipFieldPose(Constants.Target.L_18)));
+              //.whileTrue(m_driveTrain.driveToPose(Constants.Target.L_7));
+
+        m_driverController
+              .pov(225)
+              .whileTrue(m_driveTrain.driveToPose(FlippingUtil.flipFieldPose(Constants.Target.R_19)));
+              //.whileTrue(m_driveTrain.driveToPose(Constants.Target.R_6));
+        m_driverController
+              .pov(225)
+              .and(m_driverController.a())
+              .whileTrue(m_driveTrain.driveToPose(FlippingUtil.flipFieldPose(Constants.Target.L_19)));
+              //.whileTrue(m_driveTrain.driveToPose(Constants.Target.L_6));
+
+        m_driverController
+              .pov(315)
+              .whileTrue(m_driveTrain.driveToPose(FlippingUtil.flipFieldPose(Constants.Target.R_20)));
+              //.whileTrue(m_driveTrain.driveToPose(Constants.Target.R_11));
+        m_driverController
+              .pov(315)
+              .and(m_driverController.a())
+              .whileTrue(m_driveTrain.driveToPose(FlippingUtil.flipFieldPose(Constants.Target.L_20)));
+}
       else {
         //The blue location sides
         //Right side Coral Station 
         m_driverController
                           .b()
-                          .onTrue( m_driveTrain.driveToPose(new Pose2d(new Translation2d(1.588, 0.799), 
-                                    new Rotation2d(Units.degreesToRadians(60))))
-                          .withTimeout(3));
+                          .whileTrue( m_driveTrain.driveToPose(new Pose2d(new Translation2d(1.588, 0.799), 
+                                    new Rotation2d(Units.degreesToRadians(60)))));
         //Left side Coral Station 
         m_driverController
                           .x()
-                          .onTrue( m_driveTrain.driveToPose(new Pose2d(new Translation2d(1.588, 7.266), 
-                                  new Rotation2d(Units.degreesToRadians(300))))
-                          .withTimeout(3));
+                          .whileTrue( m_driveTrain.driveToPose(new Pose2d(new Translation2d(1.588, 7.266), 
+                                  new Rotation2d(Units.degreesToRadians(300)))));
       
-        m_driverController.y().onTrue(m_driveTrain.driveToPose(m_driveTrain.getPose()));
 
       //Reef settings 
 
         m_driverController
                           .pov(0)
-                          .onTrue(m_driveTrain.driveToPose(Constants.Target.R_21));
+                          .whileTrue(m_driveTrain.driveToPose(Constants.Target.R_21));
         m_driverController
                           .pov(0)
                           .and(m_driverController.a())
-                          .onTrue(m_driveTrain.driveToPose(Constants.Target.L_21));
+                          .whileTrue(m_driveTrain.driveToPose(Constants.Target.L_21));
 
         m_driverController
                           .pov(45)
-                          .onTrue(m_driveTrain.driveToPose(Constants.Target.R_22));
+                          .whileTrue(m_driveTrain.driveToPose(Constants.Target.R_22));
         m_driverController
                           .pov(45)
                           .and(m_driverController.a())
-                          .onTrue(m_driveTrain.driveToPose(Constants.Target.L_22));
+                          .whileTrue(m_driveTrain.driveToPose(Constants.Target.L_22));
 
         m_driverController
                           .pov(135)
-                          .onTrue(m_driveTrain.driveToPose(Constants.Target.R_17));
+                          .whileTrue(m_driveTrain.driveToPose(Constants.Target.R_17));
         m_driverController
                           .pov(135)
                           .and(m_driverController.a())
-                          .onTrue(m_driveTrain.driveToPose(Constants.Target.L_17));
+                          .whileTrue(m_driveTrain.driveToPose(Constants.Target.L_17));
 
         m_driverController
                           .pov(180)
-                          .onTrue(m_driveTrain.driveToPose(Constants.Target.R_18));
+                          .whileTrue(m_driveTrain.driveToPose(Constants.Target.R_18));
         m_driverController
                           .pov(180)
                           .and(m_driverController.a())
-                          .onTrue(m_driveTrain.driveToPose(Constants.Target.L_18));
+                          .whileTrue(m_driveTrain.driveToPose(Constants.Target.L_18));
 
         m_driverController
                           .pov(225)
-                          .onTrue(m_driveTrain.driveToPose(Constants.Target.R_19));
+                          .whileTrue(m_driveTrain.driveToPose(Constants.Target.R_19));
         m_driverController
                           .pov(225)
                           .and(m_driverController.a())
-                          .onTrue(m_driveTrain.driveToPose(Constants.Target.L_19));
+                          .whileTrue(m_driveTrain.driveToPose(Constants.Target.L_19));
         
         m_driverController
                           .pov(315)
-                          .onTrue(m_driveTrain.driveToPose(Constants.Target.R_20));
+                          .whileTrue(m_driveTrain.driveToPose(Constants.Target.R_20));
         m_driverController
                           .pov(315)
                           .and(m_driverController.a())
-                          .onTrue(m_driveTrain.driveToPose(Constants.Target.L_20));
+                          .whileTrue(m_driveTrain.driveToPose(Constants.Target.L_20));
         }
     }
      
