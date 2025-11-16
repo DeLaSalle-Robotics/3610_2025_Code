@@ -207,6 +207,18 @@ public class RobotContainer {
               .and(m_driverController.a())
               .whileTrue(m_driveTrain.driveToPose(FlippingUtil.flipFieldPose(Constants.Target.L_21)));
               //.whileTrue(m_driveTrain.driveToPose(Constants.Target.L_10));
+        m_driverController
+              .pov(0)
+              .and(m_driverController.y())
+              .whileTrue(m_driveTrain.driveToL3Pose(FlippingUtil.flipFieldPose(Constants.Target.R_21)));
+              //.whileTrue(m_driveTrain.driveToPose(Constants.Target.R_10));
+        m_driverController
+              .pov(0)
+              .and(m_driverController.a())
+              .and(m_driverController.y())
+              .whileTrue(m_driveTrain.driveToL3Pose(FlippingUtil.flipFieldPose(Constants.Target.L_21)));
+              //.whileTrue(m_driveTrain.driveToPose(Constants.Target.L_10));
+
 
         m_driverController
               .pov(45)
@@ -216,6 +228,17 @@ public class RobotContainer {
               .pov(45)
               .and(m_driverController.a())
               .whileTrue(m_driveTrain.driveToPose(FlippingUtil.flipFieldPose(Constants.Target.L_22)));
+              //.whileTrue(m_driveTrain.driveToPose(Constants.Target.L_9));
+        m_driverController
+              .pov(45)
+              .and(m_driverController.y())
+              .whileTrue(m_driveTrain.driveToL3Pose(FlippingUtil.flipFieldPose(Constants.Target.R_22)));
+              //.whileTrue(m_driveTrain.driveToPose(Constants.Target.R_9));
+        m_driverController
+              .pov(45)
+              .and(m_driverController.a())
+              .and(m_driverController.y())
+              .whileTrue(m_driveTrain.driveToL3Pose(FlippingUtil.flipFieldPose(Constants.Target.L_22)));
               //.whileTrue(m_driveTrain.driveToPose(Constants.Target.L_9));
 
         m_driverController
@@ -227,6 +250,17 @@ public class RobotContainer {
               .and(m_driverController.a())
               .whileTrue(m_driveTrain.driveToPose(FlippingUtil.flipFieldPose(Constants.Target.L_17)));
               //.whileTrue(m_driveTrain.driveToPose(Constants.Target.L_8));
+        m_driverController
+              .pov(135)
+              .and(m_driverController.y())
+              .whileTrue(m_driveTrain.driveToL3Pose(FlippingUtil.flipFieldPose(Constants.Target.R_17)));
+              //.whileTrue(m_driveTrain.driveToPose(Constants.Target.R_8));
+        m_driverController
+              .pov(135)
+              .and(m_driverController.a())
+              .and(m_driverController.y())
+              .whileTrue(m_driveTrain.driveToL3Pose(FlippingUtil.flipFieldPose(Constants.Target.L_17)));
+              //.whileTrue(m_driveTrain.driveToPose(Constants.Target.L_8));
 
         m_driverController
               .pov(180)
@@ -236,6 +270,17 @@ public class RobotContainer {
               .pov(180)
               .and(m_driverController.a())
               .whileTrue(m_driveTrain.driveToPose(FlippingUtil.flipFieldPose(Constants.Target.L_18)));
+              //.whileTrue(m_driveTrain.driveToPose(Constants.Target.L_7));
+        m_driverController
+              .pov(180)
+              .and(m_driverController.y())
+              .whileTrue(m_driveTrain.driveToL3Pose(FlippingUtil.flipFieldPose(Constants.Target.R_18)));
+              //.whileTrue(m_driveTrain.driveToPose(Constants.Target.R_7));
+        m_driverController
+              .pov(180)
+              .and(m_driverController.a())
+              .and(m_driverController.y())
+              .whileTrue(m_driveTrain.driveToL3Pose(FlippingUtil.flipFieldPose(Constants.Target.L_18)));
               //.whileTrue(m_driveTrain.driveToPose(Constants.Target.L_7));
 
         m_driverController
@@ -247,6 +292,17 @@ public class RobotContainer {
               .and(m_driverController.a())
               .whileTrue(m_driveTrain.driveToPose(FlippingUtil.flipFieldPose(Constants.Target.L_19)));
               //.whileTrue(m_driveTrain.driveToPose(Constants.Target.L_6));
+        m_driverController
+              .pov(225)
+              .and(m_driverController.y())
+              .whileTrue(m_driveTrain.driveToL3Pose(FlippingUtil.flipFieldPose(Constants.Target.R_19)));
+              //.whileTrue(m_driveTrain.driveToPose(Constants.Target.R_6));
+        m_driverController
+              .pov(225)
+              .and(m_driverController.a())
+              .and(m_driverController.y())
+              .whileTrue(m_driveTrain.driveToL3Pose(FlippingUtil.flipFieldPose(Constants.Target.L_19)));
+              //.whileTrue(m_driveTrain.driveToPose(Constants.Target.L_6));
 
         m_driverController
               .pov(315)
@@ -256,6 +312,16 @@ public class RobotContainer {
               .pov(315)
               .and(m_driverController.a())
               .whileTrue(m_driveTrain.driveToPose(FlippingUtil.flipFieldPose(Constants.Target.L_20)));
+        m_driverController
+              .pov(315)
+              .and(m_driverController.y())
+              .whileTrue(m_driveTrain.driveToL3Pose(FlippingUtil.flipFieldPose(Constants.Target.R_20)));
+              //.whileTrue(m_driveTrain.driveToPose(Constants.Target.R_11));
+        m_driverController
+              .pov(315)
+              .and(m_driverController.a())
+              .and(m_driverController.y())
+              .whileTrue(m_driveTrain.driveToL3Pose(FlippingUtil.flipFieldPose(Constants.Target.L_20)));
 }
       else {
         //The blue location sides
@@ -280,6 +346,15 @@ public class RobotContainer {
                           .pov(0)
                           .and(m_driverController.a())
                           .whileTrue(m_driveTrain.driveToPose(Constants.Target.L_21));
+        m_driverController
+                          .pov(0)
+                          .and(m_driverController.y())
+                          .whileTrue(m_driveTrain.driveToL3Pose(Constants.Target.R_21));
+        m_driverController
+                          .pov(0)
+                          .and(m_driverController.a())
+                          .and(m_driverController.y())
+                          .whileTrue(m_driveTrain.driveToL3Pose(Constants.Target.L_21));
 
         m_driverController
                           .pov(45)
@@ -288,6 +363,15 @@ public class RobotContainer {
                           .pov(45)
                           .and(m_driverController.a())
                           .whileTrue(m_driveTrain.driveToPose(Constants.Target.L_22));
+        m_driverController
+                          .pov(45)
+                          .and(m_driverController.y())
+                          .whileTrue(m_driveTrain.driveToL3Pose(Constants.Target.R_22));
+        m_driverController
+                          .pov(45)
+                          .and(m_driverController.a())
+                          .and(m_driverController.y())
+                          .whileTrue(m_driveTrain.driveToL3Pose(Constants.Target.L_22));
 
         m_driverController
                           .pov(135)
@@ -296,6 +380,15 @@ public class RobotContainer {
                           .pov(135)
                           .and(m_driverController.a())
                           .whileTrue(m_driveTrain.driveToPose(Constants.Target.L_17));
+        m_driverController
+                          .pov(135)
+                          .and(m_driverController.y())
+                          .whileTrue(m_driveTrain.driveToL3Pose(Constants.Target.R_17));
+        m_driverController
+                          .pov(135)
+                          .and(m_driverController.a())
+                          .and(m_driverController.y())
+                          .whileTrue(m_driveTrain.driveToL3Pose(Constants.Target.L_17));
 
         m_driverController
                           .pov(180)
@@ -304,6 +397,15 @@ public class RobotContainer {
                           .pov(180)
                           .and(m_driverController.a())
                           .whileTrue(m_driveTrain.driveToPose(Constants.Target.L_18));
+        m_driverController
+                          .pov(180)
+                          .and(m_driverController.y())
+                          .whileTrue(m_driveTrain.driveToL3Pose(Constants.Target.R_18));
+        m_driverController
+                          .pov(180)
+                          .and(m_driverController.a())
+                          .and(m_driverController.y())
+                          .whileTrue(m_driveTrain.driveToL3Pose(Constants.Target.L_18));
 
         m_driverController
                           .pov(225)
@@ -312,6 +414,15 @@ public class RobotContainer {
                           .pov(225)
                           .and(m_driverController.a())
                           .whileTrue(m_driveTrain.driveToPose(Constants.Target.L_19));
+        m_driverController
+                          .pov(225)
+                          .and(m_driverController.y())
+                          .whileTrue(m_driveTrain.driveToL3Pose(Constants.Target.R_19));
+        m_driverController
+                          .pov(225)
+                          .and(m_driverController.a())
+                          .and(m_driverController.y())
+                          .whileTrue(m_driveTrain.driveToL3Pose(Constants.Target.L_19));
         
         m_driverController
                           .pov(315)
@@ -320,6 +431,15 @@ public class RobotContainer {
                           .pov(315)
                           .and(m_driverController.a())
                           .whileTrue(m_driveTrain.driveToPose(Constants.Target.L_20));
+        m_driverController
+                          .pov(315)
+                          .and(m_driverController.y())
+                          .whileTrue(m_driveTrain.driveToL3Pose(Constants.Target.R_20));
+        m_driverController
+                          .pov(315)
+                          .and(m_driverController.a())
+                          .and(m_driverController.y())
+                          .whileTrue(m_driveTrain.driveToL3Pose(Constants.Target.L_20));
         }
     }
      

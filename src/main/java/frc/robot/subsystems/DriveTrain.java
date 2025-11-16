@@ -325,11 +325,31 @@ public class DriveTrain extends SubsystemBase {
     return defer( () -> AutoBuilder.pathfindToPose(
         pose,
         constraints,
-        edu.wpi.first.units.Units.MetersPerSecond.of(0) // Goal end velocity in meters/sec
-                                     ).andThen(() -> this.resetPose(pose)).andThen(Commands.print("Testing the command")));
+        edu.wpi.first.units.Units.MetersPerSecond.of(0)) // Goal end velocity in meters/sec
+        .andThen(() -> this.resetPose(pose)).andThen(Commands.print("Testing the command")));
   }
 
+/**
+ * Goal of this Command is to create a stepback to create space for Level 3 scoring
+ * @return Path finding For L3 Position
+ */
 
+public Command driveToL3Pose(Pose2d pose)
+{
+  // Create the constraints to use while pathfinding
+  PathConstraints constraints = new PathConstraints(
+    swerveDrive.getMaximumChassisVelocity(), 1.0,/*4.0*/
+    swerveDrive.getMaximumChassisAngularVelocity(), Units.degreesToRadians(360)/*720*/);
+    double stepBackDistance = 0.3; 
+// Since AutoBuilder is configured, we can use it to build pathfinding commands
+return defer( () -> AutoBuilder.pathfindToPose(
+    new Pose2d(pose.getX() - stepBackDistance * pose.getRotation().getCos(),
+            pose.getY() - stepBackDistance * pose.getRotation().getSin(),
+            pose.getRotation()),
+    constraints,
+    edu.wpi.first.units.Units.MetersPerSecond.of(0) // Goal end velocity in meters/sec
+                                 ).andThen(Commands.print("Testing L3 command")));
+}
 
 /**
    * Checks if the alliance is red, defaults to false if alliance isn't available.
